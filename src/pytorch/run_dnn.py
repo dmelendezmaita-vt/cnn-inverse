@@ -61,6 +61,9 @@ from opt_utils import (
 DEFAULT_SAVE_DIR_BASE = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..", "runs")
 )
+DEFAULT_REPO_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
 
 ###############################################################################
 
@@ -1316,6 +1319,17 @@ def create_arg_parser():
     )
     return parser
 
+
+def _resolve_repo_relative_path(path_value):
+    if path_value is None:
+        return None
+    if os.path.isabs(path_value):
+        return path_value
+    cwd_candidate = os.path.abspath(path_value)
+    if os.path.exists(cwd_candidate):
+        return cwd_candidate
+    return os.path.abspath(os.path.join(DEFAULT_REPO_ROOT, path_value))
+
 def main():
     parser = create_arg_parser()
     args = parser.parse_args(sys.argv[1:])
@@ -1333,7 +1347,7 @@ def main():
     if getattr(args, "curr", None) is not None:
         params["data"]["curr"] = args.curr
     if getattr(args, "load_dir", None) is not None:
-        params["runconfig"]["load_dir"] = args.load_dir
+        params["runconfig"]["load_dir"] = _resolve_repo_relative_path(args.load_dir)
 
     # persist preference for prediction saving
     if getattr(args, "save_predictions", None) is not None:
