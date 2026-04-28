@@ -1,7 +1,8 @@
 matplotlib
-numpy
+numpy<2
 pyyaml
 scikit-learn
-sbi
+scipy<1.13
+sbi==0.22.0
 torch
 deep-learning-toolkit
