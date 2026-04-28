@@ -302,7 +302,7 @@ def compute_fft256(arr2d: np.ndarray) -> np.ndarray:
 
 
 def materialize_feature_mode(flat_block: np.ndarray, feature_mode: str) -> np.ndarray:
-    raw = np.asarray(flat_block, dtype=np.float32, copy=False)
+    raw = np.asarray(flat_block, dtype=np.float32)
     summary = None
     fft = None
 
