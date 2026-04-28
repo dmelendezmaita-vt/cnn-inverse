@@ -1,2 +1,6 @@
+pip>=24
+setuptools>=61
+wheel
+packaging>=24
 -e vendor/dlkit
 -r src/tensorflow/requirements.txt

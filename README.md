@@ -15,8 +15,7 @@ This repository ships the core source tree, a small FitzHugh-Nagumo starter data
 ## Baseline Run
 
 ```bash
-python -m pip install -e vendor/dlkit
-python -m pip install -r src/pytorch/requirements.txt
+python -m pip install -r requirements-public-pytorch.txt
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode train
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode eval
 ```
