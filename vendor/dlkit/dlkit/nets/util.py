@@ -62,7 +62,8 @@ def get_parameters(net):
         else:
             table.add_row([name, n_params, False])
             n_nontrainable_params += n_params
-    table.add_divider()
+    if hasattr(table, "add_divider"):
+        table.add_divider()
     table.add_row(
         ["Total number of trainable parameters", f"{n_trainable_params}", True]
     )

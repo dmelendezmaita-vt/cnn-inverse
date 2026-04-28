@@ -58,6 +58,10 @@ from opt_utils import (
     create_lr_scheduler
 )
 
+DEFAULT_SAVE_DIR_BASE = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "runs")
+)
+
 ###############################################################################
 
 def _dist_from_env():
@@ -1285,7 +1289,7 @@ def create_arg_parser():
     # Output location: base + SLURM_JOB_ID
     parser.add_argument(
         "--save_dir_base",
-        default="/projects/neuro-collab/data/runs",
+        default=DEFAULT_SAVE_DIR_BASE,
         help="Base output directory; run directory appends SLURM_JOB_ID (or a timestamp if unset).",
     )
     parser.add_argument(
@@ -1340,7 +1344,7 @@ def main():
     if not job_id:
         job_id = time.strftime("manual_%Y%m%d_%H%M%S")
 
-    save_dir_base = getattr(args, "save_dir_base", "/projects/neuro-collab/data/runs")
+    save_dir_base = os.path.abspath(getattr(args, "save_dir_base", DEFAULT_SAVE_DIR_BASE))
     params["runconfig"]["save_dir"] = os.path.join(save_dir_base, str(job_id))
 
     os.makedirs(params["runconfig"]["save_dir"], exist_ok=True)
