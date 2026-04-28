@@ -18,7 +18,7 @@ setup(
     packages=find_packages(exclude=["_*"]),
     include_package_data=True,
     install_requires=[
-        "numpy>=2",
+        "numpy>=1.26,<2",
         "prettytable>=3",
         "torch>=2",
         "tqdm>=4",
