@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | `data/important_notes/...` as the main narrative surface | It preserves workspace chronology rather than the canonical reproduction chain | Add a numbered reproduction layer that orders artifacts by what a human must understand and execute |
 | legacy `track`, `phase`, and `optimization_track_YYYYmmdd_*` names exposed directly | They are useful for provenance, but they are poor human entrypoints | Keep them as source paths, then wrap them in stable reproduction labels |
-| very large undifferentiated `scripts/` surface | A reproducer cannot infer which commands are canonical and which are exploratory or superseded | Publish a short canonical command index with explicit status labels |
+| very large undifferentiated `tools/` surface | A reproducer cannot infer which commands are canonical and which are exploratory or superseded | Publish a short canonical command index with explicit status labels |
 | original untouched upstream zip absent from the public tree | Reproducing the inherited baseline is incomplete without an exact external reference to that archive | Ship a documented archive reference, its zip comment, its size, and an extraction command |
 | earlier `github_upload_bundle_20260407` exposed as if it were the current public structure | It reflects an older track-based packaging logic | Keep it as a legacy bundle, not as the canonical organization |
 

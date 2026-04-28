@@ -1,2 +1,2 @@
 -e vendor/dlkit
--r pytorch/requirements.txt
+-r src/pytorch/requirements.txt

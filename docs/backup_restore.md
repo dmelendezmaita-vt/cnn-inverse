@@ -14,8 +14,8 @@ The scripts provide a repeatable way to:
 
 Scripts:
 
-- `scripts/backup_project.sh`
-- `scripts/restore_project.sh`
+- `tools/backup_project.sh`
+- `tools/restore_project.sh`
 
 ## Default Behavior
 
@@ -39,19 +39,16 @@ Scripts:
 
 Included:
 
-- `code/fhn_dnn-1-implementation-in-pytorch/pytorch/`
-- `code/fhn_dnn-1-implementation-in-pytorch/tensorflow/`
-- `code/fhn_dnn-1-implementation-in-pytorch/utils/`
-- `code/fhn_dnn-1-implementation-in-pytorch/scripts/`
-- `code/fhn_dnn-1-implementation-in-pytorch/docs/`
-- `code/fhn_dnn-1-implementation-in-pytorch/slurm_train.sbatch`
-- `code/fhn_dnn-1-implementation-in-pytorch/slurm_smoke_test.sbatch`
-- `code/fhn_dnn-1-implementation-in-pytorch/README.md`
-- `code/fhn_dnn-1-implementation-in-pytorch/WARP.md`
-- `code/fhn_dnn-1-implementation-in-pytorch/LICENSE`
-- `code/dl-kit-main/dlkit/opt/train.py`
-- `code/dl-kit-main/dlkit/opt/train_utils.py`
-- `DMM research progress.pdf`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/src/pytorch/`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/src/tensorflow/`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/src/utils/`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/tools/`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/docs/`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/repro/`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/README.md`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/LICENSE`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/vendor/dlkit/dlkit/opt/train.py`
+- `code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/vendor/dlkit/dlkit/opt/train_utils.py`
 
 Intentionally excluded by default:
 
@@ -65,7 +62,7 @@ Intentionally excluded by default:
 ## Command
 
 ```bash
-bash scripts/backup_project.sh [OPTIONS]
+bash tools/backup_project.sh [OPTIONS]
 ```
 
 ## Options
@@ -102,19 +99,19 @@ Create a default backup:
 
 ```bash
 cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch
-bash scripts/backup_project.sh
+bash tools/backup_project.sh
 ```
 
 Create compressed backup:
 
 ```bash
-bash scripts/backup_project.sh --format tar.gz
+bash tools/backup_project.sh --format tar.gz
 ```
 
 Preview backup actions without writing files:
 
 ```bash
-bash scripts/backup_project.sh --dry-run
+bash tools/backup_project.sh --dry-run
 ```
 
 ## Restore Script Usage
@@ -122,7 +119,7 @@ bash scripts/backup_project.sh --dry-run
 ## Command
 
 ```bash
-bash scripts/restore_project.sh --archive PATH [OPTIONS]
+bash tools/restore_project.sh --archive PATH [OPTIONS]
 ```
 
 ## Options
@@ -152,7 +149,7 @@ bash scripts/restore_project.sh --archive PATH [OPTIONS]
 Dry-run restore:
 
 ```bash
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_backup_YYYYmmdd_HHMMSS.tar \
   --dry-run
 ```
@@ -160,7 +157,7 @@ bash scripts/restore_project.sh \
 Restore with explicit safety backup:
 
 ```bash
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_backup_YYYYmmdd_HHMMSS.tar \
   --backup-current always
 ```
@@ -168,7 +165,7 @@ bash scripts/restore_project.sh \
 Non-interactive restore:
 
 ```bash
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_backup_YYYYmmdd_HHMMSS.tar \
   --backup-current always \
   --yes

@@ -2,7 +2,7 @@
 
 This runbook is restore-focused operational documentation for:
 
-- `scripts/restore_project.sh`
+- `tools/restore_project.sh`
 
 Use it when recovering code/config state from a previously created backup archive.
 
@@ -53,7 +53,7 @@ Pre-restore backup naming:
 
 ```bash
 cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_backup_YYYYmmdd_HHMMSS.tar
 ```
 
@@ -69,7 +69,7 @@ Expected flow:
 ## B. Non-interactive restore
 
 ```bash
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_backup_YYYYmmdd_HHMMSS.tar \
   --backup-current always \
   --yes
@@ -80,7 +80,7 @@ Use for automation where prompts are not possible.
 ## C. Dry-run validation
 
 ```bash
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_backup_YYYYmmdd_HHMMSS.tar \
   --dry-run
 ```
@@ -112,7 +112,7 @@ If restore result is not desired:
 2. Run restore again using that archive:
 
 ```bash
-bash scripts/restore_project.sh \
+bash tools/restore_project.sh \
   --archive /projects/neuro-collab/archives/fhn_dnn/fhn_dnn_pre_restore_YYYYmmdd_HHMMSS.tar \
   --backup-current always
 ```

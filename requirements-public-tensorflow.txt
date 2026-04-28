@@ -1,2 +1,2 @@
 -e vendor/dlkit
--r tensorflow/requirements.txt
+-r src/tensorflow/requirements.txt

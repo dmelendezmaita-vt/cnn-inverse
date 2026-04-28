@@ -7,16 +7,20 @@ This is the current canonical clean Hodgkin-Huxley campaign in the public reposi
 Build the literal A30 manifest:
 
 ```bash
-python scripts/build_hh_track4_a30_literal_rerun_manifest_20260427.py \
+python tools/build_hh_track4_a30_literal_rerun_manifest_20260427.py \
   --out-root evidence/canonical_chain/20_hh_canonical_clean_a30/optimization_track_20260427_hh_track4_a30_literal_rerun
 ```
 
 Build the clean A30 analysis package:
 
 ```bash
-python scripts/analyze_hh_track4_a30_clean_results_20260428.py \
+python tools/analyze_hh_track4_a30_clean_results_20260428.py \
   --campaign-root evidence/canonical_chain/20_hh_canonical_clean_a30/optimization_track_20260427_hh_track4_a30_literal_rerun
 ```
+
+## Execution Boundary
+
+The shipped clean A30 output package is reproducible as an inspected artifact set inside this public repository. Rebuilding the manifest from scratch still depends on historical A30 phase matrices and some earlier checkpoint analysis tables that remain in the original workspace rather than in the slim public tree.
 
 ## Canonical Outputs
 

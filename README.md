@@ -10,8 +10,8 @@ The primary human entrypoint is the numbered reproduction layer under `repro/`, 
 
 | Area | Included in this staging repo | Technical role |
 | --- | --- | --- |
-| `pytorch/`, `tensorflow/`, `utils/` | Yes | Core model code and baseline training and evaluation entry points |
-| `scripts/` | Yes | Experiment builders, launchers, analyzers, and reporting utilities used in the live workflow |
+| `src/pytorch/`, `src/tensorflow/`, `src/utils/` | Yes | Core model code and baseline training and evaluation entry points |
+| `tools/` | Yes | Experiment builders, launchers, analyzers, and reporting utilities used in the live workflow |
 | `vendor/dlkit/` | Yes | Required vendored dependency for `dlkit.*` imports used by the PyTorch code |
 | `data/2020-12-09/` | Yes | Small FitzHugh-Nagumo baseline dataset, which fits within GitHub file-size limits |
 | `evidence/canonical_chain/` | Yes | Canonical evidence chain, ordered for human reproduction rather than workspace chronology |
@@ -24,7 +24,7 @@ The PyTorch workflow depends on the vendored `dlkit` package and on the project-
 
 ```bash
 python -m pip install -e vendor/dlkit
-python -m pip install -r pytorch/requirements.txt
+python -m pip install -r src/pytorch/requirements.txt
 ```
 
 Convenience requirements files are also provided:
@@ -37,8 +37,8 @@ python -m pip install -r requirements-public-tensorflow.txt
 ## Baseline FitzHugh-Nagumo Run
 
 ```bash
-python pytorch/run_dnn.py --params pytorch/configs/params_dnn.yaml --mode train
-python pytorch/run_dnn.py --params pytorch/configs/params_dnn.yaml --mode eval
+python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode train
+python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode eval
 ```
 
 ## Reproduction Surface
