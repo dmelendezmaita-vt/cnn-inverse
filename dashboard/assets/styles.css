@@ -1,14 +1,18 @@
 :root {
-  --bg: #f6f6f4;
+  --bg: #f5f5f3;
   --panel: #ffffff;
-  --panel-alt: #f2f4f8;
-  --ink: #17212b;
-  --muted: #5a6675;
-  --border: #d8dfe7;
-  --accent: #1d6f62;
-  --accent-soft: #e5f3ef;
-  --warn: #8f4b1d;
-  --warn-soft: #fff1e5;
+  --panel-alt: #f3f5f8;
+  --ink: #18232d;
+  --muted: #596777;
+  --border: #d8dee7;
+  --accent: #1f6f78;
+  --accent-soft: #e6f3f4;
+  --warn: #8b4a1e;
+  --warn-soft: #fff0e4;
+  --success: #2a8a50;
+  --success-soft: #e8f5ed;
+  --purple: #6a4fb3;
+  --purple-soft: #f0ebff;
 }
 
 * {
@@ -20,7 +24,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .hero {
@@ -30,7 +34,7 @@ body {
 
 .hero__inner,
 .layout {
-  max-width: 1120px;
+  max-width: 1180px;
   margin: 0 auto;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -52,13 +56,18 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(2rem, 3.8vw, 3rem);
   line-height: 1.08;
 }
 
 .subtitle,
 .meta,
-.panel-note {
+.panel-note,
+.kpi-note,
+.text-card p,
+.text-card li,
+.chart-card p,
+.chart-notes li {
   color: var(--muted);
 }
 
@@ -88,11 +97,22 @@ h1 {
 
 h2 {
   margin: 0 0 0.75rem;
-  font-size: 1.25rem;
+  font-size: 1.28rem;
+}
+
+h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.panel-note {
+  margin: 0.35rem 0 0.85rem;
+  font-size: 0.93rem;
 }
 
 .kpi-grid,
-.cards-grid {
+.cards-grid,
+.chart-grid {
   display: grid;
   gap: 0.75rem;
 }
@@ -105,42 +125,33 @@ h2 {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-.kpi-card,
-.text-card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.85rem;
-  background: var(--panel-alt);
+.chart-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
-.kpi-card h3,
-.text-card h3 {
-  margin: 0 0 0.35rem;
-  font-size: 0.98rem;
+.kpi-card,
+.text-card,
+.chart-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem;
+  background: var(--panel-alt);
 }
 
 .kpi-value {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: 1.48rem;
   font-weight: 700;
-}
-
-.kpi-note,
-.text-card p,
-.text-card li {
-  margin: 0.35rem 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
 }
 
 .pill {
   display: inline-block;
-  padding: 0.18rem 0.45rem;
+  padding: 0.18rem 0.5rem;
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .pill.warn {
@@ -148,8 +159,75 @@ h2 {
   color: var(--warn);
 }
 
+.pill.success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.pill.purple {
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+
+.thread-header {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.thread-header p {
+  margin: 0;
+}
+
+.chart-subtitle {
+  margin: 0.15rem 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.chart-shell {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.chart-shell svg {
+  width: 100%;
+  min-width: 300px;
+  display: block;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.legend-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  flex: none;
+}
+
+.chart-notes {
+  margin: 0.7rem 0 0;
+  padding-left: 1.1rem;
+}
+
 .table-wrap {
   overflow-x: auto;
+  margin-top: 0.75rem;
 }
 
 table {
@@ -172,12 +250,38 @@ th {
 }
 
 ul {
-  margin: 0.45rem 0 0;
+  margin: 0.4rem 0 0;
   padding-left: 1.1rem;
 }
 
-@media (max-width: 700px) {
+.thread-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.axis-label {
+  font-size: 12px;
+  fill: var(--muted);
+}
+
+.value-label {
+  font-size: 12px;
+  fill: var(--ink);
+  font-weight: 600;
+}
+
+.grid-line {
+  stroke: #e7ebf0;
+  stroke-width: 1;
+}
+
+.zero-line {
+  stroke: #bcc6d2;
+  stroke-width: 1.2;
+}
+
+@media (max-width: 760px) {
   .panel {
-    padding: 0.85rem;
+    padding: 0.9rem;
   }
 }

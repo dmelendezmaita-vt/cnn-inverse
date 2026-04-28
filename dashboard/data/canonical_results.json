@@ -1,199 +1,587 @@
 {
   "generated_on": "2026-04-28",
-  "scope_note": "Primary results are ordered by scientific importance, while supporting studies remain visible without being merged into the main leaderboard.",
-  "kpis": [
-    {
-      "label": "Direct clean winner",
-      "value": "Extra Trees depth-20",
-      "note": "Mean MAE 500.43 in the canonical A30 direct clean package."
-    },
-    {
-      "label": "Robust direct representative",
-      "value": "kNN k=11",
-      "note": "Clean MAE is only 0.34% worse than the direct winner, while additive-noise MAE improves by 28.1% at noise 0.20."
-    },
-    {
-      "label": "Clean posterior leader",
-      "value": "FMPE",
-      "note": "Relative to feature-aware SNPE, MAE improves by 2.49% and MSE improves by 8.03%."
-    },
-    {
-      "label": "Aligned posterior rule",
-      "value": "BayesFlow median",
-      "note": "Best comparable posterior decision rule by MAE, with a 5.20% MAE gain over the aligned BayesFlow framework row."
-    },
-    {
-      "label": "Execution default",
-      "value": "Concurrent single-node",
-      "note": "Broad-sweep throughput improves by 85.6% relative to the targeted four-node path on the canonical Hodgkin-Huxley workload."
-    }
-  ],
+  "scope_note": "The dashboard compresses a large artifact surface into a small set of argument-driven charts, which are separated by comparability class and by scientific role.",
+  "inventory": {
+    "kpis": [
+      {
+        "label": "Canonical artifact files",
+        "value": "18,627",
+        "note": "Files across the canonical packages that support the current claims."
+      },
+      {
+        "label": "Canonical artifact volume",
+        "value": "56.56 GiB",
+        "note": "The clean A30 campaign dominates the stored volume."
+      },
+      {
+        "label": "Structured summary rows",
+        "value": "340",
+        "note": "Rows in the main summary tables that feed the current interpretation surface."
+      },
+      {
+        "label": "Numeric result cells",
+        "value": "1,824",
+        "note": "Numeric fields in the structured tables that matter for the dashboard, before logs and per-target artifacts."
+      }
+    ],
+    "packages": [
+      {
+        "label": "Clean A30 canonical campaign",
+        "files": 13867,
+        "gib": 38.00,
+        "role": "Primary clean comparison and later aligned follow-up coverage."
+      },
+      {
+        "label": "Grouped single-node factorization",
+        "files": 726,
+        "gib": 3.91,
+        "role": "Settled the best single-node broad-sweep configuration."
+      },
+      {
+        "label": "Throughput orchestration",
+        "files": 400,
+        "gib": 1.03,
+        "role": "Separated completed-run throughput from single-run latency."
+      },
+      {
+        "label": "Scaling redesign R1",
+        "files": 838,
+        "gib": 3.97,
+        "role": "Established the early communication-reduction candidates."
+      },
+      {
+        "label": "Scaling replication R2",
+        "files": 1578,
+        "gib": 6.96,
+        "role": "Stabilized the node-local 2n and 4n comparisons."
+      },
+      {
+        "label": "Feature-scale cache studies",
+        "files": 667,
+        "gib": 2.33,
+        "role": "Measured startup reductions without changing the hot loop."
+      },
+      {
+        "label": "Split-array cache studies",
+        "files": 181,
+        "gib": 0.04,
+        "role": "Proved the prewarm-and-launch path for the mmap-backed split cache."
+      },
+      {
+        "label": "Benchmark parity studies",
+        "files": 183,
+        "gib": 0.32,
+        "role": "Established the bounded parity and split-integrity context."
+      }
+    ],
+    "rows_by_space": [
+      {
+        "space": "Direct clean summary",
+        "rows": 140,
+        "numeric_cells": 700
+      },
+      {
+        "space": "Aligned posterior framework snapshot",
+        "rows": 17,
+        "numeric_cells": 61
+      },
+      {
+        "space": "Posterior decision-rule snapshot",
+        "rows": 63,
+        "numeric_cells": 189
+      },
+      {
+        "space": "Hybrid initializer summary",
+        "rows": 77,
+        "numeric_cells": 539
+      },
+      {
+        "space": "Active-policy ladder",
+        "rows": 14,
+        "numeric_cells": 62
+      },
+      {
+        "space": "Family efficiency audit",
+        "rows": 5,
+        "numeric_cells": 36
+      },
+      {
+        "space": "Execution support tables",
+        "rows": 24,
+        "numeric_cells": 216
+      }
+    ],
+    "interpretation_note": "The raw archive is much larger than the human interpretation surface. The dashboard should therefore show only the comparisons that answer a question cleanly, while the tables and files remain available for audit."
+  },
   "reading_guide": [
     {
-      "title": "Primary comparison",
-      "badge": "Main evidence",
+      "title": "Comparability first",
+      "badge": "Interpretation rule",
       "kind": "primary",
-      "body": "The primary table reports the defended fixed-task comparison, in which direct predictors, aligned posterior framework rows, posterior decision rules, and hybrid initializers remain separated because they do not share one common evaluation contract."
+      "body": "Direct clean rows, posterior framework rows, posterior decision rules, hybrid initializers, and active-sequential rows are not one pooled leaderboard. Each chart states its own comparison class."
     },
     {
-      "title": "Boundary studies",
-      "badge": "Scope checks",
-      "kind": "boundary",
-      "body": "Boundary studies test whether the promoted representatives survive localized shifts, whether later executable families overturn the frontier, and whether direct fitting is currently interpretable in the absence of simulator provenance."
-    },
-    {
-      "title": "Supporting execution studies",
-      "badge": "Support evidence",
+      "title": "Performance versus speedup",
+      "badge": "Interpretation rule",
       "kind": "support",
-      "body": "Supporting studies establish that the inherited FitzHugh-Nagumo baseline is statistically stable, while execution configuration changes runtime far more than predictive quality on the benchmarked workloads."
+      "body": "Performance improvements refer to elapsed time, train time, startup cost, and completed-run throughput. Speedup refers to a ratio against a baseline. The dashboard keeps those quantities separate."
+    },
+    {
+      "title": "Primary versus supporting evidence",
+      "badge": "Interpretation rule",
+      "kind": "boundary",
+      "body": "The Hodgkin-Huxley fixed-task comparison is the empirical center. Benchmark parity, execution studies, and execution-path optimizations support or bound that comparison, but they do not replace it."
     }
   ],
-  "primary_note": "Rows below are grouped by comparability class. They should not be read as one pooled rank order.",
-  "primary_rows": [
+  "threads": [
     {
-      "class": "Direct point estimation",
-      "representative": "extra_trees_500_depth20",
-      "meaning": "Canonical clean direct winner by mean MAE in the homogeneous A30 rerun.",
-      "mae": "500.43",
-      "mse": "2.785e6",
-      "r2": "0.102",
-      "resources": "CPU-only, mean elapsed 13.1 s."
+      "title": "Benchmark Parity and Split Integrity",
+      "badge": "Supporting evidence",
+      "intro": "These studies checked whether the inherited FitzHugh-Nagumo baseline remained statistically stable, and whether the archived split behavior remained scientifically interpretable.",
+      "how_to_read": "Read the metric-delta chart as a bounded difference against the archived benchmark mean, then read the ANOVA chart as a check that node count did not materially change predictive quality.",
+      "main_conclusion": "The baseline remained statistically close to the archived benchmark, while runtime changed more than predictive quality. The split issue mattered for interpretation, not for the later Hodgkin-Huxley frontier itself.",
+      "charts": [
+        {
+          "title": "Benchmark deltas against the archived FitzHugh-Nagumo reference",
+          "subtitle": "Positive values indicate the multi-seed rerun mean was above the archived benchmark value.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "MSE delta",
+            "MAE delta",
+            "R2 delta"
+          ],
+          "series": [
+            {
+              "label": "Delta versus benchmark",
+              "values": [8.09, 3.86, 0.145],
+              "color": "#7a3c12"
+            }
+          ],
+          "notes": [
+            "The MSE offset is real, but it remains inside the reproduced multi-seed variation envelope.",
+            "The R2 shift is very small, which is why the parity conclusion remained positive."
+          ]
+        },
+        {
+          "title": "Node-count effect test on parity metrics",
+          "subtitle": "Higher p-values indicate weaker evidence that node count changed model quality.",
+          "type": "bar",
+          "unit": "p",
+          "lower_is_better": false,
+          "categories": [
+            "MSE ANOVA p",
+            "MAE ANOVA p",
+            "R2 ANOVA p"
+          ],
+          "series": [
+            {
+              "label": "Node-count ANOVA",
+              "values": [0.996, 0.992, 0.992],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
+            "These p-values support the claim that the benchmark parity result is stable across the tested node counts.",
+            "The benchmark study therefore supports later systems claims without becoming a main objective."
+          ]
+        }
+      ]
     },
     {
-      "class": "Robust direct point estimation",
-      "representative": "knn_k11",
-      "meaning": "Preferred additive-noise representative, because the clean penalty is small and the shift penalty is much smaller.",
-      "mae": "502.13 clean, 664.09 at noise 0.20",
-      "mse": "2.755e6 clean",
-      "r2": "0.110 clean",
-      "resources": "CPU-only, mean elapsed 5.47 s in the head-to-head package."
+      "title": "Execution Configuration and Run Policy",
+      "badge": "Supporting evidence",
+      "intro": "These studies determined which execution setting best supports broad comparative sweeps, while keeping the task fixed.",
+      "how_to_read": "The throughput chart answers the operational default question. The train-time chart answers a narrower question, namely whether tuned 2-node and 4-node lanes improved inside their own lane, which is different from asking whether multi-node scaling beat the best single-node policy.",
+      "main_conclusion": "Throughput-first grouped single-node execution became the practical default. Tuned 2-node and 4-node paths improved their own lane materially, but they did not overturn the broad-sweep single-node policy.",
+      "charts": [
+        {
+          "title": "Completed runs per hour, grouped 1-node versus selected 4-node latency path",
+          "subtitle": "Higher is better. The current Hodgkin-Huxley workload used the right-hand comparison.",
+          "type": "grouped_bar",
+          "unit": "runs/hour",
+          "lower_is_better": false,
+          "categories": [
+            "Reduced HH support task",
+            "Current HH task"
+          ],
+          "series": [
+            {
+              "label": "Grouped 1-node",
+              "values": [127.43, 54.75],
+              "color": "#1f6f78"
+            },
+            {
+              "label": "Selected 4-node latency path",
+              "values": [30.38, 29.51],
+              "color": "#b04a2f"
+            }
+          ],
+          "notes": [
+            "On the current Hodgkin-Huxley task, grouped single-node execution improved completed-run throughput by 85.5%.",
+            "This chart is why single-node remained the broad default even though 4-node latency could still be useful for targeted reference runs."
+          ]
+        },
+        {
+          "title": "Train-time reduction inside the tuned multi-node lane",
+          "subtitle": "These percentages compare the tuned `R1_accum2_nosync` lane against the earlier node-matched baseline.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Reduced HH 2-node",
+            "Reduced HH 4-node",
+            "Current HH 2-node",
+            "Current HH 4-node"
+          ],
+          "series": [
+            {
+              "label": "Train-time reduction",
+              "values": [33.45, 35.08, 32.80, 33.93],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "These are node-local improvements, not broad run-policy wins.",
+            "This is why performance and speedup should not be conflated in the dashboard text."
+          ]
+        },
+        {
+          "title": "Final grouped single-node factorization improvement",
+          "subtitle": "The `factor_s5` path was the last single-node cleanup before the broad default was closed.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Reduced HH train-time reduction",
+            "Current HH train-time reduction"
+          ],
+          "series": [
+            {
+              "label": "factor_s5 versus factor_s2",
+              "values": [4.35, 4.66],
+              "color": "#6a4fb3"
+            }
+          ],
+          "notes": [
+            "This was a small but clean single-node improvement that preserved quality.",
+            "Once this path existed, the case for broad 4-node default promotion became even weaker."
+          ]
+        }
+      ]
     },
     {
-      "class": "Best neural direct row",
-      "representative": "efficientnet_huber005_inversevar_e500",
-      "meaning": "Strongest surviving neural direct baseline in the current clean comparison.",
-      "mae": "879.46",
-      "mse": "4.846e6",
-      "r2": "-0.103",
-      "resources": "A30/V100 neural phases typically 210 to 241 s, host RSS about 19.2 GB, peak GPU utilization about 94%."
+      "title": "Primary Direct Fixed-Task Comparison",
+      "badge": "Primary evidence",
+      "intro": "This is the empirical center of the work. The current clean direct frontier is taken from the homogeneous A30 rerun package, which displaced the older mixed closure endpoint.",
+      "how_to_read": "Read the accuracy chart as the clean direct comparison within the direct-estimation class, and read the runtime chart separately, because runtime and accuracy are different objectives.",
+      "main_conclusion": "The direct clean winner is tuned Extra Trees, the robust direct representative is tuned k-nearest neighbors, and the best surviving neural direct row is materially behind both.",
+      "charts": [
+        {
+          "title": "Clean direct MAE by family representative",
+          "subtitle": "Lower is better. These rows share one direct-estimation comparison class.",
+          "type": "bar",
+          "unit": "MAE",
+          "lower_is_better": true,
+          "categories": [
+            "Extra Trees depth-20",
+            "kNN k=11",
+            "EfficientNet beta0.05 inverse-var e500"
+          ],
+          "series": [
+            {
+              "label": "Clean MAE",
+              "values": [500.43, 502.13, 879.46],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
+            "The clean gap from the best neural direct row to the direct winner is 43.1% on MAE.",
+            "The clean gap between the direct winner and the robust kNN representative is only 0.34%."
+          ]
+        },
+        {
+          "title": "Representative runtime by direct family",
+          "subtitle": "Lower is better. Runtime is not a quality metric, so it should be read separately from MAE.",
+          "type": "bar",
+          "unit": "seconds",
+          "lower_is_better": true,
+          "categories": [
+            "kNN k=11",
+            "Extra Trees depth-20",
+            "EfficientNet beta0.05 inverse-var e500"
+          ],
+          "series": [
+            {
+              "label": "Representative runtime",
+              "values": [5.47, 13.10, 235.76],
+              "color": "#b04a2f"
+            }
+          ],
+          "notes": [
+            "The direct clean winner was also much cheaper than the best surviving neural row.",
+            "The kNN representative remained the lowest-runtime direct contender while preserving near-winner clean accuracy."
+          ]
+        }
+      ]
     },
     {
-      "class": "Aligned posterior framework",
-      "representative": "bayesflow_native_meanstd_v100_20260425",
-      "meaning": "Strongest aligned framework row in the later executable literature follow-up.",
-      "mae": "595.63",
-      "mse": "2.383e6",
-      "r2": "0.095",
-      "resources": "Elapsed 133.2 s, host RSS about 1.90 GB, GPU memory max about 1169 MB."
+      "title": "Posterior-Oriented and Representation Follow-Up",
+      "badge": "Boundary and extension",
+      "intro": "These studies broadened the state-of-the-art comparison through richer observations, stronger posterior families, and later aligned framework rows.",
+      "how_to_read": "The posterior chart is internal to the posterior-oriented family space. It should not be merged numerically with the direct clean frontier. The gain chart shows which interventions actually moved the posterior-oriented needle.",
+      "main_conclusion": "Observation enrichment improved SNPE materially, FMPE became the strongest clean posterior family in the checkpoint-2 block, and later BayesFlow decision rules improved MAE inside the aligned posterior branch without overturning the direct clean winner.",
+      "charts": [
+        {
+          "title": "Posterior-oriented clean MAE by representative",
+          "subtitle": "Lower is better. These rows remain inside the posterior-oriented result space.",
+          "type": "bar",
+          "unit": "MAE",
+          "lower_is_better": true,
+          "categories": [
+            "BayesFlow posterior median",
+            "FMPE",
+            "BayesFlow framework meanstd",
+            "NPSE"
+          ],
+          "series": [
+            {
+              "label": "Clean MAE",
+              "values": [564.64, 582.30, 595.63, 620.61],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
+            "The BayesFlow median row is the best comparable posterior decision rule by MAE.",
+            "FMPE is still the clean posterior-family winner in the checkpoint-2 SBI block.",
+            "NPSE stayed slower and weaker than FMPE on the primary point metrics."
+          ]
+        },
+        {
+          "title": "Posterior-oriented intervention gains",
+          "subtitle": "Positive values are improvements against the reference named in each label. The combined-corruption row is intentionally negative.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Raw+FFT SNPE MAE gain",
+            "FMPE versus SNPE MAE gain",
+            "BayesFlow median versus framework MAE gain",
+            "Combined-corruption clean penalty"
+          ],
+          "series": [
+            {
+              "label": "MAE change",
+              "values": [8.0, 2.49, 5.20, -66.8],
+              "color": "#6a4fb3"
+            }
+          ],
+          "notes": [
+            "The richer observation space mattered before later family expansion.",
+            "The combined-corruption negative bar is a guardrail, because that branch damaged clean behavior too severely to promote."
+          ]
+        },
+        {
+          "title": "Posterior-oriented runtime by representative",
+          "subtitle": "Lower is better. This is performance, not quality.",
+          "type": "bar",
+          "unit": "seconds",
+          "lower_is_better": true,
+          "categories": [
+            "BayesFlow framework meanstd",
+            "FMPE",
+            "BayesFlow posterior median",
+            "NPSE"
+          ],
+          "series": [
+            {
+              "label": "Representative runtime",
+              "values": [133.2, 166.7, 367.9, 482.24],
+              "color": "#b04a2f"
+            }
+          ],
+          "notes": [
+            "BayesFlow meanstd is the fastest aligned framework row among the promoted posterior-oriented representatives.",
+            "The MAE-optimal posterior decision rule is much slower than the aligned framework row, which is why the dashboard keeps accuracy and runtime in separate charts."
+          ]
+        }
+      ]
     },
     {
-      "class": "Posterior decision rule",
-      "representative": "bayesflow_set_posterior_v100_20260426::median",
-      "meaning": "Best comparable posterior decision rule by MAE. MAE and MSE optima diverge, so this rule is not the universal posterior winner.",
-      "mae": "564.64",
-      "mse": "2.157e6",
-      "r2": "0.553",
-      "resources": "Elapsed 367.9 s, host RSS about 2.00 GB, GPU memory max about 453 MB."
+      "title": "Shift Robustness and Noise Sensitivity",
+      "badge": "Boundary and extension",
+      "intro": "These studies asked whether the clean winners survived perturbations, and whether shift-specific retraining changed the representative set.",
+      "how_to_read": "The first chart shows the clean-to-shift-specific posterior interventions. The second chart shows where the robust direct representative gains its practical value.",
+      "main_conclusion": "Robustness is plural. Matched drift and matched masking repairs are genuinely useful, while the robust direct representative is kNN rather than the clean tuned tree under additive noise.",
+      "charts": [
+        {
+          "title": "Shift-specific posterior improvement relative to the clean-trained feature-aware SNPE reference",
+          "subtitle": "Positive values indicate MAE improvement. The combined-corruption row shows why a single universal corruption-aware model was not promoted.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Drift010 matched retraining",
+            "Mask20 matched retraining",
+            "Combined corruption clean penalty"
+          ],
+          "series": [
+            {
+              "label": "MAE change",
+              "values": [28.4, 36.9, -66.8],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "The positive bars justify shift-specific promoted robustness paths.",
+            "The negative combined-corruption bar shows why one pooled robust-SNPE winner would have been misleading."
+          ]
+        },
+        {
+          "title": "kNN MAE improvement over the tuned tree under additive noise",
+          "subtitle": "Positive values indicate that kNN reduced MAE relative to `extra_trees_500_depth20` at that noise level.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Noise 0.05",
+            "Noise 0.10",
+            "Noise 0.20"
+          ],
+          "series": [
+            {
+              "label": "kNN improvement",
+              "values": [40.9, 36.6, 28.1],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
+            "The direct clean winner and the direct robust winner are different, which is why the dashboard keeps them separate at the top.",
+            "The improvement stays material even at the heaviest tested additive noise level."
+          ]
+        }
+      ]
     },
     {
-      "class": "Clean SBI winner",
-      "representative": "FMPE",
-      "meaning": "Strongest clean posterior family inside the checkpoint-2 modern SBI comparison.",
-      "mae": "582.3",
-      "mse": "2.005e6",
-      "r2": "0.268",
-      "resources": "V100 train 54.0 s, eval 102.3 s, total 166.7 s, GPU reserved about 584 MB, host RSS about 1.59 GB."
+      "title": "Later Executable Extensions",
+      "badge": "Coverage expansion",
+      "intro": "These studies reduced missed-family risk through aligned framework runs, posterior decision rules, active-sequential ladders, and hybrid initializer rows.",
+      "how_to_read": "These charts are internal to their own extension class. They broaden coverage, but they do not replace the direct fixed-task comparison.",
+      "main_conclusion": "The best active-sequential row remained a simple Wasserstein smoke heuristic, ASNPE-style extension improved its own lane at a large runtime cost, and hybrid-initializer rows broadened coverage without entering the direct clean leaderboard.",
+      "charts": [
+        {
+          "title": "Active-sequential error metric by representative policy",
+          "subtitle": "Lower is better. This chart stays inside the active-sequential class.",
+          "type": "bar",
+          "unit": "mean abs log10 error",
+          "lower_is_better": true,
+          "categories": [
+            "Wasserstein smoke",
+            "Disagreement smoke",
+            "Uncertainty smoke",
+            "ASNPE extended"
+          ],
+          "series": [
+            {
+              "label": "Error metric",
+              "values": [0.46467, 0.46681, 0.52043, 0.65578],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
+            "The simple Wasserstein smoke policy remained the best row in this class on the reported error metric.",
+            "ASNPE extended improved over earlier ASNPE ladders, but it did not become the best active-sequential representative overall."
+          ]
+        },
+        {
+          "title": "Active-sequential runtime by representative policy",
+          "subtitle": "Lower is better. The runtime gap is part of why these rows stayed in their own extension section.",
+          "type": "bar",
+          "unit": "seconds",
+          "lower_is_better": true,
+          "categories": [
+            "Wasserstein smoke",
+            "Disagreement smoke",
+            "Uncertainty smoke",
+            "ASNPE extended"
+          ],
+          "series": [
+            {
+              "label": "Runtime",
+              "values": [4.698, 4.747, 4.700, 376.272],
+              "color": "#b04a2f"
+            }
+          ],
+          "notes": [
+            "The later active ladder widened coverage dramatically, but the best class-level row was still the cheap Wasserstein heuristic.",
+            "This is one reason the extension studies should be read as coverage-expansion evidence rather than as a replacement leaderboard."
+          ]
+        }
+      ]
     },
     {
-      "class": "Hybrid initializer class",
-      "representative": "assumption-conditioned hybrid follow-up",
-      "meaning": "Coverage-expansion class used to reduce missed-family risk. It remains separate from the direct and aligned posterior leaderboards.",
-      "mae": "Class-specific",
-      "mse": "Class-specific",
-      "r2": "Class-specific",
-      "resources": "Follow-up class only. It is not pooled with the direct clean frontier."
-    }
-  ],
-  "boundary_rows": [
-    {
-      "study": "Representation enrichment for SNPE",
-      "intervention": "raw_plus_fft256_summary12 versus raw-only and summary-only inputs",
-      "primary_delta": "MAE 649.1 to 597.2, improvement 8.0%",
-      "secondary_delta": "MSE improves 14.5%, R2 improves from 0.158 to 0.259, cov90 improves from 0.600 to 0.635",
-      "resources": "Same V100 training budget and four-seed evaluation block.",
-      "interpretation": "Observation richness mattered enough to justify promoting the richer representation before later family comparisons."
-    },
-    {
-      "study": "Matched drift robustness",
-      "intervention": "Train-time drift-aware corruption for the drift010 evaluation",
-      "primary_delta": "MAE 945.0 to 676.3, improvement 28.4%",
-      "secondary_delta": "MSE improves 35.7%, R2 improves from -0.183 to 0.141",
-      "resources": "V100 total runtime about 126.1 s, only about 0.4% above the clean-trained SNPE total.",
-      "interpretation": "Localized drift failure is recoverable with matched corruption, so robustness is shift-specific rather than global."
-    },
-    {
-      "study": "Matched mask robustness",
-      "intervention": "Train-time masking-aware corruption for the mask20 evaluation",
-      "primary_delta": "MAE 981.08 to 618.98, improvement 36.9%",
-      "secondary_delta": "MSE improves 50.6%, R2 improves from -0.240 to 0.216",
-      "resources": "V100 total runtime about 137.4 s, about 9.4% above the clean-trained SNPE total.",
-      "interpretation": "Masking failure is also recoverable, although the promoted path is again specific to one shift family."
-    },
-    {
-      "study": "Combined corruption guardrail",
-      "intervention": "Joint drift-plus-mask corruption training",
-      "primary_delta": "Clean MAE 597.21 to 996.12, degradation 66.8%",
-      "secondary_delta": "Clean performance fails the guardrail, so no promotion is justified",
-      "resources": "Negative result, retained as a boundary check.",
-      "interpretation": "One corruption-aware model did not cover every case. The robust frontier remains plural."
-    },
-    {
-      "study": "Modern SBI family swap",
-      "intervention": "FMPE versus promoted feature-aware SNPE",
-      "primary_delta": "MAE 597.2 to 582.3, improvement 2.49%",
-      "secondary_delta": "MSE improves 8.03%, cov90 improves from 0.6354 to 0.6574",
-      "resources": "FMPE total runtime 166.7 s. NPSE evaluation time remains 72.7% slower.",
-      "interpretation": "The clean posterior frontier improved, but FMPE did not become the robust shift winner."
-    },
-    {
-      "study": "Later executable follow-up",
-      "intervention": "Native BayesFlow, native Swyft, posterior decision rules, active-sequential variants, and hybrid initializers",
-      "primary_delta": "Coverage broadens materially, but no later branch overturns the direct clean winner",
-      "secondary_delta": "BayesFlow median improves MAE by 5.20% over the aligned framework row, while direct Extra Trees still stays 12.8% ahead on MAE",
-      "resources": "Class-specific resource costs, reported inside their own result spaces",
-      "interpretation": "The follow-up narrows missed-family risk without justifying one pooled state-of-the-art table."
-    }
-  ],
-  "support_rows": [
-    {
-      "study": "FitzHugh-Nagumo parity reruns",
-      "question": "Does the inherited baseline stay statistically stable across the tested node counts?",
-      "main_result": "MSE changes by 1.78%, MAE by 0.73%, and R2 by 0.043% absolute relative percentage across the seeded reruns",
-      "quality_effect": "Scientific conclusion remains stable",
-      "runtime_effect": "Elapsed time rises from about 4.35 min to 5.24 min, increase 20.5%",
-      "interpretation": "Predictive behavior is stable, while runtime is more sensitive than quality."
-    },
-    {
-      "study": "Grouped single-node execution",
-      "question": "Which execution setting best supports broad comparative sweeps on the current Hodgkin-Huxley workload?",
-      "main_result": "Throughput rises from 29.51 to 54.75 runs per hour, improvement 85.6%",
-      "quality_effect": "No promoted quality claim depends on the broader-node path",
-      "runtime_effect": "Single-node concurrency becomes the practical default for broad sweeps",
-      "interpretation": "The practical execution default is a throughput result, not a scientific accuracy result."
-    }
-  ],
-  "data_boundary": [
-    {
-      "title": "Shipped data",
-      "body": "The repository ships only the small FitzHugh-Nagumo starter dataset, which is enough to exercise the baseline code path and the smoke templates."
-    },
-    {
-      "title": "External data",
-      "body": "The current Hodgkin-Huxley comparison requires external arrays, because the full tar-backed data are far larger than GitHub upload limits. The repository therefore keeps the analysis surface and the execution helpers, while the large arrays remain outside the public tree."
-    },
-    {
-      "title": "Result boundary",
-      "body": "Direct clean rows, aligned posterior framework rows, posterior decision rules, hybrid initializers, active-sequential surrogates, and upstream references are shown separately because the defended comparison depends on that separation."
+      "title": "Execution-Path Optimizations",
+      "badge": "Engineering support",
+      "intro": "These studies optimized startup behavior inside the extracted-data HH execution path. They mattered operationally, but they did not change the scientific frontier.",
+      "how_to_read": "The cache charts show startup reduction inside the execution path, not a change in model ranking. The explanation card below states why this branch was not expanded into a larger scientific campaign, even though the later mmap-backed canaries were strong.",
+      "main_conclusion": "Feature-scale caching reduced preprocessing materially, the mmap-backed split-array cache removed almost all startup overhead in the successful canaries, and the branch was tested far enough to prove viability, but it was not expanded into a large matrix because the main run-policy question had already closed on grouped single-node throughput.",
+      "charts": [
+        {
+          "title": "Feature-scale cache preprocessing reduction",
+          "subtitle": "Positive values indicate preprocessing time reduction relative to the eager path.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Reduced HH support task",
+            "Current HH task"
+          ],
+          "series": [
+            {
+              "label": "Preprocess reduction",
+              "values": [61.4, 49.1],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "This optimization attacked a measured startup bottleneck while preserving the eager hot loop.",
+            "That is why feature-scale cache became the extracted-data default before the split-array branch did."
+          ]
+        },
+        {
+          "title": "Split-array mmap startup reduction after the proof chain",
+          "subtitle": "Positive values indicate data-load reduction against the completed R4 medians for the same families.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "Reduced HH canary",
+            "Current HH canary"
+          ],
+          "series": [
+            {
+              "label": "Startup reduction",
+              "values": [99.24, 99.22],
+              "color": "#6a4fb3"
+            }
+          ],
+          "notes": [
+            "The first split-array canary failed badly, which is why the branch was initially kept experimental.",
+            "After the mmap-backed reload fix, the branch cleared both the dedicated launcher proof and a broader ordinary-launcher proof, so the question stopped being correctness and became one of marginal value."
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "title": "Why it was not tested as a full campaign",
+          "body": "The branch ultimately addressed startup overhead inside one extracted-data execution path. By the time the later proofs succeeded, the main systems question had already been answered by the throughput-first single-node policy, and the model-frontier question had already moved into family comparison, representation, and robustness work. So the split-array branch was tested enough to establish viability, while a full factorial expansion would have consumed effort without changing the main scientific claims."
+        },
+        {
+          "title": "What was actually proved",
+          "body": "The later proof chain established that the split-array cache could be prewarmed, launched through its ordinary canary package, and then exercised through an older ordinary HH launcher once safe dataloader overrides were materialized automatically. That was enough for operational viability, even though it did not justify a new large experimental campaign."
+        }
+      ]
     }
   ]
 }
