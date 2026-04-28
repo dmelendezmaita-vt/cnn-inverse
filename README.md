@@ -24,8 +24,6 @@ python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mod
 
 | Script | Role |
 | --- | --- |
-| `scripts/build_hh_a30_manifest.py` | rebuild the canonical clean A30 manifest when the original workspace note inputs are available |
-| `scripts/analyze_hh_a30_clean_results.py` | analyze the canonical clean A30 campaign outputs |
 | `scripts/shared_data_utils.py` | staged tar extraction helper |
 | `scripts/run_interactive_dnn_step.sh` | distributed DNN execution step |
 | `scripts/run_classical_baseline_step.sh` | classical baseline execution step |
