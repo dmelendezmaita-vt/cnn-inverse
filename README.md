@@ -45,7 +45,6 @@ The full Hodgkin-Huxley data are not shipped here.
 
 The public repository therefore ships no full Hodgkin-Huxley arrays, because those files are far beyond GitHub's practical and hard upload limits.
 
-The A30 canonical rebuild script also depends on external workspace note tables, through `NC_WORKSPACE_NOTES_ROOT`, because the slim public repository does not ship the large historical campaign metadata bundle.
 
 ## Untouched Upstream Snapshot
 
