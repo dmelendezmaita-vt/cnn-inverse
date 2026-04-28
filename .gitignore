@@ -76,9 +76,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -176,22 +173,10 @@ cython_debug/
 # Windows
 Thumbs.db
 
-# Public staging runtime exclusions
+# Public runtime exclusions
 .venvs/
 sbi-logs/
 slurm-*.out
 sitecustomize.py
 WARP.md
-docs/paper/acm_template/
 **/__pycache__/
-data/important_notes/**/logs/
-data/important_notes/**/runs/
-data/important_notes/**/shared/
-data/important_notes/**/*.out
-data/important_notes/**/*.err
-data/important_notes/**/*.npy
-data/important_notes/**/*.npz
-data/important_notes/**/*.pt
-data/important_notes/**/*.pth
-evidence/canonical_chain/**/logs/
-evidence/canonical_chain/**/runs/

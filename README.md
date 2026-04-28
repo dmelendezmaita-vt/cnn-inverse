@@ -24,7 +24,7 @@ python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mod
 
 | Script | Role |
 | --- | --- |
-| `scripts/build_hh_a30_manifest.py` | build the canonical clean A30 manifest, using external workspace note inputs when available |
+| `scripts/build_hh_a30_manifest.py` | rebuild the canonical clean A30 manifest when the original workspace note inputs are available |
 | `scripts/analyze_hh_a30_clean_results.py` | analyze the canonical clean A30 campaign outputs |
 | `scripts/shared_data_utils.py` | staged tar extraction helper |
 | `scripts/run_interactive_dnn_step.sh` | distributed DNN execution step |
@@ -46,6 +46,8 @@ The full Hodgkin-Huxley data are not shipped here.
 | one full-current target array such as `concatenated_data_0.1_curr.npy` | `24000000000` bytes |
 
 The public repository therefore ships no full Hodgkin-Huxley arrays, because those files are far beyond GitHub's practical and hard upload limits.
+
+The A30 canonical rebuild script also depends on external workspace note tables, through `NC_WORKSPACE_NOTES_ROOT`, because the slim public repository does not ship the large historical campaign metadata bundle.
 
 ## Untouched Upstream Snapshot
 
