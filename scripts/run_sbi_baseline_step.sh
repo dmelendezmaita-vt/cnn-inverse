@@ -24,7 +24,7 @@ MAX_NUM_EPOCHS="${MAX_NUM_EPOCHS:-80}"
 POSTERIOR_SAMPLES="${POSTERIOR_SAMPLES:-256}"
 SEED="${SEED:-0}"
 
-PYTHON_BIN="/projects/neuro-collab/conda/neuro-collab-env/bin/python"
+PYTHON_BIN="${PYTHON_BIN:-python}"
 DLKIT="${REPO_ROOT}/vendor/dlkit"
 
 export PYTHONPATH="${DLKIT}:${REPO_ROOT}/src:${REPO_ROOT}:${PYTHONPATH:-}"
@@ -41,7 +41,7 @@ if [[ "${PARAMS_PATH}" != /* ]]; then
   PARAMS_PATH="${REPO_ROOT}/${PARAMS_PATH}"
 fi
 
-cd /tmp
+cd "${REPO_ROOT}"
 "${PYTHON_BIN}" "${REPO_ROOT}/scripts/run_hh_sbi_baseline.py" \
   --params "${PARAMS_PATH}" \
   --save-dir "${SAVE_DIR}" \

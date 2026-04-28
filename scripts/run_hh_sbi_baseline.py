@@ -165,7 +165,8 @@ def target_cache_files(cache_dir: Path) -> dict[str, Path]:
 def hh_raw_prior_bounds(n_targets: int) -> tuple[np.ndarray, np.ndarray] | None:
     if n_targets != 6:
         return None
-    # Track 4 HH full uses the same three conductance ranges twice.
+    # The current six-target Hodgkin-Huxley setup reuses the same three
+    # conductance ranges for the second current condition.
     low = np.asarray([0.05, 0.2, 5.0, 0.05, 0.2, 5.0], dtype=np.float32)
     high = np.asarray([10000.0, 100.0, 1000.0, 10000.0, 100.0, 1000.0], dtype=np.float32)
     return low, high

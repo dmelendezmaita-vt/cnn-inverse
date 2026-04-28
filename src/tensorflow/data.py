@@ -72,7 +72,7 @@ def load_data(params):
         print('[load_data]', 'Nvalidate:', data_params['Nvalidate'])
         print('[load_data]', 'Ntest:    ', data_params['Ntest'])
     assert (data_params['Ntrain'] + data_params['Nvalidate'] + data_params['Ntest']) <= Ns
-    assert data_params['Nvalidate'] == 0, 'no validation for now' #TODO
+    assert data_params['Nvalidate'] == 0, 'validation split is not implemented in this TensorFlow loader'
 
     # split data into training and testing sets
     features_train    = features[:data_params['Ntrain'],...]
@@ -170,4 +170,3 @@ def create_dataset(params, mode,
 
     # return dataset
     return dataset
-

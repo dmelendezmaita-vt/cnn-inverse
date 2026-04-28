@@ -510,7 +510,7 @@ class GNet(nn.Module):
         elif NetworkType.MLPRESNET == net_type:
             self.hidden_input_size = [0] * len(net_params["residual_blocks_sizes"])
             self.hidden_input_size[0] = latent_size
-            # TODO ^ the latent_size can also be passed to subsequent layers
+            # latent_size can also be propagated to subsequent layers if needed
             self.net = _create_MLPResNet(input_channels, input_size, targets_size, net_params, logger,
                                          hidden_input_size=self.hidden_input_size)
         # elif NetworkType.CONVNET == net_type:
@@ -518,7 +518,7 @@ class GNet(nn.Module):
         elif NetworkType.CONVRESNET == net_type:
             self.hidden_input_size = [0] * len(net_params["residual_blocks_sizes"])
             self.hidden_input_size[0] = latent_size
-            # TODO ^ the latent_size can also be passed to subsequent layers
+            # latent_size can also be propagated to subsequent layers if needed
             self.net = _create_convResNet(input_channels, input_size, targets_size, net_params, logger,
                                           mlp_block_hidden_input_size=self.hidden_input_size)
         # elif NetworkType.EFFICIENTNET == net_type:

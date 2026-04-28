@@ -1,0 +1,199 @@
+{
+  "generated_on": "2026-04-28",
+  "scope_note": "Primary results are ordered by scientific importance, while supporting studies remain visible without being merged into the main leaderboard.",
+  "kpis": [
+    {
+      "label": "Direct clean winner",
+      "value": "Extra Trees depth-20",
+      "note": "Mean MAE 500.43 in the canonical A30 direct clean package."
+    },
+    {
+      "label": "Robust direct representative",
+      "value": "kNN k=11",
+      "note": "Clean MAE is only 0.34% worse than the direct winner, while additive-noise MAE improves by 28.1% at noise 0.20."
+    },
+    {
+      "label": "Clean posterior leader",
+      "value": "FMPE",
+      "note": "Relative to feature-aware SNPE, MAE improves by 2.49% and MSE improves by 8.03%."
+    },
+    {
+      "label": "Aligned posterior rule",
+      "value": "BayesFlow median",
+      "note": "Best comparable posterior decision rule by MAE, with a 5.20% MAE gain over the aligned BayesFlow framework row."
+    },
+    {
+      "label": "Execution default",
+      "value": "Concurrent single-node",
+      "note": "Broad-sweep throughput improves by 85.6% relative to the targeted four-node path on the canonical Hodgkin-Huxley workload."
+    }
+  ],
+  "reading_guide": [
+    {
+      "title": "Primary comparison",
+      "badge": "Main evidence",
+      "kind": "primary",
+      "body": "The primary table reports the defended fixed-task comparison, in which direct predictors, aligned posterior framework rows, posterior decision rules, and hybrid initializers remain separated because they do not share one common evaluation contract."
+    },
+    {
+      "title": "Boundary studies",
+      "badge": "Scope checks",
+      "kind": "boundary",
+      "body": "Boundary studies test whether the promoted representatives survive localized shifts, whether later executable families overturn the frontier, and whether direct fitting is currently interpretable in the absence of simulator provenance."
+    },
+    {
+      "title": "Supporting execution studies",
+      "badge": "Support evidence",
+      "kind": "support",
+      "body": "Supporting studies establish that the inherited FitzHugh-Nagumo baseline is statistically stable, while execution configuration changes runtime far more than predictive quality on the benchmarked workloads."
+    }
+  ],
+  "primary_note": "Rows below are grouped by comparability class. They should not be read as one pooled rank order.",
+  "primary_rows": [
+    {
+      "class": "Direct point estimation",
+      "representative": "extra_trees_500_depth20",
+      "meaning": "Canonical clean direct winner by mean MAE in the homogeneous A30 rerun.",
+      "mae": "500.43",
+      "mse": "2.785e6",
+      "r2": "0.102",
+      "resources": "CPU-only, mean elapsed 13.1 s."
+    },
+    {
+      "class": "Robust direct point estimation",
+      "representative": "knn_k11",
+      "meaning": "Preferred additive-noise representative, because the clean penalty is small and the shift penalty is much smaller.",
+      "mae": "502.13 clean, 664.09 at noise 0.20",
+      "mse": "2.755e6 clean",
+      "r2": "0.110 clean",
+      "resources": "CPU-only, mean elapsed 5.47 s in the head-to-head package."
+    },
+    {
+      "class": "Best neural direct row",
+      "representative": "efficientnet_huber005_inversevar_e500",
+      "meaning": "Strongest surviving neural direct baseline in the current clean comparison.",
+      "mae": "879.46",
+      "mse": "4.846e6",
+      "r2": "-0.103",
+      "resources": "A30/V100 neural phases typically 210 to 241 s, host RSS about 19.2 GB, peak GPU utilization about 94%."
+    },
+    {
+      "class": "Aligned posterior framework",
+      "representative": "bayesflow_native_meanstd_v100_20260425",
+      "meaning": "Strongest aligned framework row in the later executable literature follow-up.",
+      "mae": "595.63",
+      "mse": "2.383e6",
+      "r2": "0.095",
+      "resources": "Elapsed 133.2 s, host RSS about 1.90 GB, GPU memory max about 1169 MB."
+    },
+    {
+      "class": "Posterior decision rule",
+      "representative": "bayesflow_set_posterior_v100_20260426::median",
+      "meaning": "Best comparable posterior decision rule by MAE. MAE and MSE optima diverge, so this rule is not the universal posterior winner.",
+      "mae": "564.64",
+      "mse": "2.157e6",
+      "r2": "0.553",
+      "resources": "Elapsed 367.9 s, host RSS about 2.00 GB, GPU memory max about 453 MB."
+    },
+    {
+      "class": "Clean SBI winner",
+      "representative": "FMPE",
+      "meaning": "Strongest clean posterior family inside the checkpoint-2 modern SBI comparison.",
+      "mae": "582.3",
+      "mse": "2.005e6",
+      "r2": "0.268",
+      "resources": "V100 train 54.0 s, eval 102.3 s, total 166.7 s, GPU reserved about 584 MB, host RSS about 1.59 GB."
+    },
+    {
+      "class": "Hybrid initializer class",
+      "representative": "assumption-conditioned hybrid follow-up",
+      "meaning": "Coverage-expansion class used to reduce missed-family risk. It remains separate from the direct and aligned posterior leaderboards.",
+      "mae": "Class-specific",
+      "mse": "Class-specific",
+      "r2": "Class-specific",
+      "resources": "Follow-up class only. It is not pooled with the direct clean frontier."
+    }
+  ],
+  "boundary_rows": [
+    {
+      "study": "Representation enrichment for SNPE",
+      "intervention": "raw_plus_fft256_summary12 versus raw-only and summary-only inputs",
+      "primary_delta": "MAE 649.1 to 597.2, improvement 8.0%",
+      "secondary_delta": "MSE improves 14.5%, R2 improves from 0.158 to 0.259, cov90 improves from 0.600 to 0.635",
+      "resources": "Same V100 training budget and four-seed evaluation block.",
+      "interpretation": "Observation richness mattered enough to justify promoting the richer representation before later family comparisons."
+    },
+    {
+      "study": "Matched drift robustness",
+      "intervention": "Train-time drift-aware corruption for the drift010 evaluation",
+      "primary_delta": "MAE 945.0 to 676.3, improvement 28.4%",
+      "secondary_delta": "MSE improves 35.7%, R2 improves from -0.183 to 0.141",
+      "resources": "V100 total runtime about 126.1 s, only about 0.4% above the clean-trained SNPE total.",
+      "interpretation": "Localized drift failure is recoverable with matched corruption, so robustness is shift-specific rather than global."
+    },
+    {
+      "study": "Matched mask robustness",
+      "intervention": "Train-time masking-aware corruption for the mask20 evaluation",
+      "primary_delta": "MAE 981.08 to 618.98, improvement 36.9%",
+      "secondary_delta": "MSE improves 50.6%, R2 improves from -0.240 to 0.216",
+      "resources": "V100 total runtime about 137.4 s, about 9.4% above the clean-trained SNPE total.",
+      "interpretation": "Masking failure is also recoverable, although the promoted path is again specific to one shift family."
+    },
+    {
+      "study": "Combined corruption guardrail",
+      "intervention": "Joint drift-plus-mask corruption training",
+      "primary_delta": "Clean MAE 597.21 to 996.12, degradation 66.8%",
+      "secondary_delta": "Clean performance fails the guardrail, so no promotion is justified",
+      "resources": "Negative result, retained as a boundary check.",
+      "interpretation": "One corruption-aware model did not cover every case. The robust frontier remains plural."
+    },
+    {
+      "study": "Modern SBI family swap",
+      "intervention": "FMPE versus promoted feature-aware SNPE",
+      "primary_delta": "MAE 597.2 to 582.3, improvement 2.49%",
+      "secondary_delta": "MSE improves 8.03%, cov90 improves from 0.6354 to 0.6574",
+      "resources": "FMPE total runtime 166.7 s. NPSE evaluation time remains 72.7% slower.",
+      "interpretation": "The clean posterior frontier improved, but FMPE did not become the robust shift winner."
+    },
+    {
+      "study": "Later executable follow-up",
+      "intervention": "Native BayesFlow, native Swyft, posterior decision rules, active-sequential variants, and hybrid initializers",
+      "primary_delta": "Coverage broadens materially, but no later branch overturns the direct clean winner",
+      "secondary_delta": "BayesFlow median improves MAE by 5.20% over the aligned framework row, while direct Extra Trees still stays 12.8% ahead on MAE",
+      "resources": "Class-specific resource costs, reported inside their own result spaces",
+      "interpretation": "The follow-up narrows missed-family risk without justifying one pooled state-of-the-art table."
+    }
+  ],
+  "support_rows": [
+    {
+      "study": "FitzHugh-Nagumo parity reruns",
+      "question": "Does the inherited baseline stay statistically stable across the tested node counts?",
+      "main_result": "MSE changes by 1.78%, MAE by 0.73%, and R2 by 0.043% absolute relative percentage across the seeded reruns",
+      "quality_effect": "Scientific conclusion remains stable",
+      "runtime_effect": "Elapsed time rises from about 4.35 min to 5.24 min, increase 20.5%",
+      "interpretation": "Predictive behavior is stable, while runtime is more sensitive than quality."
+    },
+    {
+      "study": "Grouped single-node execution",
+      "question": "Which execution setting best supports broad comparative sweeps on the current Hodgkin-Huxley workload?",
+      "main_result": "Throughput rises from 29.51 to 54.75 runs per hour, improvement 85.6%",
+      "quality_effect": "No promoted quality claim depends on the broader-node path",
+      "runtime_effect": "Single-node concurrency becomes the practical default for broad sweeps",
+      "interpretation": "The practical execution default is a throughput result, not a scientific accuracy result."
+    }
+  ],
+  "data_boundary": [
+    {
+      "title": "Shipped data",
+      "body": "The repository ships only the small FitzHugh-Nagumo starter dataset, which is enough to exercise the baseline code path and the smoke templates."
+    },
+    {
+      "title": "External data",
+      "body": "The current Hodgkin-Huxley comparison requires external arrays, because the full tar-backed data are far larger than GitHub upload limits. The repository therefore keeps the analysis surface and the execution helpers, while the large arrays remain outside the public tree."
+    },
+    {
+      "title": "Result boundary",
+      "body": "Direct clean rows, aligned posterior framework rows, posterior decision rules, hybrid initializers, active-sequential surrogates, and upstream references are shown separately because the defended comparison depends on that separation."
+    }
+  ]
+}

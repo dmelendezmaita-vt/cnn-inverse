@@ -1,6 +1,6 @@
 # Neural Inverse Inference Workflows for FitzHugh-Nagumo and Hodgkin-Huxley Models
 
-This repository is a cleaned public code artifact. It ships the core source tree, a small baseline FitzHugh-Nagumo dataset, a curated script surface, and the vendored `dlkit` dependency required by the PyTorch workflow.
+This repository ships the core source tree, a small FitzHugh-Nagumo starter dataset, a curated script surface, a static results dashboard, and the vendored `dlkit` dependency required by the PyTorch workflow.
 
 ## Repository Surface
 
@@ -8,6 +8,7 @@ This repository is a cleaned public code artifact. It ships the core source tree
 | --- | --- |
 | `src/` | source code for the PyTorch and TensorFlow workflows |
 | `scripts/` | curated execution and analysis helpers |
+| `dashboard/` | static website for the current canonical result summary |
 | `vendor/dlkit/` | vendored dependency used by the PyTorch code |
 | `data/2020-12-09/` | shipped baseline FitzHugh-Nagumo data |
 
@@ -33,6 +34,8 @@ python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mod
 | `scripts/slurm_smoke_test.sbatch` | smoke job template |
 | `scripts/slurm_train.sbatch` | train job template |
 
+The shipped templates are parameterized and do not assume a particular user account, notification channel, or private directory layout. The Hodgkin-Huxley helpers still require external data, because the full arrays are not part of this repository.
+
 ## Data Boundary
 
 The full Hodgkin-Huxley data are not shipped here.
@@ -45,10 +48,13 @@ The full Hodgkin-Huxley data are not shipped here.
 
 The public repository therefore ships no full Hodgkin-Huxley arrays, because those files are far beyond GitHub's practical and hard upload limits.
 
+## Static Dashboard
+
+The repository includes a static website under `dashboard/`, which summarizes the current canonical results using the comparability classes that are defended in the thesis and supporting reports.
 
 ## Untouched Upstream Snapshot
 
-The inherited upstream zip referenced during benchmark reconstruction is:
+The inherited upstream zip referenced during benchmark reconstruction was stored in the original workspace at:
 
 - `/projects/neuro-collab/code/archives/fhn_dnn-1-implementation-in-pytorch.zip`
 - zip comment: `eb676a34bb32d880b172e70f9faf6f41a2d9fe3c`

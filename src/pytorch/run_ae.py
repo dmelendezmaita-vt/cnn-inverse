@@ -39,7 +39,7 @@ from nets import create_ae
 ###############################################################################
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# ^TODO review usage of device variable
+# device selection is handled locally in this entrypoint
 
 def run(args, params):
     # get parameters

@@ -20,11 +20,10 @@ SPLIT_EVAL_AFTER_TRAIN="${SPLIT_EVAL_AFTER_TRAIN:-0}"
 EVAL_ONLY_CHECKPOINT="${EVAL_ONLY_CHECKPOINT:-}"
 SKIP_INLINE_SPLIT_EVAL="${SKIP_INLINE_SPLIT_EVAL:-0}"
 LAUNCH_BACKEND="${LAUNCH_BACKEND:-torchrun}"
+PYTHON_BIN="${PYTHON_BIN:-python}"
+TORCHRUN_BIN="${TORCHRUN_BIN:-torchrun}"
 
-module load Miniforge3
-source activate /projects/neuro-collab/conda/neuro-collab-env
-
-DLKIT="${REPO}/vendor/dlkit"
+DLKIT="${REPO_ROOT}/vendor/dlkit"
 export PYTHONPATH="${DLKIT}:${REPO_ROOT}/src:${REPO_ROOT}:${PYTHONPATH:-}"
 export PYTHONUNBUFFERED=1
 export TORCH_DIST_TIMEOUT_SECONDS="${TORCH_DIST_TIMEOUT_SECONDS:-1800}"
@@ -50,7 +49,7 @@ mkdir -p "${WORK_ROOT}" "${WORK}" "${TMPDIR}"
 
 if [[ -n "${SHARED_DATA_DIR}" ]]; then
   if [[ ! -d "${SHARED_DATA_DIR}" ]] || ! find "${SHARED_DATA_DIR}" -mindepth 1 -maxdepth 1 | grep -q .; then
-    python "${REPO_ROOT}/scripts/shared_data_utils.py" \
+    "${PYTHON_BIN}" "${REPO_ROOT}/scripts/shared_data_utils.py" \
       --tar-path "${TAR_PATH}" \
       --shared-dir "${SHARED_DATA_DIR}"
   fi
@@ -111,7 +110,7 @@ if [[ -n "${EVAL_ONLY_CHECKPOINT}" ]]; then
   unset WORLD_SIZE RANK LOCAL_RANK LOCAL_WORLD_SIZE MASTER_ADDR MASTER_PORT
   unset SLURM_NTASKS SLURM_LOCALID
   export CUDA_VISIBLE_DEVICES=
-  python src/pytorch/run_dnn.py \
+  "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
     --mode eval \
     --load_dir "${LOAD_PATH}" \
@@ -129,7 +128,7 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" ]]; then
 fi
 
 if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
-  python src/pytorch/run_dnn.py \
+  "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
     --mode "${TRAIN_MODE}" \
     --save_dir_base "${RUN_OUTPUT_ROOT}" \
@@ -138,7 +137,7 @@ if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
     --curr "${CURR}" \
     "${SAVE_PREDICTIONS_ARGS[@]}"
 else
-  torchrun \
+  "${TORCHRUN_BIN}" \
     --nnodes="${STEP_NNODES}" \
     --node_rank="${SLURM_PROCID}" \
     --nproc_per_node="${NPROC_PER_NODE}" \
@@ -171,7 +170,7 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" && "${SKIP_INLINE_SPLIT_EVAL}" != "1" &
   # distributed training step for these post-local SGD runs.
   export CUDA_VISIBLE_DEVICES=
 
-  python src/pytorch/run_dnn.py \
+  "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
     --mode eval \
     --load_dir "${CKPT_PATH}" \

@@ -157,7 +157,7 @@ runconfig:
     mode: 'TRAIN'
     load_dir: #'runs/ae'
     save_dir:  'runs/ae'
-    log_epochs: 1                # TODO move to [training] in all configs
-    save_checkpoints_epochs: 50  # TODO move to [training] in all configs
+    log_epochs: 1
+    save_checkpoints_epochs: 50
     debug: True
     show_plots: False

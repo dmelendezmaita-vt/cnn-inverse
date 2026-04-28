@@ -10,9 +10,7 @@ FEATURE_MODE="${FEATURE_MODE:-raw}"
 DATA_DIR="${DATA_DIR:-}"
 DATA_PREFIX="${DATA_PREFIX:-}"
 CURR="${CURR:-0.1}"
-
-module load Miniforge3
-source activate /projects/neuro-collab/conda/neuro-collab-env
+PYTHON_BIN="${PYTHON_BIN:-python}"
 
 DLKIT="${REPO_ROOT}/vendor/dlkit"
 export PYTHONPATH="${DLKIT}:${REPO_ROOT}/src:${REPO_ROOT}:${PYTHONPATH:-}"
@@ -23,7 +21,7 @@ mkdir -p "${RUN_OUTPUT_ROOT}"
 SAVE_DIR="${RUN_OUTPUT_ROOT}/${SLURM_JOB_ID}_${RUN_ID}"
 
 cd "${REPO_ROOT}"
-python scripts/run_hh_classical_baseline.py \
+"${PYTHON_BIN}" scripts/run_hh_classical_baseline.py \
   --params "${PARAMS_FILE}" \
   --baseline "${BASELINE_NAME}" \
   --feature-mode "${FEATURE_MODE}" \

@@ -871,8 +871,8 @@ def _load_and_split_arrays(data_params, logger=None):
                 "data.legacy_validate_test_overlap requires split_strategy='sequential'."
             )
         logger.warning(
-            "legacy_validate_test_overlap enabled: emulating original Track 1 "
-            "paper-behavior split where test is drawn from the tail of the pool "
+            "legacy_validate_test_overlap enabled: emulating the original "
+            "publication split behavior where test is drawn from the tail of the pool "
             "array instead of the true holdout tail."
         )
 
@@ -1570,7 +1570,7 @@ def postprocess_features(features, scale, params):
 #   # apply inverse scaling
 #   if features_type == 'RATE_DURATION'.casefold():
 #       features = _apply_scale_inverse(features, scale)
-#       #TODO apply inverse transforms
+#       # apply inverse transforms here if a downstream caller requires them
 #       raise NotImplementedError()
 #/DEV
 

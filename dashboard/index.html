@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Canonical Results Dashboard</title>
+  <meta name="description" content="Static dashboard for the canonical FitzHugh-Nagumo and Hodgkin-Huxley result summary.">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__inner">
+      <p class="eyebrow">Neural Inverse Inference</p>
+      <h1>Canonical Results Dashboard</h1>
+      <p class="subtitle">
+        This dashboard summarizes the current defended result spaces, which are separated by comparability class and ordered by scientific importance.
+      </p>
+      <p class="meta" id="generated-on">Loading summary metadata...</p>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <h2>At a Glance</h2>
+      <div class="kpi-grid" id="kpi-grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>How to Read the Results</h2>
+      <div class="cards-grid" id="reading-guide"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Primary Hodgkin-Huxley Comparison</h2>
+      <p class="panel-note" id="primary-note"></p>
+      <div class="table-wrap">
+        <table id="primary-table">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Representative</th>
+              <th>Meaning</th>
+              <th>MAE</th>
+              <th>MSE</th>
+              <th>R2</th>
+              <th>Resource Summary</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Boundary and Extension Studies</h2>
+      <div class="table-wrap">
+        <table id="boundary-table">
+          <thead>
+            <tr>
+              <th>Study</th>
+              <th>Intervention</th>
+              <th>Primary delta</th>
+              <th>Secondary delta</th>
+              <th>Resource Summary</th>
+              <th>Interpretation</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Supporting Execution Studies</h2>
+      <div class="table-wrap">
+        <table id="support-table">
+          <thead>
+            <tr>
+              <th>Study</th>
+              <th>Question</th>
+              <th>Main result</th>
+              <th>Quality effect</th>
+              <th>Runtime effect</th>
+              <th>Interpretation</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Data Boundary</h2>
+      <div class="cards-grid" id="data-boundary"></div>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
