@@ -60,6 +60,7 @@ from data import (  # noqa: E402
     _apply_scale_inverse,
     _apply_targets_transform,
     _resolve_split_array_cache_dir,
+    load_data,
     preprocess_targets,
 )
 
@@ -316,12 +317,16 @@ def load_cached_splits(params: dict, args: argparse.Namespace, logger: logging.L
     if cache_dir is None:
         raise SystemExit("Unable to resolve split-array cache for the requested HH config.")
     if not cache_dir.exists():
-        raise SystemExit(f"Missing split-array cache: {cache_dir}")
+        logger.info("Split-array cache missing at %s, building it now.", cache_dir)
+        load_data(params, logger)
 
     logger.info("Using split-array cache %s", cache_dir)
 
     feature_files = feature_cache_files(cache_dir)
     target_files = target_cache_files(cache_dir)
+    if not all(path.exists() for path in [*feature_files.values(), *target_files.values()]):
+        logger.info("Split-array cache incomplete at %s, rebuilding it now.", cache_dir)
+        load_data(params, logger)
     if not all(path.exists() for path in [*feature_files.values(), *target_files.values()]):
         raise SystemExit(f"Incomplete split-array cache at {cache_dir}")
 
