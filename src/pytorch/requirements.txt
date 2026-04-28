@@ -2,5 +2,6 @@ matplotlib
 numpy
 pyyaml
 scikit-learn
+sbi
 torch
 deep-learning-toolkit
