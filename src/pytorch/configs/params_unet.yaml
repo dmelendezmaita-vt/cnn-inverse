@@ -1,8 +1,10 @@
 description: "Options for UNet"
 
 data:
-    data_dir:  '../data/float32' # relative path to data directory
-    data_type: 'TIME_NOISE'      # 'TIME', 'TIME_NOISE', 'RATE', 'RATE_DURATION'
+    data_dir: 'data/2020-12-09'
+    features_type: 'TIME_NOISE'
+    targets_type: 'N/A'
+    data_type: 'TIME_NOISE'      # retained for backward compatibility with older utilities
     Ntrain:    1024
     Nvalidate: 2048
     Ntest:     2048

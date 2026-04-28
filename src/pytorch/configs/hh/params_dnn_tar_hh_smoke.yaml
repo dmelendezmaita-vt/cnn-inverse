@@ -1,7 +1,7 @@
 description: "Hodgkin-Huxley smoke options for DNN-based inverse maps"
 
 data:
-    data_dir: '/projects/neuro-collab/data/tar_files/concatenated_data_no_compression.tar'
+    data_dir: 'concatenated_data.tar.gz'
     data_prefix: "concatenated_data"
     curr: "0.1"
     dataset_layout: tar_singlefile_split

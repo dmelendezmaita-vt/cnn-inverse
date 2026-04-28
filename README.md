@@ -36,13 +36,29 @@ python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mod
 
 The shipped templates are parameterized and do not assume a particular user account, notification channel, or private directory layout. The Hodgkin-Huxley helpers still require external data, because the full arrays are not part of this repository.
 
+## Hodgkin-Huxley Data Placement
+
+To run the current Hodgkin-Huxley workflows from a fresh checkout:
+
+1. download the full dataset archive as `concatenated_data.tar.gz`
+2. place that file in the repository root
+
+The public Hodgkin-Huxley configs and helpers are written so that this root-level
+tarball is the only required external data artifact.
+
+Smoke example for the Hodgkin-Huxley DNN path:
+
+```bash
+python src/pytorch/run_dnn.py --params src/pytorch/configs/hh/params_dnn_tar_hh_smoke.yaml --mode train
+python src/pytorch/run_dnn.py --params src/pytorch/configs/hh/params_dnn_tar_hh_smoke.yaml --mode eval
+```
+
 ## Data Boundary
 
 The full Hodgkin-Huxley data are not shipped here.
 
 | Artifact | Size |
 | --- | ---: |
-| `concatenated_data_no_compression.tar` | `125790393856` bytes |
 | `concatenated_data.tar.gz` | `77205166166` bytes |
 | one full-current target array such as `concatenated_data_0.1_curr.npy` | `24000000000` bytes |
 

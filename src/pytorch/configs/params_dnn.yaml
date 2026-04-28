@@ -1,7 +1,7 @@
 description: "Options for DNN-based inverse maps"
 
 data:
-    data_dir: '../data/2020-12-09'  # relative path to data directory
+    data_dir: 'data/2020-12-09'
     features_type: 'TIME_NOISE'     # 'TIME', 'TIME_NOISE', 'RATE_DURATION'/'ODE_STATS', 'NOISE'
     features_use_channels_range:
         - 0

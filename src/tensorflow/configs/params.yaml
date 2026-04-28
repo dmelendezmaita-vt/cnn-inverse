@@ -1,7 +1,7 @@
 description: "Options for FHN-ODE inference"
 
 data:
-    data_dir:  '../data/float32' # relative path to data directory
+    data_dir: 'data/2020-12-09'
     data_type: 'TIME_NOISE'      # 'TIME', 'TIME_NOISE', 'RATE', 'RATE_DURATION'
     Ntrain:    1024
     Nvalidate: 0

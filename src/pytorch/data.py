@@ -8,6 +8,8 @@ import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utils'))
 from utils import Mode
 
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
+
 ###############################################################################
 
 def dictarray_empty():
@@ -106,7 +108,7 @@ def _resolve_features_scale_cache_path(data_params, array_name='features'):
     if explicit:
         return pathlib.Path(str(explicit))
 
-    data_dir = pathlib.Path(data_params['data_dir'])
+    data_dir = _resolve_data_source_path(data_params['data_dir'])
     if not data_dir.exists() or not data_dir.is_dir():
         return None
 
@@ -156,7 +158,7 @@ def _resolve_split_array_cache_dir(data_params):
     if explicit:
         return pathlib.Path(str(explicit))
 
-    data_dir = pathlib.Path(data_params['data_dir'])
+    data_dir = _resolve_data_source_path(data_params['data_dir'])
     if not data_dir.exists() or not data_dir.is_dir():
         return None
 
@@ -303,6 +305,28 @@ def _load_memmap(data_file, cols_num, dtype=np.float32):
         mode='r',
         shape=(data_rows, data_points)
     )
+
+
+def _resolve_data_source_path(data_dir_raw):
+    """
+    Resolve data paths against the repository root when a relative path is used.
+
+    Public reproducibility assumes that any external full Hodgkin-Huxley tarball
+    is dropped into the repository root, so relative paths must stay valid even
+    when commands are launched from another working directory.
+    """
+    path = pathlib.Path(str(data_dir_raw))
+    if path.is_absolute():
+        return path
+
+    candidates = [
+        pathlib.Path.cwd() / path,
+        REPO_ROOT / path,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate.resolve()
+    return (REPO_ROOT / path).resolve()
 
 
 def _validate_cols_num(array, cols_num, context):
@@ -494,7 +518,7 @@ def _load_and_split_arrays(data_params, logger=None):
     # options
     features_type = data_params['features_type'].casefold()
     targets_type  = data_params.get('targets_type', 'N/A').casefold()
-    data_dir      = pathlib.Path(data_params['data_dir'])
+    data_dir      = _resolve_data_source_path(data_params['data_dir'])
     data_dir_str  = str(data_dir)
     tar_data_source = (
         data_dir.is_file()
@@ -1218,7 +1242,7 @@ def load_data(params, logger):
 
 def load_timesteps(params):
     data_params = params['data']
-    data_dir    = pathlib.Path(data_params['data_dir'])
+    data_dir    = _resolve_data_source_path(data_params['data_dir'])
 
     file_names = data_params.get('file_names', {})
     timesteps_name = file_names.get('timesteps')
