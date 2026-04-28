@@ -1,0 +1,24 @@
+V100 paper-equivalence suite
+Created: 2026-03-04 22:03 EST
+
+Goal:
+- Compare distributed training consistency across nodes (1n/2n/4n)
+- Use multiple random seeds while keeping architecture/data config fixed
+
+Configuration:
+- Cluster: Falcon
+- GPU: V100
+- Seeds: 301, 302, 303, 304, 305
+- Nodes per run: 1, 2, 4
+- GPUs/node: 2
+- CPUs/node: 24
+- RAM/node: 64 GiB
+- Time limit: 1-00:00:00
+- QoS: fal_v100_normal_base
+- Data access mode: copy_to_node
+- Base config: pytorch/configs/params_dnn_tar.yaml
+- Seed configs: pytorch/configs/paper_data_parity_v100/params_dnn_tar_seed{seed}.yaml
+
+Tracking:
+- CSV: data/important_notes/v100_paper_data_parity_training_jobs.csv
+- Updater script: scripts/update_v100_paper_data_parity_csv.sh

@@ -1,0 +1,20 @@
+Paper-data parity reproducibility snapshot
+Created: 2026-03-04T23:16:08-05:00
+Archive: /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231608.tar.gz
+Purpose: Preserve exact artifacts used for V100 paper-data parity study so results can be replicated later while code continues evolving.
+
+Included categories:
+- Current training/orchestration code paths
+- Parity-study seed configs
+- Parity-study tracking/analysis outputs
+- Baseline benchmark artifacts/config used for comparison
+
+Verification:
+- SHA256 file: /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231608.sha256
+- Included path list: /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231608.filelist.txt
+
+Restore preview:
+  tar -tzf /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231608.tar.gz | less
+Restore extraction target example:
+  mkdir -p /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/restore_20260304_231608
+  tar -xzf /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231608.tar.gz -C /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/restore_20260304_231608

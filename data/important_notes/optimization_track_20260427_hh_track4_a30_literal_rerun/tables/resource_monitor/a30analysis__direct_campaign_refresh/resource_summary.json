@@ -1,0 +1,38 @@
+{
+  "completed_at": "2026-04-28T05:40:05-04:00",
+  "return_code": 0,
+  "elapsed_sec": 1.5581624507904053,
+  "slurm_job_id": "483279",
+  "slurm_step_id": "",
+  "time_metrics": {
+    "Command being timed": "\"bash -lc cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && env PYTHONPATH=\"/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch:/projects/neuro-collab/code/dl-kit-main:${PYTHONPATH:-}\" /projects/neuro-collab/conda/neuro-collab-env/bin/python /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/scripts/analyze_hh_track4_a30_campaign_refresh_20260427.py --campaign-root /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260427_hh_track4_a30_literal_rerun\"",
+    "User time (seconds)": "1.52",
+    "System time (seconds)": "0.34",
+    "Percent of CPU this job got": "120%",
+    "Elapsed (wall clock) time (h": "mm:ss or m:ss): 0:01.55",
+    "Average shared text size (kbytes)": "0",
+    "Average unshared data size (kbytes)": "0",
+    "Average stack size (kbytes)": "0",
+    "Average total size (kbytes)": "0",
+    "Maximum resident set size (kbytes)": "89660",
+    "Average resident set size (kbytes)": "0",
+    "Major (requiring I/O) page faults": "0",
+    "Minor (reclaiming a frame) page faults": "22400",
+    "Voluntary context switches": "2427",
+    "Involuntary context switches": "126",
+    "Swaps": "0",
+    "File system inputs": "0",
+    "File system outputs": "24",
+    "Socket messages sent": "0",
+    "Socket messages received": "0",
+    "Signals delivered": "0",
+    "Page size (bytes)": "4096",
+    "Exit status": "0"
+  },
+  "gpu_metrics": {
+    "gpu_sample_count": 0,
+    "per_gpu": []
+  },
+  "sacct_step_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260427_hh_track4_a30_literal_rerun/tables/resource_monitor/a30analysis__direct_campaign_refresh/sacct_step.txt",
+  "sacct_present": true
+}

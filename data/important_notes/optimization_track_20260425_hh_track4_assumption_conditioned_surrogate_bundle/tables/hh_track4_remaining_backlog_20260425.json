@@ -1,0 +1,7 @@
+[
+  {
+    "row_id": "acdhh_0001",
+    "label": "hybrid_prediction_swyft_tmnre_schedule_matrix",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_schedule_matrix --init-mode prediction --prediction-file data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_schedule_matrix_v100_20260425/predictions_test.npz --n-exemplars 3 --trace-length 2000 --maxiter 120"
+  }
+]

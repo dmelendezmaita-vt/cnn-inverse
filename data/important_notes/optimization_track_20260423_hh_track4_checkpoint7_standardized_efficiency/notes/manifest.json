@@ -1,0 +1,19 @@
+{
+  "date_label": "2026-04-23",
+  "package_root": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260423_hh_track4_checkpoint7_standardized_efficiency",
+  "runner": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/scripts/run_hh_track4_checkpoint7_standardized_efficiency_20260423.py",
+  "matrix_csv": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260423_hh_track4_checkpoint7_standardized_efficiency/tables/hh_track4_checkpoint7_standardized_efficiency_matrix_20260423_hh_track4_checkpoint7_standardized_efficiency.csv",
+  "summary_csv": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260423_hh_track4_checkpoint7_standardized_efficiency/tables/hh_track4_checkpoint7_standardized_efficiency_results_20260423_hh_track4_checkpoint7_standardized_efficiency.csv",
+  "rows": 6,
+  "repeats": [
+    1,
+    2,
+    3
+  ],
+  "baselines": [
+    "random_forest_500",
+    "knn_k11"
+  ],
+  "feature_mode": "raw_plus_fft256_summary12",
+  "launch_policy": "not_launched_by_builder"
+}

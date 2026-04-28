@@ -1,0 +1,55 @@
+[project]
+name =  "deep-learning-toolkit"
+version = "0.1.0"
+description = "DL-Kit: Deep Learning tool-Kit"
+readme = "README.md"
+authors = [
+    { name = "Johann Rudi", email = "jrudi@vt.edu" },
+    { name = "Harrison J Goldwyn", email = "Harrison.Goldwyn@nrel.gov" },
+]
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = [
+    "deep learning",
+    "machine learning",
+    "pytorch",
+]
+dependencies = [
+    "numpy>=2",
+    "prettytable>=3",
+    "torch>=2",
+    "tqdm>=4",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = ["black>=25", "build", "bumpver", "pip-tools", "pytest>=8", "twine"]
+
+#[project.urls]
+#Homepage = "https://github.com/johannrudi/cg-kit"
+#Documentation = "" #TODO
+#Issues = "https://github.com/johannrudi/cg-kit/issues"
+
+#[project.scripts]
+#cgkit = "cgkit.__main__:main"
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = ["_*"]
+namespaces = false  # do not add folders without `__init__.py` file

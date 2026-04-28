@@ -1,0 +1,1 @@
+368759.1808|fal003|00:00:26|RUNNING|||cpu=4,gres/gpu:a30=4,gres/gpu=4,mem=495G,node=1

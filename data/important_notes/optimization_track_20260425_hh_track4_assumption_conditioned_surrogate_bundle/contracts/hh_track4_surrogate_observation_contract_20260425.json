@@ -1,0 +1,12 @@
+{
+  "contract_name": "hh_track4_surrogate_voltage_observation",
+  "assumption_level": "assumption_conditioned_not_provenance_recovered",
+  "source_path_pattern": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260411_v100_interactive/shared_data/track4_hh_full/concatenated_data/y/concatenated_data_{curr}_curr.npy",
+  "source_row_count": 15000,
+  "source_feature_length": 400000,
+  "surrogate_trace_length": 2000,
+  "feature_representation": "standardized_downsample_plus_summary12",
+  "downsample_points": 128,
+  "summary_representation": "summary12",
+  "literature_rationale": "Compact HH inverse problems are normally driven by voltage traces, while summary features remain useful for optimization and discrepancy scoring when provenance is incomplete."
+}

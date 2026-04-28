@@ -1,0 +1,9 @@
+category,text
+allowed_use,exploratory surrogate direct fitting
+allowed_use,assumption-conditioned active sequential design
+allowed_use,workflow prototyping for later provenance recovery
+allowed_use,sensitivity analysis over protocol and support assumptions
+disallowed_claim,recovered Track4 simulator provenance
+disallowed_claim,dataset-faithful direct fitting
+disallowed_claim,true physical current units for labels 0.1 to 0.5
+disallowed_claim,true semantic identity of hh_param_1 to hh_param_6

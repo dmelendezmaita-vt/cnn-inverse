@@ -1,0 +1,2 @@
+-e third_party/dl-kit-main
+-r tensorflow/requirements.txt

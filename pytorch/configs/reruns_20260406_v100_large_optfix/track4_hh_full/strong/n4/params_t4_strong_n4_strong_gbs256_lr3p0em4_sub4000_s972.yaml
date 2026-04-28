@@ -1,0 +1,102 @@
+description: "track4_hh_full strong large-matrix n4 strong_gbs256 lr=3.0e-4 sub=4000 2026-04-06 (V100 large matrix)"
+
+data:
+    # Override from Slurm/CLI as needed (--data_dir/--data_prefix/--curr)
+    data_dir: '/projects/neuro-collab/data/tar_files/concatenated_data_no_compression.tar'
+    data_prefix: "concatenated_data"
+    curr: "0.1"
+    dataset_layout: tar_singlefile_split
+    use_mmap: true
+
+    # HH-oriented second-track schema
+    features_cols_num: 400000
+    targets_cols_num: 6
+    file_names:
+      features: "y/{data_prefix}_{curr}_curr.npy"
+      features_stats: "support_stats/{data_prefix}_{curr}_curr.npy"
+      targets: "generated_params/{data_prefix}_{curr}_curr.npy"
+
+    # Keep names neutral until upstream generation metadata maps semantic labels.
+    target_names:
+      - hh_param_1
+      - hh_param_2
+      - hh_param_3
+      - hh_param_4
+      - hh_param_5
+      - hh_param_6
+    targets_transform:
+      - log10
+      - log10
+      - log10
+      - log10
+      - log10
+      - log10
+    targets_transform_eps: 1.0e-12
+
+    features_type: 'TIME'
+    features_use_channels_range:
+        - 0
+        - 1
+    features_normalize: True
+    features_sub_length: 4000
+    features_sub_begin_random: True
+    features_sub_begin_random_eval: False
+    features_additive_noise_std: 0
+    targets_type: 'ODE'
+    targets_normalize: True
+    target_loss_weight_mode: inverse_std
+    target_loss_weights_normalize: True
+
+    # Conservative defaults for concatenated_data.
+    Ntrain: 8192
+    Nvalidate: 1024
+    Ntest:     1024
+    train_shuffle_buffer_size: 20000
+    train_batch_size: 256
+    global_train_batch_size: 256
+    eval_batch_size: 128
+    random_seed: 972
+
+net:
+    type: 'ConvNet'
+    conv_layer_kernel: 3
+    conv_layer_sizes:
+        - 8
+        - 16
+        - 32
+    dense_layer_sizes:
+        - 128
+        - 128
+        - 128
+        - 128
+    activation_fn: 'gelu'
+
+optimizer:
+    type: 'AdamW'
+    learning_rate: 3.0e-4
+    beta1: 0.9
+    beta2: 0.999
+    epsilon: 1.0e-8
+    weight_decay: 0.01
+    learning_rate_scheduler:
+        init_learning_rate: 1.5e-5
+        linear_epochs: 40
+        constant_epochs: 40
+        final_learning_rate: 1.5e-6
+
+training:
+    grad_clip_max_norm: 1.0
+    huber_beta: 1.0
+    loss_type: huber
+    epochs: 400
+
+runconfig:
+    load_dir:
+    save_dir: 'runs/dnn_hh'
+    log_epochs: 1
+    save_checkpoints_epochs: 10
+    debug: True
+    show_plots: False
+    save_predictions: "test"
+    plot_format: "png"
+    plot_dpi: 300

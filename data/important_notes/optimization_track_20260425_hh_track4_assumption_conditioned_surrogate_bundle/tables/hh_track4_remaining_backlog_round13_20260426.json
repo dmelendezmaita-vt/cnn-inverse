@@ -1,0 +1,138 @@
+[
+  {
+    "row_id": "acdhh_13032",
+    "label": "prediction_swyft_native_v100_20260425_mean",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_native_v100_20260425_mean --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_v100_20260425/predictions_mean.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 840.2318725585938,
+    "r2": 0.039256891899978275,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_v100_20260425/predictions_mean.npz"
+  },
+  {
+    "row_id": "acdhh_13033",
+    "label": "prediction_swyft_tmnre_schedule_matrix_v100_20260425_median",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_schedule_matrix_v100_20260425_median --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_schedule_matrix_v100_20260425/predictions_median.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 864.882568359375,
+    "r2": 0.003210998460904224,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_schedule_matrix_v100_20260425/predictions_median.npz"
+  },
+  {
+    "row_id": "acdhh_13034",
+    "label": "prediction_swyft_native_v100_20260425_median",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_native_v100_20260425_median --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_v100_20260425/predictions_median.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 883.5573120117188,
+    "r2": -0.008609096626661872,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_v100_20260425/predictions_median.npz"
+  },
+  {
+    "row_id": "acdhh_13036",
+    "label": "prediction_swyft_tmnre_native_v100_20260425_mean",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_native_v100_20260425_mean --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_native_v100_20260425/predictions_mean.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 902.2291870117188,
+    "r2": -0.13317621298973603,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_native_v100_20260425/predictions_mean.npz"
+  },
+  {
+    "row_id": "acdhh_13037",
+    "label": "prediction_swyft_tmnre_native_v100_20260425_median",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_native_v100_20260425_median --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_native_v100_20260425/predictions_median.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 934.73291015625,
+    "r2": -0.16705843105101148,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_native_v100_20260425/predictions_median.npz"
+  },
+  {
+    "row_id": "acdhh_13038",
+    "label": "prediction_swyft_native_concat_small_v100_20260425_mean",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_native_concat_small_v100_20260425_mean --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_concat_small_v100_20260425/predictions_mean.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 941.6043090820312,
+    "r2": -0.15040110877911994,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_concat_small_v100_20260425/predictions_mean.npz"
+  },
+  {
+    "row_id": "acdhh_13039",
+    "label": "prediction_swyft_tmnre_score_prune_structured_v100_20260426_map_bank",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_score_prune_structured_v100_20260426_map_bank --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_score_prune_structured_v100_20260426/predictions_map_bank.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 942.4851684570312,
+    "r2": -0.14822817422779533,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_score_prune_structured_v100_20260426/predictions_map_bank.npz"
+  },
+  {
+    "row_id": "acdhh_13041",
+    "label": "prediction_swyft_tmnre_structured_stage1_v100_20260425_map_bank",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_structured_stage1_v100_20260425_map_bank --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_structured_stage1_v100_20260425/predictions_map_bank.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 943.7913208007812,
+    "r2": -0.21453947289321662,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_structured_stage1_v100_20260425/predictions_map_bank.npz"
+  },
+  {
+    "row_id": "acdhh_13042",
+    "label": "prediction_swyft_native_v100_20260425_medoid",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_native_v100_20260425_medoid --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_v100_20260425/predictions_medoid.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 944.3833618164062,
+    "r2": -0.0006372246138681703,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_v100_20260425/predictions_medoid.npz"
+  },
+  {
+    "row_id": "acdhh_13043",
+    "label": "prediction_swyft_tmnre_schedule_matrix_v100_20260425_map_bank",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_schedule_matrix_v100_20260425_map_bank --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_schedule_matrix_v100_20260425/predictions_map_bank.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 953.34228515625,
+    "r2": -0.08408227839791982,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_schedule_matrix_v100_20260425/predictions_map_bank.npz"
+  },
+  {
+    "row_id": "acdhh_13044",
+    "label": "prediction_swyft_native_concat_small_v100_20260425_median",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_native_concat_small_v100_20260425_median --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_concat_small_v100_20260425/predictions_median.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 975.0545043945312,
+    "r2": -0.177676491939613,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_concat_small_v100_20260425/predictions_median.npz"
+  },
+  {
+    "row_id": "acdhh_13045",
+    "label": "prediction_swyft_tmnre_native_v100_20260425_medoid",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_native_v100_20260425_medoid --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_native_v100_20260425/predictions_medoid.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 979.907470703125,
+    "r2": -0.15774038576480853,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_native_v100_20260425/predictions_medoid.npz"
+  },
+  {
+    "row_id": "acdhh_13046",
+    "label": "prediction_snpe_maf_r3_pool4096_final2048_mean",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_snpe_maf_r3_pool4096_final2048_mean --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_tc_hh_track4_pool_sequential_sbi/runs/snpe_maf_r3_pool4096_final2048/predictions_mean.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 991.0187377929688,
+    "r2": 0.0934085757572517,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_tc_hh_track4_pool_sequential_sbi/runs/snpe_maf_r3_pool4096_final2048/predictions_mean.npz"
+  },
+  {
+    "row_id": "acdhh_13047",
+    "label": "prediction_snpe_maf_r3_pool4096_final2048_selected",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_snpe_maf_r3_pool4096_final2048_selected --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_tc_hh_track4_pool_sequential_sbi/runs/snpe_maf_r3_pool4096_final2048/predictions_selected.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 991.0187377929688,
+    "r2": 0.0934085757572517,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_tc_hh_track4_pool_sequential_sbi/runs/snpe_maf_r3_pool4096_final2048/predictions_selected.npz"
+  },
+  {
+    "row_id": "acdhh_13048",
+    "label": "prediction_snpe_maf_r3_pool4096_final2048_medoid",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_snpe_maf_r3_pool4096_final2048_medoid --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_tc_hh_track4_pool_sequential_sbi/runs/snpe_maf_r3_pool4096_final2048/predictions_medoid.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 991.916015625,
+    "r2": 0.01327841325922996,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_tc_hh_track4_pool_sequential_sbi/runs/snpe_maf_r3_pool4096_final2048/predictions_medoid.npz"
+  },
+  {
+    "row_id": "acdhh_13049",
+    "label": "prediction_swyft_native_concat_small_v100_20260425_medoid",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_native_concat_small_v100_20260425_medoid --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_concat_small_v100_20260425/predictions_medoid.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 1044.2645263671875,
+    "r2": -0.19837834558469392,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_concat_small_v100_20260425/predictions_medoid.npz"
+  },
+  {
+    "row_id": "acdhh_13052",
+    "label": "prediction_swyft_tmnre_score_prune_structured_v100_20260426_median",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_swyft_tmnre_score_prune_structured_v100_20260426_median --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_score_prune_structured_v100_20260426/predictions_median.npz --n-exemplars 3 --trace-length 2000 --maxiter 120",
+    "mae": 1204.1878662109375,
+    "r2": -0.3239620362829698,
+    "prediction_file": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_score_prune_structured_v100_20260426/predictions_median.npz"
+  }
+]

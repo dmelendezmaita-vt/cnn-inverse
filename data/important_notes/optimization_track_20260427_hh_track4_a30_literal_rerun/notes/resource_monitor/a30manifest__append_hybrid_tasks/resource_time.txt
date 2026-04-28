@@ -1,0 +1,23 @@
+	Command being timed: "bash -lc cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && env PYTHONPATH="/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch:/projects/neuro-collab/code/dl-kit-main:${PYTHONPATH:-}" /projects/neuro-collab/conda/neuro-collab-env/bin/python /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/scripts/append_hh_track4_a30_hybrid_tasks_20260427.py --campaign-root /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260427_hh_track4_a30_literal_rerun --manifest-json data/important_notes/optimization_track_20260427_hh_track4_a30_literal_rerun/tables/hh_track4_a30_literal_rerun_manifest_20260427.json"
+	User time (seconds): 0.37
+	System time (seconds): 0.09
+	Percent of CPU this job got: 47%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 108668
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 27675
+	Voluntary context switches: 2258
+	Involuntary context switches: 25
+	Swaps: 0
+	File system inputs: 3104
+	File system outputs: 17232
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

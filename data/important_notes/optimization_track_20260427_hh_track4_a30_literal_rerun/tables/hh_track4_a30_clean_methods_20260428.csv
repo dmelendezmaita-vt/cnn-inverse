@@ -1,0 +1,8 @@
+item,value,note
+campaign_root,/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260427_hh_track4_a30_literal_rerun,fresh homogeneous A30 campaign
+completed_tasks,622,registry closure
+direct_task_count,502,direct task coverage
+framework_rows,17,A30-local aligned framework rows
+decision_rows,63,A30-local decision-rule rows
+hybrid_rows,77,A30-local hybrid initializer rows
+active_rows,14,"A30-local active-policy rows, including ASNPE"

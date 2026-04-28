@@ -1,0 +1,12 @@
+[
+  {
+    "row_id": "acdhh_3001",
+    "label": "swyft_tmnre_score_prune_structured_rerun",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /home/dmm96/venvs/swyft_20260425/bin/python scripts/run_hh_track4_aligned_multicurrent_swyft_tmnre_score_prune_20260426.py --params pytorch/configs/fourth_track_hh_full/params_dnn_tar_hh_full.yaml --save-dir data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_tmnre_score_prune_structured_v100_20260426 --stage1-run-dir data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_aligned_currents_pool_v100_20260425 --aggregation concat --keep-fracs 0.5,0.25 --device gpu"
+  },
+  {
+    "row_id": "acdhh_3002",
+    "label": "swyft_trained_posterior_sbc_rerun",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /home/dmm96/venvs/swyft_20260425/bin/python scripts/run_hh_track4_swyft_trained_posterior_sbc_20260426.py --params pytorch/configs/fourth_track_hh_full/params_dnn_tar_hh_full.yaml --save-dir data/important_notes/optimization_track_20260425_hh_track4_assumption_conditioned_surrogate_bundle/runs/swyft_surrogate_sbc_20260426 --stage1-run-dir data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/swyft_native_aligned_currents_pool_v100_20260425 --aggregation concat --n-query 64 --posterior-draws 64 --device gpu"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "started_at": "2026-04-28T05:40:03-04:00",
+  "hostname": "owl034",
+  "slurm_job_id": "483279",
+  "slurm_step_id": "",
+  "slurmd_nodename": "",
+  "cuda_visible_devices": "",
+  "slurm_cpus_per_task": ""
+}

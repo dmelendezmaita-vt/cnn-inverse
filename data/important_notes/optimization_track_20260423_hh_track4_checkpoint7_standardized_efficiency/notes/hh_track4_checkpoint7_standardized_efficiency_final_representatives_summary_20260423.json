@@ -1,0 +1,14 @@
+{
+  "summary_csv": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260423_hh_track4_checkpoint7_standardized_efficiency/tables/hh_track4_checkpoint7_standardized_efficiency_final_representatives_20260423.csv",
+  "sbi_seed_rows_csv": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260423_hh_track4_checkpoint7_standardized_efficiency/tables/hh_track4_checkpoint7_standardized_efficiency_sbi_seed_rows_20260423.csv",
+  "classical_source_csv": "/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260423_hh_track4_checkpoint7_standardized_efficiency/tables/hh_track4_checkpoint7_standardized_efficiency_results_20260423_hh_track4_checkpoint7_standardized_efficiency.csv",
+  "rows": 9,
+  "sbi_seed_rows": 20,
+  "interpretation": {
+    "clean_accuracy_winner": "random_forest_500 by MAE on clean data",
+    "clean_sbi_winner": "sbi_fmpe_clean among SBI methods by clean mean MAE/MSE/R2 against promoted feature-aware SNPE",
+    "robust_sbi_path": "shift-specific matched SNPE: sbi_snpe_matched_drift010 and sbi_snpe_matched_mask20",
+    "systems_caveat": "Classical CPU microbenchmark and SBI V100 existing-run timing are standardized within family but not identical hardware/eval-size protocols.",
+    "direct_fitting_caveat": "Direct fitting remains workspace-blocked by missing simulator provenance, not scientifically exhausted."
+  }
+}

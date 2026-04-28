@@ -1,0 +1,9 @@
+timestamp=2026-03-04T19:44:49-05:00
+hostname=fal131
+job_id=242036
+job_name=bench_V100_1n
+partition=v100_normal_q
+nodelist=fal131
+gpus_on_node=1
+cpus_per_task=24
+mem_per_node=65536

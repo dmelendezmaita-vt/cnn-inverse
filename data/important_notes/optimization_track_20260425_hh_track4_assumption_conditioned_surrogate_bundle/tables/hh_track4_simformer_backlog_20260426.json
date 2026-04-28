@@ -1,0 +1,12 @@
+[
+  {
+    "row_id": "acdhh_16001",
+    "label": "simformer_official_hh_primary",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && source /home/dmm96/venvs/simformer_min_py312/bin/activate && python scripts/run_hh_track4_simformer_official_hh_20260426.py --save-dir data/important_notes/optimization_track_20260425_hh_track4_assumption_conditioned_surrogate_bundle/runs/simformer/simformer_official_hh_primary_20260426 --seed 20260426 --num-simulations 512 --max-number-steps 120 --min-number-steps 120 --training-batch-size 32 --num-samples 128 --num-eval-observations 5 --posterior-steps 50"
+  },
+  {
+    "row_id": "acdhh_16002",
+    "label": "simformer_official_hh_secondary",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && source /home/dmm96/venvs/simformer_min_py312/bin/activate && python scripts/run_hh_track4_simformer_official_hh_20260426.py --save-dir data/important_notes/optimization_track_20260425_hh_track4_assumption_conditioned_surrogate_bundle/runs/simformer/simformer_official_hh_secondary_20260426 --seed 20260427 --num-simulations 512 --max-number-steps 120 --min-number-steps 120 --training-batch-size 32 --num-samples 128 --num-eval-observations 5 --posterior-steps 50"
+  }
+]

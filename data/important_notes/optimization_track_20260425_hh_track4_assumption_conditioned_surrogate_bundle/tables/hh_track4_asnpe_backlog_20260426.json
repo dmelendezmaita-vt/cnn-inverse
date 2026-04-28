@@ -1,0 +1,7 @@
+[
+  {
+    "row_id": "acdhh_14001",
+    "label": "asnpe_ensemble_main",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /home/dmm96/venvs/bayesflow_20260425_py312/bin/python scripts/run_hh_track4_assumption_conditioned_asnpe_20260426.py --save-dir data/important_notes/optimization_track_20260425_hh_track4_assumption_conditioned_surrogate_bundle/runs/asnpe/asnpe_ensemble_main_20260426 --bundle-label ensemble_main --ensemble-size 2 --n-rounds 4 --initial-sims 128 --round-sims 32 --candidate-pool 256 --epochs 12 --batch-size 64 --posterior-samples 256 --sample-batch-size 64 --workers 8"
+  }
+]

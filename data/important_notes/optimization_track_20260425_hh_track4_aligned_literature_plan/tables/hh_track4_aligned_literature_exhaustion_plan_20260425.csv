@@ -1,0 +1,9 @@
+branch_id,branch_name,mandatory_under_alignment,can_run_now,expected_accuracy_upside,expected_scale_upside,role,why_still_open,priority
+AL1,multi_current_deterministic_inverse_maps,yes,yes,high,high,accuracy,Single-current inverse maps are covered, but aligned multi-current conditioning is still untested.,highest
+AL2,hierarchical_multi_observation_sbi,yes,yes,high,high,accuracy_uncertainty,HNPE or BayesFlow-style shared-latent inference becomes legitimate only under row alignment.,highest
+AL3,sbi_validation_and_recalibration,yes,yes,medium,medium,validation,SBC, L-C2ST, and coverage recalibration are not yet exhausted on final representatives.,highest
+AL4,tmnre_ratio_estimation_followup,yes,yes,low_medium,medium_high,completeness,Vanilla SNRE is covered, but TMNRE is the stronger remaining ratio-estimation family.,high
+AL5,hybrid_amortized_init_plus_local_refinement,yes,yes,medium,medium,hybrid_bridge,Amortized and mechanistic fitting were tested separately, but not the hybrid bridge.,high
+AL6,wasserstein_evaluation_stack,yes,yes,medium,medium,diagnostics,Current Wasserstein code is only a starting point and does not yet cover joint sliced-Wasserstein or posterior-predictive use.,high
+AL7,sliced_wasserstein_abc_or_wasserstein_smc,no,yes,low_medium,low,optimal_transport_inference,This is the main remaining OT-based inference family, but it is expensive and lower priority.,medium
+AL8,active_sequential_posterior_estimation,no,yes,low,medium_high,simulation_efficiency,Most relevant once subset-of-current or protocol-selection decisions matter.,medium_low

@@ -1,0 +1,87 @@
+description: "Track 2 true weak scaling confidence top-up (4 node A30) 2026-04-02"
+
+data:
+    data_dir: '../data/2020-12-09'  # overridden in batch jobs via --data_dir
+    data_prefix: "publication_2020"
+    curr: "0.1"
+    dataset_layout: tar_singlefile_split
+    use_mmap: true
+
+    # publication arrays
+    features_cols_num: 1000
+    features_noise_cols_num: 1000
+    targets_cols_num: 2
+    file_names:
+      features: "fhn_T200_samplePrior_state0.npy"
+      targets: "fhn_T200_samplePrior_theta.npy"
+      features_noise: "noise_correlated_Nt1000_Nsim10000_data.npy"
+
+    features_type: 'TIME_NOISE'
+    features_use_channels_range:
+        - 0
+        - 1
+    features_normalize: False
+    features_sub_length: 1000
+    features_sub_begin_random: True
+    features_additive_noise_std: 0
+    targets_type: 'ODE'
+    targets_normalize: False
+
+    # Table 1 (paper): Ntrain=1000, Nvalidate=2000, Ntest=2000, batch=32
+    Ntrain:    4000
+    Nvalidate: 2000
+    Ntest:     2000
+    train_shuffle_buffer_size: 1000
+    train_batch_size: 128
+    global_train_batch_size: 128
+    eval_batch_size: 32
+    random_seed: 503
+    features_sub_begin_random_eval: false
+
+net:
+    # Paper-selected CNN family: nf x [1,2,4], nf=8 and two dense layers (nu=32)
+    type: 'ConvNet'
+    conv_layer_kernel: 3
+    conv_layer_stride: 2
+    conv_layer_padding: 0
+    conv_pool_type: 'avg'
+    conv_pool_kernel: 2
+    conv_pool_stride: 2
+    conv_pool_padding: 0
+    conv_layer_sizes:
+        - 8
+        - 16
+        - 32
+    dense_layer_sizes:
+        - 32
+        - 32
+    activation_fn: 'swish'
+
+optimizer:
+    # Table 1 (paper): Adam, lr=0.002
+    type: 'Adam'
+    learning_rate: 2.0e-3
+    beta1: 0.9
+    beta2: 0.999
+    epsilon: 1.0e-8
+    weight_decay: 0.0
+    learning_rate_scheduler:
+        init_learning_rate:
+        linear_epochs:
+        constant_epochs:
+        final_learning_rate:
+
+training:
+    # Table 1 (paper): epochs with noise-free data = 200
+    epochs: 200
+
+runconfig:
+    load_dir:
+    save_dir: 'runs/dnn'
+    log_epochs: 1
+    save_checkpoints_epochs: 50
+    debug: True
+    show_plots: False
+    save_predictions: "test"
+    plot_format: "png"
+    plot_dpi: 300

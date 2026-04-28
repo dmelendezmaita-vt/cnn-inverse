@@ -1,0 +1,27 @@
+[
+  {
+    "row_id": "acdhh_12001",
+    "label": "prediction_bayesflow_temporal_transformer_v100_20260426_mean",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_bayesflow_temporal_transformer_v100_20260426_mean --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/bayesflow_temporal_transformer_v100_20260426/predictions_mean.npz --n-exemplars 3 --trace-length 2000 --maxiter 120"
+  },
+  {
+    "row_id": "acdhh_12002",
+    "label": "prediction_bayesflow_temporal_transformer_v100_20260426_medoid",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_bayesflow_temporal_transformer_v100_20260426_medoid --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/bayesflow_temporal_transformer_v100_20260426/predictions_medoid.npz --n-exemplars 3 --trace-length 2000 --maxiter 120"
+  },
+  {
+    "row_id": "acdhh_12003",
+    "label": "prediction_bayesflow_deepset_posterior_v100_20260426_median",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_bayesflow_deepset_posterior_v100_20260426_median --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/bayesflow_deepset_posterior_v100_20260426/predictions_median.npz --n-exemplars 3 --trace-length 2000 --maxiter 120"
+  },
+  {
+    "row_id": "acdhh_12004",
+    "label": "prediction_bayesflow_deepset_posterior_v100_20260426_medoid",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_bayesflow_deepset_posterior_v100_20260426_medoid --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/bayesflow_deepset_posterior_v100_20260426/predictions_medoid.npz --n-exemplars 3 --trace-length 2000 --maxiter 120"
+  },
+  {
+    "row_id": "acdhh_12005",
+    "label": "prediction_bayesflow_deepset_posterior_v100_20260426_mean",
+    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /projects/neuro-collab/conda/neuro-collab-env/bin/python scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_surrogate_bundle_integration_20260425.py --bundle-label prediction_bayesflow_deepset_posterior_v100_20260426_mean --init-mode prediction --prediction-file /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch/data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/bayesflow_deepset_posterior_v100_20260426/predictions_mean.npz --n-exemplars 3 --trace-length 2000 --maxiter 120"
+  }
+]
