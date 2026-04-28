@@ -1,7 +1,0 @@
-[
-  {
-    "row_id": "acdhh_6001",
-    "label": "bayesflow_set_posterior_family",
-    "command": "cd /projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch && /home/dmm96/venvs/bayesflow_20260425_py312/bin/python scripts/run_hh_track4_aligned_multicurrent_bayesflow_set_20260426.py --params pytorch/configs/fourth_track_hh_full/params_dnn_tar_hh_full.yaml --save-dir data/important_notes/optimization_track_20260425_hh_track4_run_all_literature_plan/runs/bayesflow_set_posterior_v100_20260426 --summary-network set_transformer --epochs 40 --batch-size 64 --posterior-samples 128 --sample-batch-size 32 --summary-dim 64"
-  }
-]

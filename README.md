@@ -1,55 +1,61 @@
 # Neural Inverse Inference Workflows for FitzHugh-Nagumo and Hodgkin-Huxley Models
 
-This repository is a public, reproducibility-focused staging tree prepared from the active neuro-collab working copy. It contains executable source code, configuration files, baseline FitzHugh-Nagumo data, the vendored `dlkit` dependency that the PyTorch workflow requires, and a curated subset of text-first evidence artifacts that support the current canonical Hodgkin-Huxley conclusions.
+This repository is a cleaned public code artifact. It ships the core source tree, a small baseline FitzHugh-Nagumo dataset, a curated script surface, and the vendored `dlkit` dependency required by the PyTorch workflow.
 
-## Start Here
+## Repository Surface
 
-The primary human entrypoint is the numbered reproduction layer under `repro/`, because the canonical workflow is no longer the same as the older internal track chronology that the working repository used while the campaign was still evolving.
+| Path | Role |
+| --- | --- |
+| `src/` | source code for the PyTorch and TensorFlow workflows |
+| `scripts/` | curated execution and analysis helpers |
+| `vendor/dlkit/` | vendored dependency used by the PyTorch code |
+| `data/2020-12-09/` | shipped baseline FitzHugh-Nagumo data |
 
-## Public Repository Scope
-
-| Area | Included in this staging repo | Technical role |
-| --- | --- | --- |
-| `src/pytorch/`, `src/tensorflow/`, `src/utils/` | Yes | Core model code and baseline training and evaluation entry points |
-| `tools/` | Yes | Experiment builders, launchers, analyzers, and reporting utilities used in the live workflow |
-| `vendor/dlkit/` | Yes | Required vendored dependency for `dlkit.*` imports used by the PyTorch code |
-| `data/2020-12-09/` | Yes | Small FitzHugh-Nagumo baseline dataset, which fits within GitHub file-size limits |
-| `evidence/canonical_chain/` | Yes | Canonical evidence chain, ordered for human reproduction rather than workspace chronology |
-| Runtime logs, live run directories, shared scratch mirrors, model checkpoints | No | Omitted to keep the public tree clean, portable, and within GitHub storage constraints |
-| Large Hodgkin-Huxley tar archives and local cluster scratch paths | No | These remain external data dependencies and are described in `data/README.md` |
-
-## Environment Setup
-
-The PyTorch workflow depends on the vendored `dlkit` package and on the project-specific requirements file.
+## Baseline Run
 
 ```bash
 python -m pip install -e vendor/dlkit
 python -m pip install -r src/pytorch/requirements.txt
-```
-
-Convenience requirements files are also provided:
-
-```bash
-python -m pip install -r requirements-public-pytorch.txt
-python -m pip install -r requirements-public-tensorflow.txt
-```
-
-## Baseline FitzHugh-Nagumo Run
-
-```bash
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode train
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode eval
 ```
 
-## Reproduction Surface
+## Curated Script Surface
 
-| Surface | Role |
+| Script | Role |
 | --- | --- |
-| `repro/00_source_snapshot/` | exact reference and command path for the untouched upstream zip |
-| `repro/10_fhn_benchmark_reconstruction/` | inherited benchmark reconstruction evidence |
-| `repro/20_hh_canonical_clean_a30/` | canonical clean A30 manifest and analysis path |
-| `repro/30_hh_closure_boundary/` | bounded closure claim, efficiency evidence, and provenance blocker |
-| `repro/40_state_of_the_art_followup/` | later executable literature-aligned and assumption-conditioned follow-up |
-| `repro/90_legacy_upload_bundle/` | earlier packaging logic retained as legacy context |
+| `scripts/build_hh_a30_manifest.py` | build the canonical clean A30 manifest, using external workspace note inputs when available |
+| `scripts/analyze_hh_a30_clean_results.py` | analyze the canonical clean A30 campaign outputs |
+| `scripts/shared_data_utils.py` | staged tar extraction helper |
+| `scripts/run_interactive_dnn_step.sh` | distributed DNN execution step |
+| `scripts/run_classical_baseline_step.sh` | classical baseline execution step |
+| `scripts/run_sbi_baseline_step.sh` | SBI execution step |
+| `scripts/run_hh_classical_baseline.py` | classical HH baseline driver |
+| `scripts/run_hh_sbi_baseline.py` | SBI HH baseline driver |
+| `scripts/slurm_smoke_test.sbatch` | smoke job template |
+| `scripts/slurm_train.sbatch` | train job template |
 
-The staging rules and omitted artifact classes are documented in `docs/github_upload_scope.md`.
+## Data Boundary
+
+The full Hodgkin-Huxley data are not shipped here.
+
+| Artifact | Size |
+| --- | ---: |
+| `concatenated_data_no_compression.tar` | `125790393856` bytes |
+| `concatenated_data.tar.gz` | `77205166166` bytes |
+| one full-current target array such as `concatenated_data_0.1_curr.npy` | `24000000000` bytes |
+
+The public repository therefore ships no full Hodgkin-Huxley arrays, because those files are far beyond GitHub's practical and hard upload limits.
+
+## Untouched Upstream Snapshot
+
+The inherited upstream zip referenced during benchmark reconstruction is:
+
+- `/projects/neuro-collab/code/archives/fhn_dnn-1-implementation-in-pytorch.zip`
+- zip comment: `eb676a34bb32d880b172e70f9faf6f41a2d9fe3c`
+
+Verification command:
+
+```bash
+unzip -z /projects/neuro-collab/code/archives/fhn_dnn-1-implementation-in-pytorch.zip
+```

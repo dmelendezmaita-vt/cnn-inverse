@@ -1,8 +1,0 @@
-backup_name=paper_data_parity_reproducibility_snapshot_20260304_231726
-created_local=2026-03-04 23:17:26 EST
-purpose=Freeze code+config+notes required to reproduce paper-data-parity study while allowing later code evolution
-project_root=/projects/neuro-collab/code/fhn_dnn-1-implementation-in-pytorch
-archive_path=data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231726.tar.gz
-sha256_file=data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231726.sha256
-file_list=data/important_notes/paper_data_parity_reproducibility_snapshot_20260304_231726.filelist.txt
-git_head=unknown

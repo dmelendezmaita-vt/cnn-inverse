@@ -1,9 +1,0 @@
-{
-  "started_at": "2026-04-28T06:02:06-04:00",
-  "hostname": "fal003",
-  "slurm_job_id": "368759",
-  "slurm_step_id": "1808",
-  "slurmd_nodename": "fal003",
-  "cuda_visible_devices": "0,1,2,3",
-  "slurm_cpus_per_task": "4"
-}

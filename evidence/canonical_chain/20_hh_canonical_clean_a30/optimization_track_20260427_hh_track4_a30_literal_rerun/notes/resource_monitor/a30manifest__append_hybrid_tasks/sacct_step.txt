@@ -1,1 +1,0 @@
-368759.1721|fal003|00:00:01|RUNNING|||cpu=4,gres/gpu:a30=4,gres/gpu=4,mem=495G,node=1

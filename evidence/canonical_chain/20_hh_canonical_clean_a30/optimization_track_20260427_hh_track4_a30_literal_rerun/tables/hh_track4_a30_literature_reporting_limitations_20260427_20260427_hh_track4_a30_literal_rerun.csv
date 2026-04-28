@@ -1,6 +1,0 @@
-limitation_id,scope,statement,severity
-L1,comparability,"Do not rank aligned BayesFlow, Swyft, TMNRE, pool-sequential SBI, surrogate active-design, Simformer upstream HH, and generalized-Bayes adaptation rows in one undifferentiated table, because they target different observation contracts and posterior objectives.",high
-L2,decision_rules,"For normalized BayesFlow and Swyft posterior runs, this refresh can reconstruct mean rows directly from local predictions_test artifacts, while median, medoid, and map-bank rows are regenerated only when explicit predictions_* files are present under the campaign root.",high
-L3,active_design,"Active sequential and ASNPE rows remain assumption-conditioned surrogate branches, so they should be reported as active-design evidence rather than as direct Track4 frontier claims.",high
-L4,simformer,"Simformer rows remain upstream HH benchmark references, which are methodologically useful but not numerically comparable to the local aligned or surrogate Track4-style workloads.",high
-L5,generalized_bayes,"The generalized-Bayes NPE branch is a bounded local beta-conditioned adaptation, which should be documented as such, because it is not the authors' exact released workflow.",medium

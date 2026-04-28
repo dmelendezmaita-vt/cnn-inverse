@@ -1,6 +1,0 @@
-limitation_id,scope,statement,severity
-L1,coverage,"The refresh reads only matrix, registry, metrics, and prediction artifacts present under the supplied campaign root, so missing or pruned rerun rows remain outside scope.",high
-L2,comparability,"These A30-only summaries compare direct point-estimation reruns across local branches, noise settings, and schedules, and they should not be merged numerically with posterior-family analyses from separate campaign roots.",high
-L3,diagnostics,"The diagnostics are deterministic error-shape diagnostics derived from point predictions and per-target metrics, because posterior-sample calibration artifacts are not part of the A30 direct-output contract.",medium
-L4,noise,"Noise robustness summaries depend on campaign-local strategy naming and metrics metadata, so rows without explicit clean or noise tags remain visible but cannot contribute to clean-vs-noisy deltas.",medium
-L5,runtime,"Runtime columns prefer campaign-local training metadata, then registry elapsed time, which means they reflect the rerun's local execution contract rather than a globally standardized benchmark protocol.",medium

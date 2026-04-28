@@ -1,2 +1,0 @@
-decision_id,status,best_hybrid_de,best_hybrid_bptt,best_feature_de,best_feature_bptt,promotion_decision,safe_interpretation,remaining_gap
-FITFAM1,completed_no_material_reopening,fit_search_lowcurrent_broad_shortpulse,bptt_fit_lowcurrent_broad_shortpulse,fit_search_featureonly_broad_shortpulse,bptt_fit_featureonly_broad_shortpulse,do_not_promote,Main executable compact-HH fitting families under the current assumptions were tested and none became a compelling missed-winner lane.,True Track4 simulator provenance remains unrecovered.
