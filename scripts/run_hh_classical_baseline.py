@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import yaml
+from shared_data_utils import ensure_shared_data
 
 try:
     from sklearn.decomposition import TruncatedSVD
@@ -67,6 +68,33 @@ def parse_args() -> argparse.Namespace:
 def load_params(path: str) -> dict:
     with open(path, "r") as f:
         return yaml.safe_load(f)
+
+
+def resolve_local_data_dir(params: dict, logger: logging.Logger) -> dict:
+    params = json.loads(json.dumps(params))
+    data_cfg = params["data"]
+    data_dir = Path(str(data_cfg["data_dir"]))
+    if not data_dir.is_absolute():
+        data_dir = (REPO / data_dir).resolve()
+    is_tar = data_dir.is_file() and (
+        str(data_dir).endswith(".tar")
+        or str(data_dir).endswith(".tar.gz")
+        or str(data_dir).endswith(".tgz")
+        or str(data_dir).endswith(".tar.bz2")
+        or str(data_dir).endswith(".tar.xz")
+    )
+    if not is_tar:
+        data_cfg["data_dir"] = str(data_dir)
+        return params
+
+    data_prefix = str(data_cfg.get("data_prefix") or data_dir.stem).strip("/.")
+    prepared_root = REPO / ".prepared_data"
+    prepared_root.mkdir(parents=True, exist_ok=True)
+    prepared_dir = prepared_root / data_prefix
+    logger.info("Preparing extracted data directory %s from %s", prepared_dir, data_dir)
+    ensure_shared_data(data_dir, prepared_dir)
+    data_cfg["data_dir"] = str(prepared_dir)
+    return params
 
 
 def crop_trace_window(arr: np.ndarray, sub_length: int | None, sub_step: int | None = None) -> np.ndarray:
@@ -290,6 +318,7 @@ def load_cached_splits(
         params["data"]["data_prefix"] = args.data_prefix
     if args.curr is not None:
         params["data"]["curr"] = args.curr
+    params = resolve_local_data_dir(params, logger)
 
     params["data"]["split_array_cache_enabled"] = True
     params["data"]["features_sub_begin_random"] = False
@@ -493,6 +522,7 @@ def main() -> None:
         params["data"]["data_prefix"] = args.data_prefix
     if args.curr is not None:
         params["data"]["curr"] = args.curr
+    params = resolve_local_data_dir(params, logger)
 
     params["data"]["split_array_cache_enabled"] = True
     params["data"]["features_scale_cache_enabled"] = True
