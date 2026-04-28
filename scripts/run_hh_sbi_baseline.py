@@ -55,7 +55,8 @@ from sbi.utils import BoxUniform
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 REPO = Path(__file__).resolve().parents[1]
-sys.path.append(str(REPO / "src"))
+sys.path.insert(0, str(REPO / "src" / "pytorch"))
+sys.path.insert(0, str(REPO / "src"))
 
 from data import (  # noqa: E402
     _apply_scale_inverse,

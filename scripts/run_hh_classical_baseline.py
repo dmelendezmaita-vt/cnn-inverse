@@ -28,7 +28,8 @@ except ImportError as exc:  # pragma: no cover - handled at runtime on cluster
     ) from exc
 
 REPO = Path(__file__).resolve().parents[1]
-sys.path.append(str(REPO / "src"))
+sys.path.insert(0, str(REPO / "src" / "pytorch"))
+sys.path.insert(0, str(REPO / "src"))
 
 from data import (  # noqa: E402
     _apply_scale_inverse,
