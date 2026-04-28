@@ -1,6 +1,6 @@
 {
   "generated_on": "2026-04-28",
-  "scope_note": "The dashboard compresses a large artifact surface into a small set of argument-driven charts, which are separated by comparability class and by scientific role.",
+  "scope_note": "The dashboard condenses a large artifact surface into a small set of argument-driven charts, which are organized by comparability class and by scientific role.",
   "inventory": {
     "kpis": [
       {
@@ -111,14 +111,14 @@
         "numeric_cells": 216
       }
     ],
-    "interpretation_note": "The raw archive is much larger than the human interpretation surface. The dashboard should therefore show only the comparisons that answer a question cleanly, while the tables and files remain available for audit."
+    "interpretation_note": "The raw archive is much larger than the interpretation surface that a reader can use directly. The dashboard therefore shows only the comparisons that answer a question clearly, while the underlying tables and files remain available for audit."
   },
   "reading_guide": [
     {
       "title": "Comparability first",
       "badge": "Interpretation rule",
       "kind": "primary",
-      "body": "Direct clean rows, posterior framework rows, posterior decision rules, hybrid initializers, and active-sequential rows are not one pooled leaderboard. Each chart states its own comparison class."
+      "body": "Direct clean rows, posterior framework rows, posterior decision rules, hybrid initializers, and active-sequential rows form separate result spaces. Each chart states its own comparison class."
     },
     {
       "title": "Performance versus speedup",
@@ -130,7 +130,7 @@
       "title": "Primary versus supporting evidence",
       "badge": "Interpretation rule",
       "kind": "boundary",
-      "body": "The Hodgkin-Huxley fixed-task comparison is the empirical center. Benchmark parity, execution studies, and execution-path optimizations support or bound that comparison, but they do not replace it."
+      "body": "The Hodgkin-Huxley fixed-task comparison is the empirical center. Benchmark parity, execution studies, and execution-path optimizations support or bound that comparison."
     }
   ],
   "threads": [
@@ -139,7 +139,7 @@
       "badge": "Supporting evidence",
       "intro": "These studies checked whether the inherited FitzHugh-Nagumo baseline remained statistically stable, and whether the archived split behavior remained scientifically interpretable.",
       "how_to_read": "Read the metric-delta chart as a bounded difference against the archived benchmark mean, then read the ANOVA chart as a check that node count did not materially change predictive quality.",
-      "main_conclusion": "The baseline remained statistically close to the archived benchmark, while runtime changed more than predictive quality. The split issue mattered for interpretation, not for the later Hodgkin-Huxley frontier itself.",
+      "main_conclusion": "The baseline remained statistically close to the archived benchmark, while runtime changed more than predictive quality. The split issue shaped interpretation and did not alter the later Hodgkin-Huxley frontier.",
       "charts": [
         {
           "title": "Benchmark deltas against the archived FitzHugh-Nagumo reference",
@@ -184,7 +184,7 @@
           ],
           "notes": [
             "These p-values support the claim that the benchmark parity result is stable across the tested node counts.",
-            "The benchmark study therefore supports later systems claims without becoming a main objective."
+            "The benchmark study anchors the later systems claims, while remaining supporting evidence rather than a main objective."
           ]
         }
       ]
@@ -192,8 +192,8 @@
     {
       "title": "Execution Configuration and Run Policy",
       "badge": "Supporting evidence",
-      "intro": "These studies determined which execution setting best supports broad comparative sweeps, while keeping the task fixed.",
-      "how_to_read": "The throughput chart answers the operational default question. The train-time chart answers a narrower question, namely whether tuned 2-node and 4-node lanes improved inside their own lane, which is different from asking whether multi-node scaling beat the best single-node policy.",
+      "intro": "These studies determined which execution setting best supports broad comparative sweeps while keeping the task fixed.",
+      "how_to_read": "The throughput chart answers the run-policy question. The train-time chart answers a narrower question, namely whether tuned 2-node and 4-node lanes improved inside their own lane, which is different from asking whether multi-node scaling beat the best single-node policy.",
       "main_conclusion": "Throughput-first grouped single-node execution became the practical default. Tuned 2-node and 4-node paths improved their own lane materially, but they did not overturn the broad-sweep single-node policy.",
       "charts": [
         {
@@ -220,7 +220,7 @@
           ],
           "notes": [
             "On the current Hodgkin-Huxley task, grouped single-node execution improved completed-run throughput by 85.5%.",
-            "This chart is why single-node remained the broad default even though 4-node latency could still be useful for targeted reference runs."
+            "This chart establishes single-node execution as the broad default, while 4-node latency remains useful for targeted reference runs."
           ]
         },
         {
@@ -243,7 +243,7 @@
             }
           ],
           "notes": [
-            "These are node-local improvements, not broad run-policy wins.",
+            "These are node-local improvements rather than broad run-policy wins.",
             "This is why performance and speedup should not be conflated in the dashboard text."
           ]
         },
@@ -266,7 +266,7 @@
           ],
           "notes": [
             "This was a small but clean single-node improvement that preserved quality.",
-            "Once this path existed, the case for broad 4-node default promotion became even weaker."
+            "Once this path existed, the broad-default case for 4-node execution weakened further."
           ]
         }
       ]
@@ -275,7 +275,7 @@
       "title": "Primary Direct Fixed-Task Comparison",
       "badge": "Primary evidence",
       "intro": "This is the empirical center of the work. The current clean direct frontier is taken from the homogeneous A30 rerun package, which displaced the older mixed closure endpoint.",
-      "how_to_read": "Read the accuracy chart as the clean direct comparison within the direct-estimation class, and read the runtime chart separately, because runtime and accuracy are different objectives.",
+      "how_to_read": "Read the accuracy chart as the clean direct comparison within the direct-estimation class, and read the runtime chart separately, because runtime and accuracy answer different questions.",
       "main_conclusion": "The direct clean winner is tuned Extra Trees, the robust direct representative is tuned k-nearest neighbors, and the best surviving neural direct row is materially behind both.",
       "charts": [
         {
@@ -303,7 +303,7 @@
         },
         {
           "title": "Representative runtime by direct family",
-          "subtitle": "Lower is better. Runtime is not a quality metric, so it should be read separately from MAE.",
+          "subtitle": "Lower is better. Runtime is a cost measure, so it should be read separately from MAE.",
           "type": "bar",
           "unit": "seconds",
           "lower_is_better": true,
@@ -329,8 +329,8 @@
     {
       "title": "Posterior-Oriented and Representation Follow-Up",
       "badge": "Boundary and extension",
-      "intro": "These studies broadened the state-of-the-art comparison through richer observations, stronger posterior families, and later aligned framework rows.",
-      "how_to_read": "The posterior chart is internal to the posterior-oriented family space. It should not be merged numerically with the direct clean frontier. The gain chart shows which interventions actually moved the posterior-oriented needle.",
+      "intro": "These studies broadened the executable comparison through richer observations, stronger posterior families, and later aligned framework rows.",
+      "how_to_read": "The posterior chart stays inside the posterior-oriented result space. The gain chart identifies which interventions materially improved that space.",
       "main_conclusion": "Observation enrichment improved SNPE materially, FMPE became the strongest clean posterior family in the checkpoint-2 block, and later BayesFlow decision rules improved MAE inside the aligned posterior branch without overturning the direct clean winner.",
       "charts": [
         {
@@ -379,12 +379,12 @@
           ],
           "notes": [
             "The richer observation space mattered before later family expansion.",
-            "The combined-corruption negative bar is a guardrail, because that branch damaged clean behavior too severely to promote."
+            "The combined-corruption negative bar is a guardrail, because that branch damaged clean behavior too severely for promotion."
           ]
         },
         {
           "title": "Posterior-oriented runtime by representative",
-          "subtitle": "Lower is better. This is performance, not quality.",
+          "subtitle": "Lower is better. This chart reports performance cost rather than predictive quality.",
           "type": "bar",
           "unit": "seconds",
           "lower_is_better": true,
@@ -467,7 +467,7 @@
       "title": "Later Executable Extensions",
       "badge": "Coverage expansion",
       "intro": "These studies reduced missed-family risk through aligned framework runs, posterior decision rules, active-sequential ladders, and hybrid initializer rows.",
-      "how_to_read": "These charts are internal to their own extension class. They broaden coverage, but they do not replace the direct fixed-task comparison.",
+      "how_to_read": "These charts stay inside their own extension class. They broaden coverage within the executable method space.",
       "main_conclusion": "The best active-sequential row remained a simple Wasserstein smoke heuristic, ASNPE-style extension improved its own lane at a large runtime cost, and hybrid-initializer rows broadened coverage without entering the direct clean leaderboard.",
       "charts": [
         {
@@ -523,9 +523,9 @@
     {
       "title": "Execution-Path Optimizations",
       "badge": "Engineering support",
-      "intro": "These studies optimized startup behavior inside the extracted-data HH execution path. They mattered operationally, but they did not change the scientific frontier.",
-      "how_to_read": "The cache charts show startup reduction inside the execution path, not a change in model ranking. The explanation card below states why this branch was not expanded into a larger scientific campaign, even though the later mmap-backed canaries were strong.",
-      "main_conclusion": "Feature-scale caching reduced preprocessing materially, the mmap-backed split-array cache removed almost all startup overhead in the successful canaries, and the branch was tested far enough to prove viability, but it was not expanded into a large matrix because the main run-policy question had already closed on grouped single-node throughput.",
+      "intro": "These studies optimized startup behavior inside the extracted-data Hodgkin-Huxley execution path. They mattered operationally, while the scientific frontier remained unchanged.",
+      "how_to_read": "The cache charts measure startup reduction inside the execution path. The explanation cards clarify why the branch stayed secondary, even though the later mmap-backed canaries were strong.",
+      "main_conclusion": "Feature-scale caching reduced preprocessing materially, the mmap-backed split-array cache removed almost all startup overhead in the successful canaries, and the branch was tested far enough to prove viability. A larger matrix was unnecessary, because the main run-policy question had already closed on grouped single-node throughput.",
       "charts": [
         {
           "title": "Feature-scale cache preprocessing reduction",
@@ -546,7 +546,7 @@
           ],
           "notes": [
             "This optimization attacked a measured startup bottleneck while preserving the eager hot loop.",
-            "That is why feature-scale cache became the extracted-data default before the split-array branch did."
+            "That is why feature-scale cache became the extracted-data default before split-array caching did."
           ]
         },
         {
@@ -568,18 +568,18 @@
           ],
           "notes": [
             "The first split-array canary failed badly, which is why the branch was initially kept experimental.",
-            "After the mmap-backed reload fix, the branch cleared both the dedicated launcher proof and a broader ordinary-launcher proof, so the question stopped being correctness and became one of marginal value."
+            "After the mmap-backed reload fix, the branch cleared both the dedicated launcher proof and a broader ordinary-launcher proof, so the remaining question became marginal value rather than correctness."
           ]
         }
       ],
       "cards": [
         {
           "title": "Why it was not tested as a full campaign",
-          "body": "The branch ultimately addressed startup overhead inside one extracted-data execution path. By the time the later proofs succeeded, the main systems question had already been answered by the throughput-first single-node policy, and the model-frontier question had already moved into family comparison, representation, and robustness work. So the split-array branch was tested enough to establish viability, while a full factorial expansion would have consumed effort without changing the main scientific claims."
+          "body": "The branch ultimately addressed startup overhead inside one extracted-data execution path. By the time the later proofs succeeded, the main systems question had already been answered by the throughput-first single-node policy, and the model-frontier question had already moved into family comparison, representation, and robustness work. The split-array branch was therefore tested enough to establish viability, while a full factorial expansion would have consumed effort without changing the main scientific claims."
         },
         {
           "title": "What was actually proved",
-          "body": "The later proof chain established that the split-array cache could be prewarmed, launched through its ordinary canary package, and then exercised through an older ordinary HH launcher once safe dataloader overrides were materialized automatically. That was enough for operational viability, even though it did not justify a new large experimental campaign."
+          "body": "The later proof chain established that the split-array cache could be prewarmed, launched through its ordinary canary package, and then exercised through an older ordinary HH launcher once safe dataloader overrides were materialized automatically. That result established operational viability, while a new large experimental campaign would not have changed the main conclusions."
         }
       ]
     }
