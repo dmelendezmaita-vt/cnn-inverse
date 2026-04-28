@@ -4,7 +4,7 @@ This repository is a public, reproducibility-focused staging tree prepared from 
 
 ## Start Here
 
-The primary human entrypoint is the numbered reproduction layer under `repro/`, because the canonical workflow is no longer the same as the older internal track chronology preserved in `data/important_notes/`.
+The primary human entrypoint is the numbered reproduction layer under `repro/`, because the canonical workflow is no longer the same as the older internal track chronology that the working repository used while the campaign was still evolving.
 
 ## Public Repository Scope
 
@@ -12,9 +12,9 @@ The primary human entrypoint is the numbered reproduction layer under `repro/`, 
 | --- | --- | --- |
 | `pytorch/`, `tensorflow/`, `utils/` | Yes | Core model code and baseline training and evaluation entry points |
 | `scripts/` | Yes | Experiment builders, launchers, analyzers, and reporting utilities used in the live workflow |
-| `third_party/dl-kit-main/` | Yes | Required sibling dependency for `dlkit.*` imports used by the PyTorch code |
+| `vendor/dlkit/` | Yes | Required vendored dependency for `dlkit.*` imports used by the PyTorch code |
 | `data/2020-12-09/` | Yes | Small FitzHugh-Nagumo baseline dataset, which fits within GitHub file-size limits |
-| `data/important_notes/` | Curated subset only | Text-first manifests, reports, notes, and tables that support the current canonical claims |
+| `evidence/canonical_chain/` | Yes | Canonical evidence chain, ordered for human reproduction rather than workspace chronology |
 | Runtime logs, live run directories, shared scratch mirrors, model checkpoints | No | Omitted to keep the public tree clean, portable, and within GitHub storage constraints |
 | Large Hodgkin-Huxley tar archives and local cluster scratch paths | No | These remain external data dependencies and are described in `data/README.md` |
 
@@ -23,7 +23,7 @@ The primary human entrypoint is the numbered reproduction layer under `repro/`, 
 The PyTorch workflow depends on the vendored `dlkit` package and on the project-specific requirements file.
 
 ```bash
-python -m pip install -e third_party/dl-kit-main
+python -m pip install -e vendor/dlkit
 python -m pip install -r pytorch/requirements.txt
 ```
 

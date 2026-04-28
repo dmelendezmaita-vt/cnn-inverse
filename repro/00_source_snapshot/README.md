@@ -38,5 +38,5 @@ bash repro/00_source_snapshot/extract_original_upstream_zip.sh \
 
 | Path | Role |
 | --- | --- |
-| `data/important_notes/first_track_paper_parity/fhn_dnn_original_unmodified_20260302_050951/` | extracted benchmark-era reference bundle used during the first-track parity work |
-| `data/important_notes/first_track_paper_parity/code_changes_vs_code_archives_zip_20260302.md` | explicit local provenance note for the untouched archive reference |
+| `evidence/canonical_chain/10_fhn_benchmark_reconstruction/first_track_paper_parity/fhn_dnn_original_unmodified_20260302_050951/` | extracted benchmark-era reference bundle used during the first-track parity work |
+| `evidence/canonical_chain/10_fhn_benchmark_reconstruction/first_track_paper_parity/code_changes_vs_code_archives_zip_20260302.md` | explicit local provenance note for the untouched archive reference |

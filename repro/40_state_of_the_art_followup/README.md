@@ -6,6 +6,7 @@ This step captures the later executable literature-aligned and assumption-condit
 
 | Artifact | Path |
 | --- | --- |
-| next-testing boundary | `data/important_notes/optimization_track_20260424_hh_track4_next_testing_plan/reports/hh_track4_next_testing_plan_20260424.md` |
-| aligned literature plan | `data/important_notes/optimization_track_20260425_hh_track4_aligned_literature_plan/` |
-| assumption-conditioned surrogate bundle | `data/important_notes/optimization_track_20260425_hh_track4_assumption_conditioned_surrogate_bundle/` |
+| compact-Hodgkin-Huxley fit search | `evidence/canonical_chain/40_state_of_the_art_followup/optimization_track_20260424_hh_track4_assumption_conditioned_compact_hh_fit_search/` |
+| next-testing boundary | `evidence/canonical_chain/40_state_of_the_art_followup/optimization_track_20260424_hh_track4_next_testing_plan/reports/hh_track4_next_testing_plan_20260424.md` |
+| aligned literature plan | `evidence/canonical_chain/40_state_of_the_art_followup/optimization_track_20260425_hh_track4_aligned_literature_plan/` |
+| assumption-conditioned surrogate bundle | `evidence/canonical_chain/40_state_of_the_art_followup/optimization_track_20260425_hh_track4_assumption_conditioned_surrogate_bundle/` |

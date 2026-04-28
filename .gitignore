@@ -193,3 +193,5 @@ data/important_notes/**/*.npy
 data/important_notes/**/*.npz
 data/important_notes/**/*.pt
 data/important_notes/**/*.pth
+evidence/canonical_chain/**/logs/
+evidence/canonical_chain/**/runs/

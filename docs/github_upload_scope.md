@@ -16,7 +16,7 @@ This document records the exact scope of the public GitHub staging tree.
 | Area | Included | Reason |
 | --- | --- | --- |
 | Core source directories | Yes | Required for executable reproduction of the baseline code paths |
-| `third_party/dl-kit-main/` | Yes | Required to satisfy the `dlkit` imports used by the PyTorch workflow |
+| `vendor/dlkit/` | Yes | Required to satisfy the `dlkit` imports used by the PyTorch workflow |
 | Baseline FHN sample data | Yes | Small enough for GitHub and needed for a real public run path |
 | Curated text-first evidence folders | Yes | Needed to preserve the canonical reporting chain without shipping runtime noise |
 | Prior upload bundle | No | The older allowlist-based packaging bundle is intentionally excluded so the current public tree stays aligned with the canonical reproduction chain |
@@ -27,7 +27,7 @@ This document records the exact scope of the public GitHub staging tree.
 | Excluded path class | Reason |
 | --- | --- |
 | `sbi-logs/`, live run directories, and scratch mirrors | Runtime outputs rather than source artifacts |
-| `data/important_notes/**/logs/` and queue `.out` / `.err` files | Operational noise, often large, with little reuse value in a public repo |
+| `evidence/canonical_chain/**/logs/` and queue `.out` / `.err` files | Operational noise, often large, with little reuse value in a public repo |
 | Binary intermediate arrays under note folders | GitHub size hygiene and reproducibility focus on manifests and reports |
 | Tool-local files such as `WARP.md`, local virtual environments, and `__pycache__` trees | Not part of the public scientific artifact |
 | Full paper-template vendoring under `docs/paper/acm_template/` | Third-party template bulk that does not advance reproducibility of the code |
