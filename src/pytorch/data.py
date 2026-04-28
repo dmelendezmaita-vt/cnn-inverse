@@ -2,7 +2,7 @@
 Handling of data.
 """
 
-import hashlib, inspect, io, json, logging, pathlib, os, shutil, sys, random, tarfile, time, warnings
+import hashlib, inspect, io, json, logging, pathlib, os, shutil, sys, random, tarfile, tempfile, time, warnings
 import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utils'))
@@ -11,6 +11,19 @@ from utils import Mode
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 ###############################################################################
+
+def _dir_populated(path: pathlib.Path) -> bool:
+    return path.is_dir() and any(path.iterdir())
+
+
+def _archive_root_name(data_path: pathlib.Path, data_prefix=None) -> str:
+    if data_prefix:
+        return str(data_prefix)
+    name = data_path.name
+    for suffix in (".tar.gz", ".tgz", ".tar.bz2", ".tar.xz", ".tar"):
+        if name.endswith(suffix):
+            return name[:-len(suffix)]
+    return data_path.stem
 
 def dictarray_empty():
     return {'train': None, 'validate': None, 'test': None}
@@ -329,6 +342,72 @@ def _resolve_data_source_path(data_dir_raw):
     return (REPO_ROOT / path).resolve()
 
 
+def _ensure_prepared_data_dir(
+    tar_path: pathlib.Path,
+    prepared_dir: pathlib.Path,
+    *,
+    wait_timeout_s: float = 1800.0,
+    poll_interval_s: float = 1.0,
+):
+    if _dir_populated(prepared_dir):
+        return "exists"
+
+    if not tar_path.is_file():
+        raise FileNotFoundError(f"Tar archive not found: {tar_path}")
+
+    if prepared_dir.exists() and not prepared_dir.is_dir():
+        raise ValueError(f"Prepared data target exists and is not a directory: {prepared_dir}")
+
+    prepared_dir.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = prepared_dir.parent / f".{prepared_dir.name}.extract.lock"
+    start = time.time()
+    lock_fd = None
+
+    while True:
+        if _dir_populated(prepared_dir):
+            return "exists"
+        try:
+            lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+            break
+        except FileExistsError:
+            if time.time() - start > wait_timeout_s:
+                raise TimeoutError(
+                    f"Timed out waiting for extracted-data lock {lock_path} while preparing {prepared_dir}"
+                )
+            time.sleep(poll_interval_s)
+
+    try:
+        if _dir_populated(prepared_dir):
+            return "exists"
+
+        with tempfile.TemporaryDirectory(prefix=f"{prepared_dir.name}_extract_", dir=str(prepared_dir.parent)) as tmp:
+            tmp_path = pathlib.Path(tmp)
+            with tarfile.open(tar_path, "r:*") as tf:
+                tf.extractall(tmp_path)
+
+            top_level = list(tmp_path.iterdir())
+            dirs = [p for p in top_level if p.is_dir()]
+
+            if prepared_dir.exists():
+                shutil.rmtree(prepared_dir)
+
+            if len(dirs) == 1 and len(top_level) == 1:
+                shutil.move(str(dirs[0]), str(prepared_dir))
+            else:
+                prepared_dir.mkdir(parents=True, exist_ok=True)
+                for item in top_level:
+                    shutil.move(str(item), str(prepared_dir / item.name))
+
+        return "prepared"
+    finally:
+        if lock_fd is not None:
+            os.close(lock_fd)
+            try:
+                os.unlink(lock_path)
+            except FileNotFoundError:
+                pass
+
+
 def _validate_cols_num(array, cols_num, context):
     """
     Validate that the final dimension matches the configured column count.
@@ -536,6 +615,20 @@ def _load_and_split_arrays(data_params, logger=None):
     if dataset_layout is None:
         dataset_layout = 'legacy_2020_hardcoded' if '2020' in data_dir.name else 'paired_train_test'
     dataset_layout = dataset_layout.casefold()
+
+    if tar_data_source and dataset_layout == 'tar_singlefile_split':
+        prepared_name = _archive_root_name(data_dir, data_params.get('data_prefix'))
+        prepared_dir = REPO_ROOT / '.prepared_data' / prepared_name
+        prepared_status = _ensure_prepared_data_dir(data_dir, prepared_dir)
+        logger.info(
+            "prepared tar dataset at %s (status=%s) from %s",
+            prepared_dir,
+            prepared_status,
+            data_dir,
+        )
+        data_dir = prepared_dir
+        data_dir_str = str(data_dir)
+        tar_data_source = False
 
     # file names (allow templates like {curr})
     file_names = data_params.get(

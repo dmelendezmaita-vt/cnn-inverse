@@ -44,7 +44,10 @@ To run the current Hodgkin-Huxley workflows from a fresh checkout:
 2. place that file in the repository root
 
 The public Hodgkin-Huxley configs and helpers are written so that this root-level
-tarball is the only required external data artifact.
+tarball is the only required external data artifact. On the first HH run, the
+repository prepares a reusable extracted working directory under
+`.prepared_data/concatenated_data/`, after which subsequent runs reuse that
+local copy automatically.
 
 Smoke example for the Hodgkin-Huxley DNN path:
 
