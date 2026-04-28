@@ -63,6 +63,11 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--data-dir", default=None)
     ap.add_argument("--data-prefix", default=None)
     ap.add_argument("--curr", default=None)
+    ap.add_argument("--features-additive-noise-std", type=float, default=None)
+    ap.add_argument("--features-multiplicative-noise-std", type=float, default=None)
+    ap.add_argument("--features-baseline-drift-std", type=float, default=None)
+    ap.add_argument("--features-mask-fraction", type=float, default=None)
+    ap.add_argument("--random-seed", type=int, default=None)
     return ap.parse_args()
 
 
@@ -319,6 +324,16 @@ def load_cached_splits(
         params["data"]["data_prefix"] = args.data_prefix
     if args.curr is not None:
         params["data"]["curr"] = args.curr
+    if args.features_additive_noise_std is not None:
+        params["data"]["features_additive_noise_std"] = float(args.features_additive_noise_std)
+    if args.features_multiplicative_noise_std is not None:
+        params["data"]["features_multiplicative_noise_std"] = float(args.features_multiplicative_noise_std)
+    if args.features_baseline_drift_std is not None:
+        params["data"]["features_baseline_drift_std"] = float(args.features_baseline_drift_std)
+    if args.features_mask_fraction is not None:
+        params["data"]["features_mask_fraction"] = float(args.features_mask_fraction)
+    if args.random_seed is not None:
+        params["data"]["random_seed"] = int(args.random_seed)
     params = resolve_local_data_dir(params, logger)
 
     params["data"]["split_array_cache_enabled"] = True

@@ -12,10 +12,27 @@ This repository ships the core source tree, a small FitzHugh-Nagumo starter data
 | `vendor/dlkit/` | vendored dependency used by the PyTorch code |
 | `data/2020-12-09/` | shipped baseline FitzHugh-Nagumo data |
 
+## Falcon Setup
+
+The public batch suites are designed to be launched from within the Falcon cluster, using the same A30 allocation contract as the repository's canonical reproduction path.
+
+Log into Falcon first:
+
+```bash
+ssh falcon
+```
+
+Create a clean repository-local environment, without `--system-site-packages`, then install the public PyTorch stack:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-public-pytorch.txt
+```
+
 ## Baseline Run
 
 ```bash
-python -m pip install -r requirements-public-pytorch.txt
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode train
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode eval
 ```
@@ -48,12 +65,53 @@ repository prepares a reusable extracted working directory under
 `.prepared_data/concatenated_data/`, after which subsequent runs reuse that
 local copy automatically.
 
+The batch runner also accepts an HH tarball from any location, so the canonical
+batch interface does not require a root-level copy when `--hh-tar-path` is
+provided explicitly.
+
 Smoke example for the Hodgkin-Huxley DNN path:
 
 ```bash
 python src/pytorch/run_dnn.py --params src/pytorch/configs/hh/params_dnn_tar_hh_smoke.yaml --mode train
 python src/pytorch/run_dnn.py --params src/pytorch/configs/hh/params_dnn_tar_hh_smoke.yaml --mode eval
 ```
+
+## Batch Runner
+
+The repository now includes a batch-aware dispatcher:
+
+```bash
+python scripts/run_batch.py --list
+```
+
+Three suites are declared:
+
+| Suite | Role |
+| --- | --- |
+| `falcon_a30_smoke` | smoke validation of the public FHN and HH workflows, designed to run inside the default Falcon A30 allocation |
+| `scientific_smoke` | reduced but claim-meaningful smoke batches for the public experiment threads |
+| `canonical_falcon` | Falcon-cluster batches for the current environment-anchored HH reproduction path |
+
+Examples:
+
+```bash
+python scripts/run_batch.py \
+  --suite falcon_a30_smoke \
+  --hh-tar-path /path/to/concatenated_data.tar.gz \
+  --allocation-job-id "$SLURM_JOB_ID"
+
+python scripts/run_batch.py \
+  --suite scientific_smoke \
+  --hh-tar-path /path/to/concatenated_data.tar.gz \
+  --allocation-job-id "$SLURM_JOB_ID"
+
+python scripts/run_batch.py \
+  --batch fal01_hh_4node_a30_dnn \
+  --hh-tar-path /path/to/concatenated_data.tar.gz \
+  --allocation-job-id "$SLURM_JOB_ID"
+```
+
+All three suites are designed for execution from within the documented Falcon Slurm allocation, using the same A30-oriented cluster contract and the same external HH tarball contract.
 
 ## Data Boundary
 

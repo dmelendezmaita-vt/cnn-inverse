@@ -2,5 +2,6 @@ pip>=24
 setuptools>=61
 wheel
 packaging>=24
+wcwidth
 -e vendor/dlkit
 -r src/tensorflow/requirements.txt
