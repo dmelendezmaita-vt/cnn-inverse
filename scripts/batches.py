@@ -326,6 +326,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 skip_inline_split_eval=True,
                 step_nnodes=1,
                 nproc_per_node=1,
+                env_overrides=(("DATA_ACCESS_MODE", "tar_in_place"),),
             ),
             BatchStep(
                 step_id="one_node_eval",
@@ -337,6 +338,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 load_from_step="one_node_train",
                 step_nnodes=1,
                 nproc_per_node=1,
+                env_overrides=(("DATA_ACCESS_MODE", "tar_in_place"),),
             ),
             BatchStep(
                 step_id="two_node_train",
@@ -349,6 +351,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 skip_inline_split_eval=True,
                 step_nnodes=2,
                 nproc_per_node=1,
+                env_overrides=(("DATA_ACCESS_MODE", "tar_in_place"),),
             ),
             BatchStep(
                 step_id="two_node_eval",
@@ -360,6 +363,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 load_from_step="two_node_train",
                 step_nnodes=2,
                 nproc_per_node=1,
+                env_overrides=(("DATA_ACCESS_MODE", "tar_in_place"),),
             ),
             BatchStep(
                 step_id="four_node_train",
@@ -372,6 +376,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 skip_inline_split_eval=True,
                 step_nnodes=4,
                 nproc_per_node=2,
+                env_overrides=(("DATA_ACCESS_MODE", "tar_in_place"),),
             ),
             BatchStep(
                 step_id="four_node_eval",
@@ -383,6 +388,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 load_from_step="four_node_train",
                 step_nnodes=4,
                 nproc_per_node=2,
+                env_overrides=(("DATA_ACCESS_MODE", "tar_in_place"),),
             ),
         ),
     ),
