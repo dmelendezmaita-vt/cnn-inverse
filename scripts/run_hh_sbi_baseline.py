@@ -49,8 +49,21 @@ def _ensure_tensorflow_io_stub() -> None:
 
 _ensure_tensorflow_io_stub()
 
-from sbi.inference import FMPE, NPSE, SNLE, SNPE, SNRE
-from sbi.neural_nets.factory import classifier_nn, likelihood_nn, posterior_flow_nn, posterior_nn, posterior_score_nn
+from sbi.inference import SNLE, SNPE, SNRE
+try:
+    from sbi.inference import FMPE
+except ImportError:  # pragma: no cover - version dependent
+    FMPE = None
+try:
+    from sbi.inference import NPSE
+except ImportError:  # pragma: no cover - version dependent
+    NPSE = None
+
+from sbi.neural_nets.factory import classifier_nn, likelihood_nn, posterior_nn, posterior_score_nn
+try:
+    from sbi.neural_nets.factory import posterior_flow_nn
+except ImportError:  # pragma: no cover - version dependent
+    posterior_flow_nn = posterior_nn
 from sbi.utils import BoxUniform
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
@@ -541,6 +554,8 @@ def build_sbi_components(args: argparse.Namespace, feature_dim: int, theta_dim: 
         return inference, sample_with
 
     if args.method == "fmpe":
+        if FMPE is None:
+            raise RuntimeError("FMPE is unavailable in the installed sbi version.")
         builder = posterior_flow_nn(
             model=model_kind,
             z_score_theta="none",
@@ -560,6 +575,8 @@ def build_sbi_components(args: argparse.Namespace, feature_dim: int, theta_dim: 
         return inference, sample_with
 
     if args.method == "npse":
+        if NPSE is None:
+            raise RuntimeError("NPSE is unavailable in the installed sbi version.")
         builder = posterior_score_nn(
             model=model_kind,
             sde_type="ve",
