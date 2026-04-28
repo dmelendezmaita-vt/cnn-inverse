@@ -714,7 +714,7 @@ def run(args, params):
         resume_ckpt_path = None
         start_epoch = 0
         if params['runconfig']['load_dir']:
-            resume_ckpt_path = os.path.join(self_dir, params['runconfig']['load_dir'])
+            resume_ckpt_path = _resolve_repo_relative_path(params['runconfig']['load_dir'])
 
 
         net = create_network(params, logging_get_logger('create_network'))
