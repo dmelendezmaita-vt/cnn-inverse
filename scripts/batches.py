@@ -544,6 +544,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 kind="script",
                 description="ASNPE surrogate smoke",
                 script_path="scripts/run_hh_track4_assumption_conditioned_asnpe_20260426.py",
+                python_bin_override=".venv-bayesflow/bin/python",
                 extra_args=(
                     "--ensemble-size", "1",
                     "--n-rounds", "2",
@@ -1351,6 +1352,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 kind="script",
                 description="ASNPE-style surrogate branch",
                 script_path="scripts/run_hh_track4_assumption_conditioned_asnpe_20260426.py",
+                python_bin_override=".venv-bayesflow/bin/python",
             ),
         ),
     ),
