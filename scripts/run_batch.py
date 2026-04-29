@@ -212,10 +212,13 @@ def source_step_root(run_root: Path, batch: BatchDefinition, step_id: str) -> Pa
 def latest_checkpoint_under(path: Path) -> Optional[Path]:
     if not path.exists():
         return None
-    candidates = sorted(path.rglob("net_e*.pt"))
+    patterns = ("net_e*.pt", "*.ckpt", "model.keras")
+    candidates: List[Path] = []
+    for pattern in patterns:
+        candidates.extend(path.rglob(pattern))
     if not candidates:
         return None
-    return candidates[-1]
+    return max(candidates, key=lambda item: item.stat().st_mtime)
 
 
 def wrap_single_node_srun(args: argparse.Namespace, allocation_job_id: str, command: Sequence[str]) -> List[str]:
