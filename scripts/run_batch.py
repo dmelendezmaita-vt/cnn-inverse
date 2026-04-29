@@ -242,7 +242,7 @@ def resolve_python_bin(args: argparse.Namespace, step: BatchStep) -> str:
     if step.python_bin_override:
         path = Path(step.python_bin_override)
         if not path.is_absolute():
-            path = (REPO_ROOT / path).resolve()
+            path = REPO_ROOT / path
         return str(path)
     return args.python_bin
 
