@@ -33,6 +33,8 @@ class BatchStep:
     step_nnodes: Optional[int] = None
     extra_args: Tuple[str, ...] = ()
     env_overrides: Tuple[Tuple[str, str], ...] = ()
+    required_globs: Tuple[str, ...] = ()
+    wrap_srun: bool = True
 
 
 @dataclass(frozen=True)
@@ -54,6 +56,30 @@ class BatchDefinition:
 
 
 BATCHES: Tuple[BatchDefinition, ...] = (
+    BatchDefinition(
+        batch_id="smk00_falcon_preflight",
+        sequence=5,
+        title="Falcon allocation preflight",
+        suite="canonical_complete_smoke",
+        scientific_role="engineering_support",
+        summary="Verifies the documented Falcon contract, both Python environments, the HH tarball, and lightweight 1-node, 2-node, and 4-node Slurm step launches before the heavier smoke batches begin.",
+        requires_hh_tar=True,
+        requires_slurm=True,
+        cluster_label="Falcon",
+        min_nodes=4,
+        preferred_gpu="A30",
+        steps=(
+            BatchStep(
+                step_id="preflight",
+                kind="script",
+                description="Falcon preflight checks for the complete smoke suite",
+                script_path="scripts/preflight_falcon_repro.py",
+                pass_data_dir=True,
+                required_globs=("preflight_summary.json",),
+                wrap_srun=False,
+            ),
+        ),
+    ),
     BatchDefinition(
         batch_id="smk01_fhn_baseline",
         sequence=10,
@@ -446,6 +472,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 script_path="scripts/analyze_hh_track4_posterior_decision_rules_20260425.py",
                 params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
                 pass_data_dir=True,
+                required_globs=("*.csv",),
                 extra_args=(
                     "--run-roots",
                     "{RUN_ROOT}/smk04_hh_sbi,{RUN_ROOT}/smk05_bayesflow_frameworks,{RUN_ROOT}/smk06_swyft_frameworks",
@@ -1524,6 +1551,7 @@ SUITES: Dict[str, Tuple[str, ...]] = {
         "smk04_hh_sbi",
     ),
     "canonical_complete_smoke": (
+        "smk00_falcon_preflight",
         "smk01_fhn_baseline",
         "smk02_hh_dnn",
         "smk03_hh_classical",

@@ -388,7 +388,7 @@ def build_step_command(
                 str(resolve_load_checkpoint(run_root, batch, step, step_records, placeholder_ok=placeholder_ok)),
             ]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
+        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
         return command, env
 
     if step.kind == "classical":
@@ -410,7 +410,7 @@ def build_step_command(
         if step.pass_curr:
             base_command += ["--curr", str(args.curr)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
+        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
         return command, env
 
     if step.kind == "sbi":
@@ -446,7 +446,7 @@ def build_step_command(
         if step.seed is not None:
             base_command += ["--seed", str(step.seed)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
+        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
         return command, env
 
     if step.kind == "script":
@@ -470,7 +470,7 @@ def build_step_command(
         if step.seed is not None:
             base_command += ["--seed", str(step.seed)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
+        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
         return command, env
 
     if step.kind == "interactive_dnn":
@@ -507,6 +507,42 @@ def summarize_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSt
     if metric_files:
         outputs["metrics_summary_files"] = [str(path) for path in metric_files]
     return outputs
+
+
+def validate_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchStep, outputs: Dict[str, object]) -> None:
+    root = step_output_root(run_root, batch, step)
+    errors: List[str] = []
+
+    if not root.exists():
+        errors.append(f"output root does not exist: {root}")
+
+    if step.kind in {"dnn", "interactive_dnn"} and not step.load_from_step:
+        if "latest_checkpoint" not in outputs:
+            errors.append("expected a checkpoint artifact, but no checkpoint was found")
+
+    expects_metrics = False
+    if step.kind in {"classical", "sbi"}:
+        expects_metrics = True
+    elif step.kind == "dnn" and str(step.mode).lower() == "eval":
+        expects_metrics = True
+    elif step.kind == "interactive_dnn" and step.load_from_step:
+        expects_metrics = True
+    if expects_metrics and "metrics_summary_files" not in outputs:
+        errors.append("expected at least one metrics_summary.json artifact, but none was found")
+
+    if step.required_globs:
+        for pattern in step.required_globs:
+            matches = list(root.rglob(pattern))
+            if not matches:
+                errors.append(f"expected at least one artifact matching {pattern!r}, but none was found")
+
+    if step.kind == "script" and not step.required_globs:
+        if not any(path.is_file() for path in root.rglob("*")):
+            errors.append("script step produced no files under its output root")
+
+    if errors:
+        joined = "; ".join(errors)
+        raise RuntimeError(f"Output validation failed for {batch.batch_id}:{step.step_id}: {joined}")
 
 
 def print_batch_listing() -> None:
@@ -709,6 +745,8 @@ def execute_batches(args: argparse.Namespace, batches: Sequence[BatchDefinition]
                     subprocess.run(command, cwd=str(REPO_ROOT), env=env, check=True)
 
                 outputs = summarize_step_outputs(run_root, batch, step)
+                if not args.dry_run:
+                    validate_step_outputs(run_root, batch, step, outputs)
                 step_record["outputs"] = outputs
                 step_record["completed_at"] = utc_now_iso()
                 step_record["status"] = "completed"
@@ -727,6 +765,15 @@ def execute_batches(args: argparse.Namespace, batches: Sequence[BatchDefinition]
             }
             write_json(status_path, batch_status)
             raise SystemExit(exc.returncode) from exc
+        except Exception as exc:
+            batch_status["status"] = "failed"
+            batch_status["completed_at"] = utc_now_iso()
+            batch_status["failure"] = {
+                "type": type(exc).__name__,
+                "message": str(exc),
+            }
+            write_json(status_path, batch_status)
+            raise
 
 
 def main() -> None:
