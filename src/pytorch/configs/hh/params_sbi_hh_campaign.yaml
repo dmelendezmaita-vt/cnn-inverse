@@ -1,0 +1,60 @@
+description: "Hodgkin-Huxley SBI campaign options for public Falcon reproduction"
+
+data:
+    data_dir: 'concatenated_data.tar.gz'
+    data_prefix: "concatenated_data"
+    curr: "0.1"
+    dataset_layout: tar_singlefile_split
+    use_mmap: true
+
+    features_cols_num: 400000
+    targets_cols_num: 6
+    file_names:
+      features: "y/{data_prefix}_{curr}_curr.npy"
+      features_stats: "support_stats/{data_prefix}_{curr}_curr.npy"
+      targets: "generated_params/{data_prefix}_{curr}_curr.npy"
+
+    target_names:
+      - hh_param_1
+      - hh_param_2
+      - hh_param_3
+      - hh_param_4
+      - hh_param_5
+      - hh_param_6
+    targets_transform:
+      - log10
+      - log10
+      - log10
+      - log10
+      - log10
+      - log10
+    targets_transform_eps: 1.0e-12
+
+    features_type: 'TIME'
+    features_use_channels_range:
+        - 0
+        - 1
+    features_normalize: False
+    features_sub_length: 2000
+    features_sub_begin_random: False
+    features_sub_begin_random_eval: False
+    features_additive_noise_std: 0.0
+    features_multiplicative_noise_std: 0.0
+    features_baseline_drift_std: 0.0
+    features_mask_fraction: 0.0
+    targets_type: 'ODE'
+    targets_normalize: True
+    target_loss_weight_mode: inverse_std
+    target_loss_weights_normalize: True
+
+    Ntrain: 12288
+    Nvalidate: 1024
+    Ntest: 1024
+    train_shuffle_buffer_size: 20000
+    train_batch_size: 64
+    global_train_batch_size: 64
+    eval_batch_size: 128
+    random_seed: 1201
+
+runconfig:
+    debug: true

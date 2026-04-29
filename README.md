@@ -89,7 +89,7 @@ Three suites are declared:
 | Suite | Role |
 | --- | --- |
 | `falcon_a30_smoke` | smoke validation of the public FHN and HH workflows, designed to run inside the default Falcon A30 allocation |
-| `scientific_smoke` | reduced but claim-meaningful smoke batches for the public experiment threads |
+| `scientific_smoke` | Falcon-sized branch reproductions for the public experiment threads |
 | `canonical_falcon` | Falcon-cluster batches for the current environment-anchored HH reproduction path |
 
 Examples:
