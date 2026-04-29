@@ -477,6 +477,7 @@ def build_step_command(
         nnodes = int(step.step_nnodes or args.step_nnodes)
         command = [
             args.srun_bin,
+            "--overlap",
             "--jobid",
             str(allocation_job_id),
             "--nodes",
