@@ -48,6 +48,36 @@ export TMP="${TMPDIR}"
 export TEMP="${TMPDIR}"
 mkdir -p "${WORK_ROOT}" "${WORK}" "${TMPDIR}"
 
+resolve_step_master_addr() {
+  local nodelist=""
+  for candidate in "${SLURM_STEP_NODELIST:-}" "${SLURM_NODELIST:-}" "${SLURM_JOB_NODELIST:-}"; do
+    if [[ -n "${candidate}" ]]; then
+      nodelist="${candidate}"
+      break
+    fi
+  done
+  if [[ -n "${nodelist}" ]] && command -v scontrol >/dev/null 2>&1; then
+    local first_host
+    first_host="$(scontrol show hostnames "${nodelist}" 2>/dev/null | head -n 1 || true)"
+    if [[ -n "${first_host}" ]]; then
+      printf '%s\n' "${first_host}"
+      return 0
+    fi
+  fi
+  if [[ -n "${SLURMD_NODENAME:-}" ]]; then
+    printf '%s\n' "${SLURMD_NODENAME}"
+    return 0
+  fi
+  if [[ -n "${HOSTNAME:-}" ]]; then
+    printf '%s\n' "${HOSTNAME}"
+    return 0
+  fi
+  printf '%s\n' "${MASTER_ADDR}"
+}
+
+STEP_MASTER_ADDR="$(resolve_step_master_addr)"
+export MASTER_ADDR="${STEP_MASTER_ADDR}"
+
 if [[ -n "${SHARED_DATA_DIR}" ]]; then
   if [[ ! -d "${SHARED_DATA_DIR}" ]] || ! find "${SHARED_DATA_DIR}" -mindepth 1 -maxdepth 1 | grep -q .; then
     "${PYTHON_BIN}" "${REPO_ROOT}/scripts/shared_data_utils.py" \
