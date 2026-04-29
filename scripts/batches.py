@@ -385,6 +385,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 load_from_step="swyft_meanstd",
                 extra_args=(
                     "--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}",
+                    "--aggregation", "meanstd",
                     "--n-train", "128",
                     "--n-validate", "64",
                     "--n-test", "32",
@@ -408,6 +409,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 load_from_step="swyft_meanstd",
                 extra_args=(
                     "--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}",
+                    "--aggregation", "meanstd",
                     "--n-train", "128",
                     "--n-validate", "64",
                     "--n-test", "32",
@@ -1263,7 +1265,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
                 pass_data_dir=True,
                 load_from_step="swyft_meanstd",
-                extra_args=("--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}"),
+                extra_args=("--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}", "--aggregation", "meanstd"),
             ),
         ),
     ),
