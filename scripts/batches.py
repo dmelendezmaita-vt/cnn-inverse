@@ -9,13 +9,15 @@ class BatchStep:
     step_id: str
     kind: str
     description: str
-    params_file: str
+    params_file: str = ""
+    script_path: Optional[str] = None
     mode: Optional[str] = None
     baseline_name: Optional[str] = None
     feature_mode: Optional[str] = None
     sbi_method: Optional[str] = None
     density_estimator: Optional[str] = None
     pass_curr: bool = False
+    pass_data_dir: bool = False
     save_predictions: Optional[str] = None
     load_from_step: Optional[str] = None
     split_eval_after_train: bool = False
@@ -633,7 +635,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
         title="Scientific smoke: public extension coverage",
         suite="scientific_smoke",
         scientific_role="coverage_expansion",
-        summary="Falcon-sized public extension reproduction that exercises the later method and decision-rule surface shipped in the public repo, which serves as the repository-side proxy for the broader extension thread.",
+        summary="Falcon-sized public extension reproduction that exercises the lighter posterior and decision-rule surface, while leaving the heavier native-framework and surrogate branches to the complete canonical suite.",
         requires_hh_tar=True,
         requires_slurm=True,
         cluster_label="Falcon",
@@ -641,7 +643,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
         preferred_gpu="A30",
         depends_on=("sci05_robustness",),
         notes=(
-            "The public repository does not ship the private later-framework code paths such as BayesFlow, Swyft, or active-sequential design. This batch therefore covers the later public posterior-family and decision-rule surface that is actually shipped.",
+            "This batch keeps the lighter extension surface in the scientific suite. The complete canonical suite adds the heavier BayesFlow, Swyft, and assumption-conditioned surrogate branches.",
         ),
         steps=(
             BatchStep(
@@ -770,6 +772,199 @@ BATCHES: Tuple[BatchDefinition, ...] = (
             ),
         ),
     ),
+    BatchDefinition(
+        batch_id="can08_aligned_frameworks",
+        sequence=180,
+        title="Canonical complete: aligned framework branches",
+        suite="canonical_complete",
+        scientific_role="coverage_expansion",
+        summary="Runs the previously missing BayesFlow and Swyft aligned-framework branches against the public HH contract, so the native framework comparison surface is part of the repository rather than remaining private workspace state.",
+        requires_hh_tar=True,
+        requires_slurm=True,
+        cluster_label="Falcon",
+        min_nodes=4,
+        preferred_gpu="A30",
+        depends_on=("sci04_posterior_followup",),
+        steps=(
+            BatchStep(
+                step_id="bayesflow_concat",
+                kind="script",
+                description="BayesFlow aligned concat baseline",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_bayesflow_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--aggregation", "concat", "--feature-mode", "raw_plus_fft256_summary12"),
+            ),
+            BatchStep(
+                step_id="bayesflow_meanstd",
+                kind="script",
+                description="BayesFlow aligned meanstd baseline",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_bayesflow_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--aggregation", "meanstd", "--feature-mode", "raw_plus_fft256_summary12"),
+            ),
+            BatchStep(
+                step_id="bayesflow_structured",
+                kind="script",
+                description="BayesFlow structured aligned baseline",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_bayesflow_structured_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--feature-mode", "raw_plus_fft256_summary12"),
+            ),
+            BatchStep(
+                step_id="bayesflow_set",
+                kind="script",
+                description="BayesFlow set-transformer posterior branch",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_bayesflow_set_20260426.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--feature-mode", "raw_plus_fft256_summary12", "--summary-network", "set_transformer"),
+            ),
+            BatchStep(
+                step_id="bayesflow_temporal",
+                kind="script",
+                description="BayesFlow temporal posterior branch",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_bayesflow_temporal_20260426.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--summary-network", "time_series_transformer"),
+            ),
+            BatchStep(
+                step_id="swyft_concat",
+                kind="script",
+                description="Swyft concat aligned baseline",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_swyft_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--aggregation", "concat"),
+            ),
+            BatchStep(
+                step_id="swyft_meanstd",
+                kind="script",
+                description="Swyft meanstd aligned baseline",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_swyft_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--aggregation", "meanstd"),
+            ),
+            BatchStep(
+                step_id="swyft_structured",
+                kind="script",
+                description="Swyft structured aligned baseline",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_swyft_structured_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                extra_args=("--aggregation", "meanstd"),
+            ),
+            BatchStep(
+                step_id="swyft_tmnre",
+                kind="script",
+                description="Swyft TMNRE follow-up branch",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_swyft_tmnre_20260425.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                load_from_step="swyft_meanstd",
+                extra_args=("--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}"),
+            ),
+            BatchStep(
+                step_id="swyft_tmnre_score_prune",
+                kind="script",
+                description="Swyft TMNRE score-prune follow-up branch",
+                script_path="scripts/run_hh_track4_aligned_multicurrent_swyft_tmnre_score_prune_20260426.py",
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                pass_data_dir=True,
+                load_from_step="swyft_meanstd",
+                extra_args=("--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}"),
+            ),
+        ),
+    ),
+    BatchDefinition(
+        batch_id="can09_posterior_decision_rules",
+        sequence=190,
+        title="Canonical complete: posterior decision-rule analysis",
+        suite="canonical_complete",
+        scientific_role="coverage_expansion",
+        summary="Analyzes the BayesFlow, Swyft, and public SBI posterior outputs into explicit decision-rule rows, so the posterior rule surface is regenerated from the repository outputs.",
+        requires_hh_tar=True,
+        requires_slurm=True,
+        cluster_label="Falcon",
+        min_nodes=4,
+        preferred_gpu="A30",
+        depends_on=("can08_aligned_frameworks", "sci06_public_extensions"),
+        steps=(
+            BatchStep(
+                step_id="decision_rule_analysis",
+                kind="script",
+                description="Posterior decision-rule analysis across framework and SBI outputs",
+                script_path="scripts/analyze_hh_track4_posterior_decision_rules_20260425.py",
+                pass_data_dir=True,
+                params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
+                extra_args=(
+                    "--run-roots",
+                    "{BATCH_ROOT}/../can08_aligned_frameworks,{RUN_ROOT}/sci04_posterior_followup,{RUN_ROOT}/sci06_public_extensions",
+                ),
+            ),
+        ),
+    ),
+    BatchDefinition(
+        batch_id="can10_assumption_conditioned_surrogates",
+        sequence=200,
+        title="Canonical complete: assumption-conditioned surrogate branches",
+        suite="canonical_complete",
+        scientific_role="coverage_expansion",
+        summary="Runs the previously missing compact-HH surrogate branches, namely sandbox, fit search, hybrid refinement, Wasserstein ABC, active-sequential design, and ASNPE-style follow-up.",
+        requires_hh_tar=True,
+        requires_slurm=True,
+        cluster_label="Falcon",
+        min_nodes=4,
+        preferred_gpu="A30",
+        depends_on=("sci06_public_extensions",),
+        steps=(
+            BatchStep(
+                step_id="compact_hh_sandbox",
+                kind="script",
+                description="Compact-HH sandbox against observed HH traces",
+                script_path="scripts/run_hh_track4_assumption_conditioned_compact_hh_sandbox_20260424.py",
+                pass_data_dir=True,
+            ),
+            BatchStep(
+                step_id="compact_hh_fit_search",
+                kind="script",
+                description="Compact-HH direct-fitting search branch",
+                script_path="scripts/run_hh_track4_assumption_conditioned_compact_hh_fit_search_20260424.py",
+                pass_data_dir=True,
+            ),
+            BatchStep(
+                step_id="hybrid_refinement_midpoint",
+                kind="script",
+                description="Hybrid local refinement branch seeded from the prior midpoint",
+                script_path="scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_20260425.py",
+                pass_data_dir=True,
+                extra_args=("--init-mode", "midpoint"),
+            ),
+            BatchStep(
+                step_id="wasserstein_abc",
+                kind="script",
+                description="Sliced-Wasserstein ABC surrogate branch",
+                script_path="scripts/run_hh_track4_assumption_conditioned_wasserstein_abc_20260425.py",
+                pass_data_dir=True,
+            ),
+            BatchStep(
+                step_id="active_sequential_policy_suite",
+                kind="script",
+                description="Active-sequential policy comparison branch",
+                script_path="scripts/run_hh_track4_assumption_conditioned_active_sequential_policy_suite_20260425.py",
+            ),
+            BatchStep(
+                step_id="asnpe_surrogate",
+                kind="script",
+                description="ASNPE-style surrogate branch",
+                script_path="scripts/run_hh_track4_assumption_conditioned_asnpe_20260426.py",
+            ),
+        ),
+    ),
 )
 
 
@@ -792,6 +987,18 @@ SUITES: Dict[str, Tuple[str, ...]] = {
         "sci04_posterior_followup",
         "sci05_robustness",
         "sci06_public_extensions",
+        "sci07_execution_path",
+    ),
+    "canonical_complete": (
+        "sci01_benchmark_parity",
+        "sci02_execution_policy",
+        "sci03_direct_frontier",
+        "sci04_posterior_followup",
+        "sci05_robustness",
+        "sci06_public_extensions",
+        "can08_aligned_frameworks",
+        "can09_posterior_decision_rules",
+        "can10_assumption_conditioned_surrogates",
         "sci07_execution_path",
     ),
 }

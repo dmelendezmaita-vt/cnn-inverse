@@ -204,6 +204,11 @@ def step_output_root(run_root: Path, batch: BatchDefinition, step: BatchStep) ->
     return batch_root(run_root, batch) / step.step_id
 
 
+def source_step_root(run_root: Path, batch: BatchDefinition, step_id: str) -> Path:
+    source_step = next(item for item in batch.steps if item.step_id == step_id)
+    return step_output_root(run_root, batch, source_step)
+
+
 def latest_checkpoint_under(path: Path) -> Optional[Path]:
     if not path.exists():
         return None
@@ -231,6 +236,26 @@ def wrap_single_node_srun(args: argparse.Namespace, allocation_job_id: str, comm
         wrapped += ["--cpus-per-task", str(cpus_per_task)]
     wrapped += list(command)
     return wrapped
+
+
+def render_extra_args(
+    extra_args: Sequence[str],
+    *,
+    run_root: Path,
+    batch: BatchDefinition,
+    step: BatchStep,
+) -> List[str]:
+    rendered: List[str] = []
+    for token in extra_args:
+        value = str(token)
+        value = value.replace("{REPO_ROOT}", str(REPO_ROOT))
+        value = value.replace("{RUN_ROOT}", str(run_root))
+        value = value.replace("{BATCH_ROOT}", str(batch_root(run_root, batch)))
+        value = value.replace("{STEP_ROOT}", str(step_output_root(run_root, batch, step)))
+        if step.load_from_step:
+            value = value.replace("{LOAD_FROM_STEP_ROOT}", str(source_step_root(run_root, batch, step.load_from_step)))
+        rendered.append(value)
+    return rendered
 
 
 def resolve_load_checkpoint(
@@ -349,7 +374,7 @@ def build_step_command(
                 "--load_dir",
                 str(resolve_load_checkpoint(run_root, batch, step, step_records, placeholder_ok=placeholder_ok)),
             ]
-        base_command += list(step.extra_args)
+        base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
         return command, env
 
@@ -370,7 +395,7 @@ def build_step_command(
             base_command += ["--data-dir", str(hh_tar_path)]
         if step.pass_curr:
             base_command += ["--curr", str(args.curr)]
-        base_command += list(step.extra_args)
+        base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
         return command, env
 
@@ -405,7 +430,30 @@ def build_step_command(
             base_command += ["--max-num-epochs", str(step.max_num_epochs)]
         if step.seed is not None:
             base_command += ["--seed", str(step.seed)]
-        base_command += list(step.extra_args)
+        base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
+        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
+        return command, env
+
+    if step.kind == "script":
+        if not step.script_path:
+            raise SystemExit(f"Batch step {batch.batch_id}:{step.step_id} is missing script_path.")
+        base_command = [
+            args.python_bin,
+            step.script_path,
+            "--save-dir",
+            str(step_root),
+        ]
+        if step.params_file:
+            base_command += ["--params", step.params_file]
+        if hh_tar_path is not None and step.pass_data_dir:
+            base_command += ["--data-dir", str(hh_tar_path), "--data-prefix", derive_data_prefix(hh_tar_path)]
+        if step.pass_curr:
+            base_command += ["--curr", str(args.curr)]
+        if step.feature_mode:
+            base_command += ["--feature-mode", str(step.feature_mode)]
+        if step.seed is not None:
+            base_command += ["--seed", str(step.seed)]
+        base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm else list(base_command)
         return command, env
 

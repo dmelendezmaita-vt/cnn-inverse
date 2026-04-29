@@ -30,6 +30,12 @@ source .venv/bin/activate
 python -m pip install -r requirements-public-pytorch.txt
 ```
 
+If you intend to run the complete canonical branch surface, which now includes the BayesFlow, Swyft, and assumption-conditioned surrogate families, install the extended stack instead:
+
+```bash
+python -m pip install -r requirements-public-canonical.txt
+```
+
 ## Baseline Run
 
 ```bash
@@ -47,6 +53,9 @@ python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mod
 | `scripts/run_sbi_baseline_step.sh` | SBI execution step |
 | `scripts/run_hh_classical_baseline.py` | classical HH baseline driver |
 | `scripts/run_hh_sbi_baseline.py` | SBI HH baseline driver |
+| `scripts/run_hh_track4_aligned_multicurrent_bayesflow_20260425.py` and related BayesFlow variants | aligned native BayesFlow framework branches |
+| `scripts/run_hh_track4_aligned_multicurrent_swyft_20260425.py` and related Swyft variants | aligned native Swyft framework branches |
+| `scripts/run_hh_track4_assumption_conditioned_*` | compact-HH surrogate branches, including active design, Wasserstein ABC, hybrid refinement, and ASNPE |
 | `scripts/slurm_smoke_test.sbatch` | smoke job template |
 | `scripts/slurm_train.sbatch` | train job template |
 
@@ -90,6 +99,7 @@ Three suites are declared:
 | --- | --- |
 | `falcon_a30_smoke` | smoke validation of the public FHN and HH workflows, designed to run inside the default Falcon A30 allocation |
 | `scientific_smoke` | Falcon-sized branch reproductions for the public experiment threads |
+| `canonical_complete` | the full public canonical branch set, including the native BayesFlow, native Swyft, and assumption-conditioned surrogate families |
 | `canonical_falcon` | Falcon-cluster batches for the current environment-anchored HH reproduction path |
 
 Examples:
@@ -106,12 +116,17 @@ python scripts/run_batch.py \
   --allocation-job-id "$SLURM_JOB_ID"
 
 python scripts/run_batch.py \
+  --suite canonical_complete \
+  --hh-tar-path /path/to/concatenated_data.tar.gz \
+  --allocation-job-id "$SLURM_JOB_ID"
+
+python scripts/run_batch.py \
   --batch fal01_hh_4node_a30_dnn \
   --hh-tar-path /path/to/concatenated_data.tar.gz \
   --allocation-job-id "$SLURM_JOB_ID"
 ```
 
-All three suites are designed for execution from within the documented Falcon Slurm allocation, using the same A30-oriented cluster contract and the same external HH tarball contract.
+All four suites are designed for execution from within the documented Falcon Slurm allocation, using the same A30-oriented cluster contract and the same external HH tarball contract.
 
 ## Data Boundary
 
