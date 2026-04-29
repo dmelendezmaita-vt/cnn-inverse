@@ -577,8 +577,9 @@ def build_sbi_components(args: argparse.Namespace, feature_dim: int, theta_dim: 
     if args.method == "npse":
         if NPSE is None:
             raise RuntimeError("NPSE is unavailable in the installed sbi version.")
+        score_net_type = model_kind if model_kind in {"mlp"} else "mlp"
         builder = posterior_score_nn(
-            score_net_type=model_kind,
+            score_net_type=score_net_type,
             sde_type="ve",
             z_score_theta="none",
             z_score_x="none",
