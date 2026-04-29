@@ -98,6 +98,7 @@ Three suites are declared:
 | Suite | Role |
 | --- | --- |
 | `falcon_a30_smoke` | smoke validation of the public FHN and HH workflows, designed to run inside the default Falcon A30 allocation |
+| `canonical_complete_smoke` | reduced smoke validation for the full canonical branch set, including BayesFlow, Swyft, posterior decision-rule analysis, and the assumption-conditioned surrogate families |
 | `scientific_smoke` | Falcon-sized branch reproductions for the public experiment threads |
 | `canonical_complete` | the full public canonical branch set, including the native BayesFlow, native Swyft, and assumption-conditioned surrogate families |
 | `canonical_falcon` | Falcon-cluster batches for the current environment-anchored HH reproduction path |
@@ -116,6 +117,11 @@ python scripts/run_batch.py \
   --allocation-job-id "$SLURM_JOB_ID"
 
 python scripts/run_batch.py \
+  --suite canonical_complete_smoke \
+  --hh-tar-path /path/to/concatenated_data.tar.gz \
+  --allocation-job-id "$SLURM_JOB_ID"
+
+python scripts/run_batch.py \
   --suite canonical_complete \
   --hh-tar-path /path/to/concatenated_data.tar.gz \
   --allocation-job-id "$SLURM_JOB_ID"
@@ -126,7 +132,7 @@ python scripts/run_batch.py \
   --allocation-job-id "$SLURM_JOB_ID"
 ```
 
-All four suites are designed for execution from within the documented Falcon Slurm allocation, using the same A30-oriented cluster contract and the same external HH tarball contract.
+All five suites are designed for execution from within the documented Falcon Slurm allocation, using the same A30-oriented cluster contract and the same external HH tarball contract.
 
 ## Data Boundary
 
