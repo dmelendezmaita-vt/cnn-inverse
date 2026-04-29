@@ -39,8 +39,9 @@ fi
 
 TMP_BASE="${FOLLOWUP_TMP_BASE:-${SLURM_TMPDIR:-${TMPDIR:-/tmp}}}"
 NODE_TAG="${SLURMD_NODENAME:-${HOSTNAME:-node}}"
-WORK_ROOT="${TMP_BASE}/${ALLOC_JOB_ID}_${RUN_ID}"
-WORK="${WORK_ROOT}/${NODE_TAG}_proc${SLURM_PROCID:-0}"
+RUN_KEY="$(printf '%s' "${RUN_ID}" | sha1sum | awk '{print substr($1,1,10)}')"
+WORK_ROOT="${TMP_BASE}/nc_${ALLOC_JOB_ID}_${RUN_KEY}"
+WORK="${WORK_ROOT}/n${SLURM_NODEID:-0}_p${SLURM_PROCID:-0}"
 TMPDIR="${WORK}/tmp"
 export TMPDIR
 export TMP="${TMPDIR}"
