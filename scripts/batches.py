@@ -664,6 +664,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 stop_after_epochs=1,
                 max_num_epochs=1,
                 seed=123,
+                extra_args=("--device", "cpu"),
             ),
             BatchStep(
                 step_id="snpe_validate_calibrated",
