@@ -571,7 +571,7 @@ def build_sbi_components(args: argparse.Namespace, feature_dim: int, theta_dim: 
             logging_level="INFO",
             show_progress_bars=False,
         )
-        sample_with = args.sample_with or "ode"
+        sample_with = args.sample_with or "direct"
         return inference, sample_with
 
     if args.method == "npse":
