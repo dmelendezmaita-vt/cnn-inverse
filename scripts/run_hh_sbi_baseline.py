@@ -578,7 +578,7 @@ def build_sbi_components(args: argparse.Namespace, feature_dim: int, theta_dim: 
         if NPSE is None:
             raise RuntimeError("NPSE is unavailable in the installed sbi version.")
         builder = posterior_score_nn(
-            model=model_kind,
+            score_net_type=model_kind,
             sde_type="ve",
             z_score_theta="none",
             z_score_x="none",
