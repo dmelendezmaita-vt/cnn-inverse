@@ -1,7 +1,3 @@
 -r requirements-public-pytorch.txt
-bayesflow==2.0.10
-keras==3.14.0
-pandas>=2
-seaborn>=0.13
 swyft==0.4.5
 pytorch-lightning==1.9.5

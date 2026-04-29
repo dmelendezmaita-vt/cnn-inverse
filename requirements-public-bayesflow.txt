@@ -1,0 +1,15 @@
+pip>=24
+setuptools>=61
+wheel
+packaging>=24
+wcwidth
+numpy>=2.2.6
+scipy>=1.15
+matplotlib
+pyyaml
+scikit-learn
+pandas>=2
+seaborn>=0.13
+torch
+keras==3.14.0
+bayesflow==2.0.10

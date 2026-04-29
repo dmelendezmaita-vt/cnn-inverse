@@ -238,6 +238,15 @@ def wrap_single_node_srun(args: argparse.Namespace, allocation_job_id: str, comm
     return wrapped
 
 
+def resolve_python_bin(args: argparse.Namespace, step: BatchStep) -> str:
+    if step.python_bin_override:
+        path = Path(step.python_bin_override)
+        if not path.is_absolute():
+            path = (REPO_ROOT / path).resolve()
+        return str(path)
+    return args.python_bin
+
+
 def render_extra_args(
     extra_args: Sequence[str],
     *,
@@ -353,8 +362,9 @@ def build_step_command(
     )
 
     if step.kind == "dnn":
+        python_bin = resolve_python_bin(args, step)
         base_command = [
-            args.python_bin,
+            python_bin,
             "src/pytorch/run_dnn.py",
             "--params",
             step.params_file,
@@ -379,8 +389,9 @@ def build_step_command(
         return command, env
 
     if step.kind == "classical":
+        python_bin = resolve_python_bin(args, step)
         base_command = [
-            args.python_bin,
+            python_bin,
             "scripts/run_hh_classical_baseline.py",
             "--params",
             step.params_file,
@@ -400,8 +411,9 @@ def build_step_command(
         return command, env
 
     if step.kind == "sbi":
+        python_bin = resolve_python_bin(args, step)
         base_command = [
-            args.python_bin,
+            python_bin,
             "scripts/run_hh_sbi_baseline.py",
             "--params",
             step.params_file,
@@ -437,8 +449,9 @@ def build_step_command(
     if step.kind == "script":
         if not step.script_path:
             raise SystemExit(f"Batch step {batch.batch_id}:{step.step_id} is missing script_path.")
+        python_bin = resolve_python_bin(args, step)
         base_command = [
-            args.python_bin,
+            python_bin,
             step.script_path,
             "--save-dir",
             str(step_root),

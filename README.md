@@ -30,16 +30,23 @@ source .venv/bin/activate
 python -m pip install -r requirements-public-pytorch.txt
 ```
 
-If you intend to run the complete canonical branch surface, which now includes the BayesFlow, Swyft, and assumption-conditioned surrogate families, install the extended stack instead:
+If you intend to run the complete canonical branch surface, which now includes the BayesFlow, Swyft, and assumption-conditioned surrogate families, use two repository-local environments under Falcon `Python/3.12.3-GCCcore-13.3.0`:
 
 ```bash
 module load Python/3.12.3-GCCcore-13.3.0
+
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements-public-canonical.txt
+python -m pip install -r requirements-public-complete-core.txt
+
+python -m venv .venv-bayesflow
+source .venv-bayesflow/bin/activate
+python -m pip install -r requirements-public-bayesflow.txt
+
+source .venv/bin/activate
 ```
 
-The complete canonical stack should be created under Falcon `Python/3.12.3-GCCcore-13.3.0`, because the BayesFlow 2.x branches do not install on the default Falcon Python 3.9 interpreter.
+The split is necessary because the BayesFlow 2.x branches require `numpy>=2.2.6`, while the existing PyTorch, SBI, and `dlkit` stack requires `numpy<2`.
 
 ## Baseline Run
 
