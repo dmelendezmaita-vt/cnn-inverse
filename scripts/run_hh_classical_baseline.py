@@ -11,7 +11,6 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from shared_data_utils import ensure_shared_data
 
 try:
     from sklearn.decomposition import TruncatedSVD
@@ -30,6 +29,9 @@ except ImportError as exc:  # pragma: no cover - handled at runtime on cluster
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src" / "pytorch"))
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO / "scripts"))
+
+from hh_repo_utils import resolve_hh_dataset_root  # noqa: E402
 
 from data import (  # noqa: E402
     _apply_scale_inverse,
@@ -79,27 +81,13 @@ def load_params(path: str) -> dict:
 def resolve_local_data_dir(params: dict, logger: logging.Logger) -> dict:
     params = json.loads(json.dumps(params))
     data_cfg = params["data"]
-    data_dir = Path(str(data_cfg["data_dir"]))
-    if not data_dir.is_absolute():
-        data_dir = (REPO / data_dir).resolve()
-    is_tar = data_dir.is_file() and (
-        str(data_dir).endswith(".tar")
-        or str(data_dir).endswith(".tar.gz")
-        or str(data_dir).endswith(".tgz")
-        or str(data_dir).endswith(".tar.bz2")
-        or str(data_dir).endswith(".tar.xz")
+    resolved = resolve_hh_dataset_root(
+        data_cfg["data_dir"],
+        data_cfg.get("data_prefix"),
+        curr=str(data_cfg.get("curr")) if data_cfg.get("curr") is not None else None,
     )
-    if not is_tar:
-        data_cfg["data_dir"] = str(data_dir)
-        return params
-
-    data_prefix = str(data_cfg.get("data_prefix") or data_dir.stem).strip("/.")
-    prepared_root = REPO / ".prepared_data"
-    prepared_root.mkdir(parents=True, exist_ok=True)
-    prepared_dir = prepared_root / data_prefix
-    logger.info("Preparing extracted data directory %s from %s", prepared_dir, data_dir)
-    ensure_shared_data(data_dir, prepared_dir)
-    data_cfg["data_dir"] = str(prepared_dir)
+    logger.info("Resolved HH dataset root to %s", resolved)
+    data_cfg["data_dir"] = str(resolved)
     return params
 
 

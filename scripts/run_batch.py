@@ -59,8 +59,14 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--step-nnodes", type=int, default=4, help="Default node count for Falcon DNN batches.")
     ap.add_argument("--nproc-per-node", type=int, default=2, help="Default processes per node for Falcon DNN batches.")
     ap.add_argument("--launch-backend", default="torchrun", choices=["torchrun", "slurm_direct"], help="Launcher backend for Falcon DNN batches.")
-    ap.add_argument("--data-access-mode", default="copy_to_node", choices=["copy_to_node", "tar_in_place"], help="Data staging policy for Falcon DNN batches.")
+    ap.add_argument(
+        "--data-access-mode",
+        default="nvme_full_extract",
+        choices=["copy_to_node", "tar_in_place", "shm_curr_copy", "shm_full_copy", "nvme_full_extract"],
+        help="Data staging policy for Falcon DNN batches.",
+    )
     ap.add_argument("--shared-data-dir", default=None, help="Optional shared extracted-data directory for Falcon batches.")
+    ap.add_argument("--prepared-data-root", default=None, help="Optional shared prepared-data root used before any node-local tmpfs staging.")
     ap.add_argument("--srun-bin", default="srun", help="Slurm launcher used for distributed Falcon batches.")
     ap.add_argument("--srun-cpus-per-task", type=int, default=None, help="Optional cpus-per-task override for distributed Falcon batches.")
     return ap.parse_args()
@@ -130,6 +136,12 @@ def derive_data_prefix(tar_path: Path) -> str:
         if name.endswith(suffix):
             return name[: -len(suffix)]
     return tar_path.stem
+
+
+def default_prepared_data_root(args: argparse.Namespace) -> Path:
+    if args.prepared_data_root:
+        return Path(args.prepared_data_root).expanduser()
+    return REPO_ROOT / ".prepared_data"
 
 
 def _job_nodelist(allocation_job_id: str) -> Optional[str]:
@@ -250,6 +262,28 @@ def resolve_python_bin(args: argparse.Namespace, step: BatchStep) -> str:
     return args.python_bin
 
 
+def wrap_with_resource_monitor(
+    *,
+    monitor_python: str,
+    step_root: Path,
+    step_id: str,
+    command: Sequence[str],
+) -> List[str]:
+    monitor_dir = step_root / "resource_monitor"
+    monitor_dir.mkdir(parents=True, exist_ok=True)
+    output_json = monitor_dir / "resource_monitor.json"
+    return [
+        monitor_python,
+        "scripts/resource_monitor.py",
+        "--output-json",
+        str(output_json),
+        "--label",
+        step_id,
+        "--",
+        *list(command),
+    ]
+
+
 def render_extra_args(
     extra_args: Sequence[str],
     *,
@@ -309,18 +343,30 @@ def make_step_env(
     env["PYTHONUNBUFFERED"] = "1"
     env["REPO_ROOT"] = str(REPO_ROOT)
     if batch.requires_slurm and hh_tar_path is not None:
+        data_prefix = derive_data_prefix(hh_tar_path)
+        prepared_root = default_prepared_data_root(args)
         env["ALLOC_JOB_ID"] = allocation_job_id
         env["RUN_ID"] = step.step_id
         env["RUN_OUTPUT_ROOT"] = str(step_output_root(run_root, batch, step))
         env["PARAMS_FILE"] = step.params_file
         env["TAR_PATH"] = str(hh_tar_path)
-        env["DATA_PREFIX"] = derive_data_prefix(hh_tar_path)
+        env["DATA_PREFIX"] = data_prefix
         env["MASTER_ADDR"] = derive_master_addr(args, allocation_job_id)
         env["MASTER_PORT"] = str(args.master_port)
         env["STEP_NNODES"] = str(step.step_nnodes or args.step_nnodes)
         env["NPROC_PER_NODE"] = str(step.nproc_per_node or args.nproc_per_node)
         env["DATA_ACCESS_MODE"] = str(args.data_access_mode)
+        env["NC_HH_STAGE_MODE"] = str(
+            args.data_access_mode if (args.data_access_mode.startswith("shm_") or args.data_access_mode.startswith("nvme_")) else "none"
+        )
+        env["NC_HH_PREPARED_ROOT"] = str(prepared_root)
+        env["NC_HH_CACHE_IDENTITY"] = f"{hh_tar_path.resolve()}::{data_prefix}"
+        env["NC_HH_SPLIT_CACHE_ROOT"] = str(prepared_root / data_prefix / ".split_array_cache")
+        env["NC_HH_SCALE_CACHE_ROOT"] = str(prepared_root / data_prefix / ".scale_cache")
         env["LAUNCH_BACKEND"] = str(args.launch_backend)
+        env["RESOURCE_MONITOR_DIR"] = str(step_output_root(run_root, batch, step) / "resource_monitor")
+        env["RESOURCE_MONITOR_LABEL"] = str(step.step_id)
+        env["RESOURCE_MONITOR_INTERVAL_SEC"] = os.environ.get("RESOURCE_MONITOR_INTERVAL_SEC", "5.0")
         if args.shared_data_dir:
             env["SHARED_DATA_DIR"] = str(Path(args.shared_data_dir).expanduser())
         if step.pass_curr:
@@ -388,7 +434,13 @@ def build_step_command(
                 str(resolve_load_checkpoint(run_root, batch, step, step_records, placeholder_ok=placeholder_ok)),
             ]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
+        monitored_command = wrap_with_resource_monitor(
+            monitor_python=python_bin,
+            step_root=step_root,
+            step_id=step.step_id,
+            command=base_command,
+        )
+        command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
         return command, env
 
     if step.kind == "classical":
@@ -410,7 +462,13 @@ def build_step_command(
         if step.pass_curr:
             base_command += ["--curr", str(args.curr)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
+        monitored_command = wrap_with_resource_monitor(
+            monitor_python=python_bin,
+            step_root=step_root,
+            step_id=step.step_id,
+            command=base_command,
+        )
+        command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
         return command, env
 
     if step.kind == "sbi":
@@ -446,7 +504,13 @@ def build_step_command(
         if step.seed is not None:
             base_command += ["--seed", str(step.seed)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
+        monitored_command = wrap_with_resource_monitor(
+            monitor_python=python_bin,
+            step_root=step_root,
+            step_id=step.step_id,
+            command=base_command,
+        )
+        command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
         return command, env
 
     if step.kind == "script":
@@ -470,7 +534,13 @@ def build_step_command(
         if step.seed is not None:
             base_command += ["--seed", str(step.seed)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
-        command = wrap_single_node_srun(args, allocation_job_id, base_command) if batch.requires_slurm and step.wrap_srun else list(base_command)
+        monitored_command = wrap_with_resource_monitor(
+            monitor_python=python_bin,
+            step_root=step_root,
+            step_id=step.step_id,
+            command=base_command,
+        )
+        command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
         return command, env
 
     if step.kind == "interactive_dnn":
@@ -506,6 +576,116 @@ def summarize_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSt
     metric_files = sorted(root.rglob("metrics_summary.json"))
     if metric_files:
         outputs["metrics_summary_files"] = [str(path) for path in metric_files]
+    resource_files = sorted(root.rglob("resource_monitor*.json"))
+    if resource_files:
+        outputs["resource_monitor_files"] = [str(path) for path in resource_files]
+        monitors: List[Dict[str, object]] = []
+        for path in resource_files:
+            try:
+                monitors.append(json.loads(path.read_text()))
+            except Exception:
+                continue
+        if monitors:
+            summary = {
+                "hostnames": sorted({str(item.get("hostname")) for item in monitors if item.get("hostname")}),
+                "slurm_step_ids": sorted({str(item.get("slurm_step_id")) for item in monitors if item.get("slurm_step_id")}),
+                "max_tree_cpu_percent": max(
+                    float(item.get("summary", {}).get("max_tree_cpu_percent") or 0.0) for item in monitors
+                ),
+                "max_tree_rss_mb": max(
+                    float(item.get("summary", {}).get("max_tree_rss_mb") or 0.0) for item in monitors
+                ),
+                "max_tree_vms_mb": max(
+                    float(item.get("summary", {}).get("max_tree_vms_mb") or 0.0) for item in monitors
+                ),
+                "max_node_cpu_percent_mean": max(
+                    float(item.get("summary", {}).get("max_node_cpu_percent_mean") or 0.0) for item in monitors
+                ),
+                "max_node_memory_used_mb": max(
+                    float(item.get("summary", {}).get("max_node_memory_used_mb") or 0.0) for item in monitors
+                ),
+                "max_node_memory_percent": max(
+                    float(item.get("summary", {}).get("max_node_memory_percent") or 0.0) for item in monitors
+                ),
+                "max_node_swap_used_mb": max(
+                    float(item.get("summary", {}).get("max_node_swap_used_mb") or 0.0) for item in monitors
+                ),
+                "node_by_hostname": {},
+                "gpu_by_uuid": {},
+            }
+            node_by_hostname: Dict[str, Dict[str, object]] = {}
+            gpu_by_uuid: Dict[str, Dict[str, object]] = {}
+            for item in monitors:
+                hostname = str(item.get("hostname") or "")
+                node_summary = item.get("summary", {})
+                if hostname:
+                    per_cpu = [float(x) for x in (node_summary.get("max_node_cpu_percent_percpu") or [])]
+                    record = node_by_hostname.setdefault(
+                        hostname,
+                        {
+                            "max_node_cpu_percent_mean": 0.0,
+                            "max_node_cpu_percent_percpu": per_cpu,
+                            "max_node_memory_used_mb": 0.0,
+                            "max_node_memory_percent": 0.0,
+                            "max_node_swap_used_mb": 0.0,
+                        },
+                    )
+                    record["max_node_cpu_percent_mean"] = max(
+                        float(record["max_node_cpu_percent_mean"]),
+                        float(node_summary.get("max_node_cpu_percent_mean") or 0.0),
+                    )
+                    if per_cpu:
+                        existing = [float(x) for x in record.get("max_node_cpu_percent_percpu", [])]
+                        width = max(len(existing), len(per_cpu))
+                        merged = []
+                        for idx in range(width):
+                            left = existing[idx] if idx < len(existing) else 0.0
+                            right = per_cpu[idx] if idx < len(per_cpu) else 0.0
+                            merged.append(max(left, right))
+                        record["max_node_cpu_percent_percpu"] = merged
+                    record["max_node_memory_used_mb"] = max(
+                        float(record["max_node_memory_used_mb"]),
+                        float(node_summary.get("max_node_memory_used_mb") or 0.0),
+                    )
+                    record["max_node_memory_percent"] = max(
+                        float(record["max_node_memory_percent"]),
+                        float(node_summary.get("max_node_memory_percent") or 0.0),
+                    )
+                    record["max_node_swap_used_mb"] = max(
+                        float(record["max_node_swap_used_mb"]),
+                        float(node_summary.get("max_node_swap_used_mb") or 0.0),
+                    )
+                for uuid, gpu in (item.get("summary", {}).get("gpu_by_uuid") or {}).items():
+                    record = gpu_by_uuid.setdefault(
+                        str(uuid),
+                        {
+                            "index": gpu.get("index"),
+                            "name": gpu.get("name"),
+                            "max_utilization_gpu_percent": 0.0,
+                            "max_utilization_memory_percent": 0.0,
+                            "max_memory_used_mb": 0.0,
+                            "max_step_process_gpu_memory_mb": 0.0,
+                        },
+                    )
+                    record["max_utilization_gpu_percent"] = max(
+                        float(record["max_utilization_gpu_percent"]),
+                        float(gpu.get("max_utilization_gpu_percent") or 0.0),
+                    )
+                    record["max_utilization_memory_percent"] = max(
+                        float(record["max_utilization_memory_percent"]),
+                        float(gpu.get("max_utilization_memory_percent") or 0.0),
+                    )
+                    record["max_memory_used_mb"] = max(
+                        float(record["max_memory_used_mb"]),
+                        float(gpu.get("max_memory_used_mb") or 0.0),
+                    )
+                    record["max_step_process_gpu_memory_mb"] = max(
+                        float(record["max_step_process_gpu_memory_mb"]),
+                        float(gpu.get("max_step_process_gpu_memory_mb") or 0.0),
+                    )
+            summary["node_by_hostname"] = node_by_hostname
+            summary["gpu_by_uuid"] = gpu_by_uuid
+            outputs["resource_monitor_summary"] = summary
     return outputs
 
 
@@ -529,6 +709,8 @@ def validate_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSte
         expects_metrics = True
     if expects_metrics and "metrics_summary_files" not in outputs:
         errors.append("expected at least one metrics_summary.json artifact, but none was found")
+    if batch.requires_slurm and "resource_monitor_files" not in outputs:
+        errors.append("expected at least one resource monitor artifact, but none was found")
 
     if step.required_globs:
         for pattern in step.required_globs:
@@ -610,6 +792,8 @@ def resolved_plan(
                                 "MASTER_ADDR",
                                 "MASTER_PORT",
                                 "NPROC_PER_NODE",
+                                "NC_HH_PREPARED_ROOT",
+                                "NC_HH_STAGE_MODE",
                                 "PARAMS_FILE",
                                 "RUN_ID",
                                 "RUN_OUTPUT_ROOT",

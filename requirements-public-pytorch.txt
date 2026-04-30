@@ -5,3 +5,4 @@ packaging>=24
 wcwidth
 -e vendor/dlkit
 -r src/pytorch/requirements.txt
+psutil>=5.9

@@ -22,6 +22,9 @@ SKIP_INLINE_SPLIT_EVAL="${SKIP_INLINE_SPLIT_EVAL:-0}"
 LAUNCH_BACKEND="${LAUNCH_BACKEND:-torchrun}"
 PYTHON_BIN="${PYTHON_BIN:-python}"
 TORCHRUN_BIN="${TORCHRUN_BIN:-torchrun}"
+RESOURCE_MONITOR_DIR="${RESOURCE_MONITOR_DIR:-${RUN_OUTPUT_ROOT}/resource_monitor}"
+RESOURCE_MONITOR_LABEL="${RESOURCE_MONITOR_LABEL:-${RUN_ID}}"
+RESOURCE_MONITOR_INTERVAL_SEC="${RESOURCE_MONITOR_INTERVAL_SEC:-5.0}"
 
 DLKIT="${REPO_ROOT}/vendor/dlkit"
 export PYTHONPATH="${DLKIT}:${REPO_ROOT}/src:${REPO_ROOT}:${PYTHONPATH:-}"
@@ -47,6 +50,19 @@ export TMPDIR
 export TMP="${TMPDIR}"
 export TEMP="${TMPDIR}"
 mkdir -p "${WORK_ROOT}" "${WORK}" "${TMPDIR}"
+mkdir -p "${RESOURCE_MONITOR_DIR}"
+
+resource_monitor_file_for_label() {
+  local label="$1"
+  printf '%s/resource_monitor_%s_%s_n%s_p%s.json\n' \
+    "${RESOURCE_MONITOR_DIR}" \
+    "${label}" \
+    "${NODE_TAG}" \
+    "${SLURM_NODEID:-0}" \
+    "${SLURM_PROCID:-0}"
+}
+
+RESOURCE_MONITOR_FILE="$(resource_monitor_file_for_label "${RESOURCE_MONITOR_LABEL}")"
 
 resolve_step_master_addr() {
   local nodelist=""
@@ -98,6 +114,29 @@ elif [[ "${DATA_ACCESS_MODE}" == "copy_to_node" ]]; then
   else
     DATA_DIR="${WORK}/ds"
   fi
+elif [[ "${DATA_ACCESS_MODE}" == "shm_curr_copy" || "${DATA_ACCESS_MODE}" == "shm_full_copy" || "${DATA_ACCESS_MODE}" == "nvme_full_extract" ]]; then
+  DATA_DIR="$("${PYTHON_BIN}" - <<PY
+import json
+import subprocess
+
+result = subprocess.check_output(
+    [
+        "${PYTHON_BIN}",
+        "${REPO_ROOT}/scripts/stage_hh_dataset.py",
+        "--data-dir",
+        "${TAR_PATH}",
+        "--data-prefix",
+        "${DATA_PREFIX}",
+        "--curr",
+        "${CURR}",
+        "--stage-mode",
+        "${DATA_ACCESS_MODE}",
+    ],
+    text=True,
+)
+print(json.loads(result)["resolved_data_dir"])
+PY
+)"
 else
   DATA_DIR="${TAR_PATH}"
 fi
@@ -141,7 +180,12 @@ if [[ -n "${EVAL_ONLY_CHECKPOINT}" ]]; then
   unset WORLD_SIZE RANK LOCAL_RANK LOCAL_WORLD_SIZE MASTER_ADDR MASTER_PORT
   unset SLURM_NTASKS SLURM_LOCALID
   export CUDA_VISIBLE_DEVICES=
-  "${PYTHON_BIN}" src/pytorch/run_dnn.py \
+  "${PYTHON_BIN}" scripts/resource_monitor.py \
+    --output-json "${RESOURCE_MONITOR_FILE}" \
+    --label "${RESOURCE_MONITOR_LABEL}" \
+    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    -- \
+    "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
     --mode eval \
     --load_dir "${LOAD_PATH}" \
@@ -159,7 +203,12 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" ]]; then
 fi
 
 if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
-  "${PYTHON_BIN}" src/pytorch/run_dnn.py \
+  "${PYTHON_BIN}" scripts/resource_monitor.py \
+    --output-json "${RESOURCE_MONITOR_FILE}" \
+    --label "${RESOURCE_MONITOR_LABEL}" \
+    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    -- \
+    "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
     --mode "${TRAIN_MODE}" \
     --save_dir_base "${RUN_OUTPUT_ROOT}" \
@@ -168,7 +217,12 @@ if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
     --curr "${CURR}" \
     "${SAVE_PREDICTIONS_ARGS[@]}"
 else
-  "${TORCHRUN_BIN}" \
+  "${PYTHON_BIN}" scripts/resource_monitor.py \
+    --output-json "${RESOURCE_MONITOR_FILE}" \
+    --label "${RESOURCE_MONITOR_LABEL}" \
+    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    -- \
+    "${TORCHRUN_BIN}" \
     --nnodes="${STEP_NNODES}" \
     --node_rank="${SLURM_PROCID}" \
     --nproc_per_node="${NPROC_PER_NODE}" \
@@ -201,7 +255,12 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" && "${SKIP_INLINE_SPLIT_EVAL}" != "1" &
   # distributed training step for these post-local SGD runs.
   export CUDA_VISIBLE_DEVICES=
 
-  "${PYTHON_BIN}" src/pytorch/run_dnn.py \
+  "${PYTHON_BIN}" scripts/resource_monitor.py \
+    --output-json "$(resource_monitor_file_for_label "${RESOURCE_MONITOR_LABEL}_split_eval")" \
+    --label "${RESOURCE_MONITOR_LABEL}_split_eval" \
+    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    -- \
+    "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
     --mode eval \
     --load_dir "${CKPT_PATH}" \

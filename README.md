@@ -1,96 +1,78 @@
 # Neural Inverse Inference Workflows for FitzHugh-Nagumo and Hodgkin-Huxley Models
 
-This repository ships the core source tree, a small FitzHugh-Nagumo starter dataset, a curated script surface, a static results dashboard, and the vendored `dlkit` dependency required by the PyTorch workflow.
+This repository contains the public source tree for the FitzHugh-Nagumo and Hodgkin-Huxley inverse-inference workflows, together with a curated execution surface, a small FitzHugh-Nagumo starter dataset, a static dashboard, and the vendored `dlkit` dependency used by the PyTorch code.
 
-## Repository Surface
+## Repository Layout
 
 | Path | Role |
 | --- | --- |
-| `src/` | source code for the PyTorch and TensorFlow workflows |
-| `scripts/` | curated execution and analysis helpers |
-| `dashboard/` | static website for the current canonical result summary |
-| `vendor/dlkit/` | vendored dependency used by the PyTorch code |
-| `data/2020-12-09/` | shipped baseline FitzHugh-Nagumo data |
+| `src/` | PyTorch and TensorFlow source trees |
+| `scripts/` | curated execution, staging, and analysis entrypoints |
+| `dashboard/` | static result dashboard |
+| `data/2020-12-09/` | shipped FitzHugh-Nagumo starter dataset |
+| `vendor/dlkit/` | vendored dependency used by the PyTorch workflows |
 
 ## Falcon Setup
 
-The public batch suites are designed to be launched from within the Falcon cluster, using the same A30 allocation contract as the repository's canonical reproduction path.
-
-Log into Falcon first:
+The batch suites are intended to run from within the Falcon cluster.
 
 ```bash
 ssh falcon
+module load Python/3.12.3-GCCcore-13.3.0
+cd /path/to/repository
 ```
 
-Create a clean repository-local environment, without `--system-site-packages`, then install the public PyTorch stack:
+If you only need the public PyTorch stack, create one environment:
 
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements-public-pytorch.txt
 ```
 
-If you intend to run the complete canonical branch surface, which now includes the BayesFlow, Swyft, and assumption-conditioned surrogate families, use two repository-local environments under Falcon `Python/3.12.3-GCCcore-13.3.0`:
+If you intend to run the complete smoke or full batch suites, use the repository bootstrap script, which creates and verifies both required environments:
 
 ```bash
-module load Python/3.12.3-GCCcore-13.3.0
-
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-public-complete-core.txt
-
-python -m venv .venv-bayesflow
-source .venv-bayesflow/bin/activate
-python -m pip install -r requirements-public-bayesflow.txt
-
-source .venv/bin/activate
+bash scripts/prepare_falcon_envs.sh
 ```
 
-The split is necessary because the BayesFlow 2.x branches require `numpy>=2.2.6`, while the existing PyTorch, SBI, and `dlkit` stack requires `numpy<2`.
+That script prepares:
 
-## Baseline Run
+| Environment | Purpose |
+| --- | --- |
+| `.venv` | core PyTorch, SBI, Swyft, and utility stack |
+| `.venv-bayesflow` | BayesFlow-specific stack, which is separated because it requires a different `numpy` line |
+
+## Data
+
+The repository ships the small FitzHugh-Nagumo starter dataset, while the full Hodgkin-Huxley arrays are external.
+
+To run the Hodgkin-Huxley workflows, provide the archive `concatenated_data.tar.gz`, either:
+
+| Method | How |
+| --- | --- |
+| explicit path | pass `--hh-tar-path /path/to/concatenated_data.tar.gz` |
+| repository-local tarball | place `concatenated_data.tar.gz` at the repository root |
+
+The current default staging strategy is `nvme_full_extract`, under which each node:
+
+1. copies the archive to local NVMe,
+2. extracts it once,
+3. reuses the extracted tree across later experiments on that same node.
+
+The batch runner and the HH helper scripts support the same staging contract. If you already maintain a reusable extracted tree elsewhere, you can point the helpers at it with `--prepared-data-root`.
+
+## Baseline Runs
+
+FitzHugh-Nagumo DNN baseline:
 
 ```bash
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode train
 python src/pytorch/run_dnn.py --params src/pytorch/configs/params_dnn.yaml --mode eval
 ```
 
-## Curated Script Surface
-
-| Script | Role |
-| --- | --- |
-| `scripts/shared_data_utils.py` | staged tar extraction helper |
-| `scripts/run_interactive_dnn_step.sh` | distributed DNN execution step |
-| `scripts/run_classical_baseline_step.sh` | classical baseline execution step |
-| `scripts/run_sbi_baseline_step.sh` | SBI execution step |
-| `scripts/run_hh_classical_baseline.py` | classical HH baseline driver |
-| `scripts/run_hh_sbi_baseline.py` | SBI HH baseline driver |
-| `scripts/run_hh_track4_aligned_multicurrent_bayesflow_20260425.py` and related BayesFlow variants | aligned native BayesFlow framework branches |
-| `scripts/run_hh_track4_aligned_multicurrent_swyft_20260425.py` and related Swyft variants | aligned native Swyft framework branches |
-| `scripts/run_hh_track4_assumption_conditioned_*` | compact-HH surrogate branches, including active design, Wasserstein ABC, hybrid refinement, and ASNPE |
-| `scripts/slurm_smoke_test.sbatch` | smoke job template |
-| `scripts/slurm_train.sbatch` | train job template |
-
-The shipped templates are parameterized and do not assume a particular user account, notification channel, or private directory layout. The Hodgkin-Huxley helpers still require external data, because the full arrays are not part of this repository.
-
-## Hodgkin-Huxley Data Placement
-
-To run the current Hodgkin-Huxley workflows from a fresh checkout:
-
-1. download the full dataset archive as `concatenated_data.tar.gz`
-2. place that file in the repository root
-
-The public Hodgkin-Huxley configs and helpers are written so that this root-level
-tarball is the only required external data artifact. On the first HH run, the
-repository prepares a reusable extracted working directory under
-`.prepared_data/concatenated_data/`, after which subsequent runs reuse that
-local copy automatically.
-
-The batch runner also accepts an HH tarball from any location, so the canonical
-batch interface does not require a root-level copy when `--hh-tar-path` is
-provided explicitly.
-
-Smoke example for the Hodgkin-Huxley DNN path:
+Hodgkin-Huxley smoke DNN baseline:
 
 ```bash
 python src/pytorch/run_dnn.py --params src/pytorch/configs/hh/params_dnn_tar_hh_smoke.yaml --mode train
@@ -99,32 +81,29 @@ python src/pytorch/run_dnn.py --params src/pytorch/configs/hh/params_dnn_tar_hh_
 
 ## Batch Runner
 
-The repository now includes a batch-aware dispatcher:
+The public control surface is `scripts/run_batch.py`.
+
+List available suites and batches:
 
 ```bash
 python scripts/run_batch.py --list
 ```
 
-Three suites are declared:
+Declared suites:
 
-| Suite | Role |
+| Suite | Purpose |
 | --- | --- |
-| `falcon_a30_smoke` | smoke validation of the public FHN and HH workflows, designed to run inside the default Falcon A30 allocation |
-| `canonical_complete_smoke` | reduced smoke validation for the full canonical branch set, including a Falcon preflight, the distributed interactive launcher paths, BayesFlow, Swyft, posterior decision-rule analysis, and the assumption-conditioned surrogate families |
-| `scientific_smoke` | Falcon-sized branch reproductions for the public experiment threads |
-| `canonical_complete` | the full public canonical branch set, including the native BayesFlow, native Swyft, and assumption-conditioned surrogate families |
-| `canonical_falcon` | Falcon-cluster batches for the current environment-anchored HH reproduction path |
+| `falcon_a30_smoke` | smoke validation of the public FHN and HH workflows |
+| `canonical_complete_smoke` | smoke validation of the full public experiment surface, including BayesFlow, Swyft, distributed launcher paths, posterior decision rules, and surrogate branches |
+| `scientific_smoke` | reduced scientific reproduction suite |
+| `canonical_complete` | full public experiment suite |
+| `canonical_falcon` | Falcon-oriented HH reproduction suite |
 
-Examples:
+Typical commands:
 
 ```bash
 python scripts/run_batch.py \
   --suite falcon_a30_smoke \
-  --hh-tar-path /path/to/concatenated_data.tar.gz \
-  --allocation-job-id "$SLURM_JOB_ID"
-
-python scripts/run_batch.py \
-  --suite scientific_smoke \
   --hh-tar-path /path/to/concatenated_data.tar.gz \
   --allocation-job-id "$SLURM_JOB_ID"
 
@@ -137,41 +116,29 @@ python scripts/run_batch.py \
   --suite canonical_complete \
   --hh-tar-path /path/to/concatenated_data.tar.gz \
   --allocation-job-id "$SLURM_JOB_ID"
-
-python scripts/run_batch.py \
-  --batch fal01_hh_4node_a30_dnn \
-  --hh-tar-path /path/to/concatenated_data.tar.gz \
-  --allocation-job-id "$SLURM_JOB_ID"
 ```
 
-The complete smoke suite now fails early if the Falcon allocation contract is wrong, if either repository-local Python environment is incomplete, or if a step exits successfully while failing to write its expected checkpoint or metrics artifacts.
+For targeted runs, the same runner also supports:
 
-All five suites are designed for execution from within the documented Falcon Slurm allocation, using the same A30-oriented cluster contract and the same external HH tarball contract.
+| Control | Role |
+| --- | --- |
+| `--batch <name>` | run one batch |
+| `--through <name>` | stop after a named batch |
+| `--resume` | continue past completed batches |
+| `--prepared-data-root <path>` | reuse an existing extracted HH dataset root |
 
-## Data Boundary
+## Resource Monitoring
 
-The full Hodgkin-Huxley data are not shipped here.
+Slurm-backed batch steps write resource-monitor artifacts under each step output root. The monitor records:
 
-| Artifact | Size |
-| --- | ---: |
-| `concatenated_data.tar.gz` | `77205166166` bytes |
-| one full-current target array such as `concatenated_data_0.1_curr.npy` | `24000000000` bytes |
+| Metric class | Coverage |
+| --- | --- |
+| process tree | CPU percent, RSS, VMS, top resident processes |
+| node | per-CPU utilization, RAM usage, swap usage |
+| GPU | per-GPU compute utilization, VRAM usage, step-attributed VRAM |
 
-The public repository therefore ships no full Hodgkin-Huxley arrays, because those files are far beyond GitHub's practical and hard upload limits.
+These artifacts are produced automatically by the batch runner and the distributed interactive launcher.
 
-## Static Dashboard
+## Dashboard
 
-The repository includes a static website under `dashboard/`, which summarizes the current canonical results using the comparability classes that are defended in the thesis and supporting reports.
-
-## Untouched Upstream Snapshot
-
-The inherited upstream zip referenced during benchmark reconstruction was stored in the original workspace at:
-
-- `/projects/neuro-collab/code/archives/fhn_dnn-1-implementation-in-pytorch.zip`
-- zip comment: `eb676a34bb32d880b172e70f9faf6f41a2d9fe3c`
-
-Verification command:
-
-```bash
-unzip -z /projects/neuro-collab/code/archives/fhn_dnn-1-implementation-in-pytorch.zip
-```
+The repository includes a static dashboard under `dashboard/`, which summarizes the shipped experiment surface.

@@ -11,7 +11,6 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from shared_data_utils import ensure_shared_data
 
 try:
     from sklearn.decomposition import TruncatedSVD
@@ -26,6 +25,7 @@ REPO = Path(__file__).resolve().parents[1]
 DEFAULT_SHARED_DATA_DIR = "concatenated_data.tar.gz"
 sys.path.insert(0, str(REPO / "src" / "pytorch"))
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO / "scripts"))
 
 from data import (  # noqa: E402
     _apply_scale_inverse,
@@ -34,6 +34,7 @@ from data import (  # noqa: E402
     load_data,
     preprocess_targets,
 )
+from hh_repo_utils import resolve_hh_dataset_root  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -64,20 +65,7 @@ def load_params(path: str) -> dict:
 
 
 def resolve_local_data_dir(data_dir: str, data_prefix: str) -> str:
-    path = Path(str(data_dir)).expanduser()
-    if not path.is_absolute():
-        path = (REPO / path).resolve()
-    text = str(path)
-    is_tar = path.is_file() and text.endswith((".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tar.xz"))
-    if not is_tar:
-        return str(path)
-
-    prefix = str(data_prefix or path.stem).strip("/.")
-    prepared_root = REPO / ".prepared_data"
-    prepared_root.mkdir(parents=True, exist_ok=True)
-    prepared_dir = prepared_root / prefix
-    ensure_shared_data(path, prepared_dir)
-    return str(prepared_dir)
+    return str(resolve_hh_dataset_root(data_dir, data_prefix))
 
 
 def crop_trace_window(arr: np.ndarray, count: int, sub_length: int | None, sub_step: int | None = None) -> np.ndarray:

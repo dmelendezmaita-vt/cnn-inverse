@@ -124,12 +124,14 @@ def _resolve_features_scale_cache_path(data_params, array_name='features'):
     data_dir = _resolve_data_source_path(data_params['data_dir'])
     if not data_dir.exists() or not data_dir.is_dir():
         return None
+    cache_identity = os.environ.get('NC_HH_CACHE_IDENTITY', str(data_dir))
+    explicit_root = os.environ.get('NC_HH_SCALE_CACHE_ROOT')
 
     payload = {
         'version': 1,
         'array_name': array_name,
         'dataset_layout': data_params.get('dataset_layout'),
-        'data_dir': str(data_dir),
+        'data_dir': cache_identity,
         'data_prefix': data_params.get('data_prefix'),
         'curr': data_params.get('curr'),
         'features_type': data_params.get('features_type'),
@@ -145,6 +147,8 @@ def _resolve_features_scale_cache_path(data_params, array_name='features'):
         'theta_filter': data_params.get('theta_filter'),
     }
     digest = hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode('utf-8')).hexdigest()[:16]
+    if explicit_root:
+        return pathlib.Path(str(explicit_root)) / f'{array_name}_scale_{digest}.npz'
     return data_dir / '.scale_cache' / f'{array_name}_scale_{digest}.npz'
 
 
@@ -174,6 +178,8 @@ def _resolve_split_array_cache_dir(data_params):
     data_dir = _resolve_data_source_path(data_params['data_dir'])
     if not data_dir.exists() or not data_dir.is_dir():
         return None
+    cache_identity = os.environ.get('NC_HH_CACHE_IDENTITY', str(data_dir))
+    explicit_root = os.environ.get('NC_HH_SPLIT_CACHE_ROOT')
 
     split_strategy = data_params.get('split_strategy', 'sequential')
     split_seed = data_params.get('split_seed')
@@ -183,7 +189,7 @@ def _resolve_split_array_cache_dir(data_params):
     payload = {
         'version': 2,
         'dataset_layout': data_params.get('dataset_layout'),
-        'data_dir': str(data_dir),
+        'data_dir': cache_identity,
         'data_prefix': data_params.get('data_prefix'),
         'curr': data_params.get('curr'),
         'features_type': data_params.get('features_type'),
@@ -199,7 +205,10 @@ def _resolve_split_array_cache_dir(data_params):
         'theta_filter': data_params.get('theta_filter'),
     }
     digest = hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode('utf-8')).hexdigest()[:16]
-    cache_dir = data_dir / '.split_array_cache' / digest
+    if explicit_root:
+        cache_dir = pathlib.Path(str(explicit_root)) / digest
+    else:
+        cache_dir = data_dir / '.split_array_cache' / digest
     return _maybe_stage_split_array_cache_dir(cache_dir)
 
 
