@@ -25,6 +25,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--resource-dir", required=True)
     ap.add_argument("--label", default="")
     ap.add_argument("--gpu-expected", type=int, default=0)
+    ap.add_argument("--monitor-python", default=os.environ.get("RESOURCE_MONITOR_PYTHON", sys.executable))
     ap.add_argument("--interval-sec", type=float, default=float(os.environ.get("RESOURCE_MONITOR_INTERVAL_SEC", "5.0")))
     ap.add_argument("command", nargs=argparse.REMAINDER)
     ns = ap.parse_args()
@@ -173,6 +174,9 @@ def main() -> int:
 
     env_snapshot = {
         "started_at": now_iso(),
+        "label": args.label,
+        "gpu_expected": int(args.gpu_expected),
+        "monitor_python": str(args.monitor_python),
         "hostname": os.environ.get("HOSTNAME", ""),
         "alloc_job_id": os.environ.get("ALLOC_JOB_ID", ""),
         "slurm_job_id": os.environ.get("SLURM_JOB_ID", ""),
@@ -191,7 +195,7 @@ def main() -> int:
     started = time.time()
     proc = subprocess.run(
         [
-            sys.executable,
+            str(args.monitor_python),
             str(RESOURCE_MONITOR_SCRIPT),
             "--output-json",
             str(raw_monitor_path),
@@ -233,6 +237,8 @@ def main() -> int:
     summary = {
         "completed_at": now_iso(),
         "label": args.label,
+        "gpu_expected": int(args.gpu_expected),
+        "monitor_python": str(args.monitor_python),
         "return_code": proc.returncode,
         "elapsed_sec": elapsed_sec,
         "alloc_job_id": alloc_job_id,

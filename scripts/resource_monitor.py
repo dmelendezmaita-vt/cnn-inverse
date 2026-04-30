@@ -335,11 +335,8 @@ def main() -> None:
     psutil.cpu_percent(interval=None, percpu=True)
 
     samples: List[Dict[str, object]] = []
-    first_sample = True
-    while True:
-        if not first_sample:
-            time.sleep(args.interval_sec)
-        first_sample = False
+
+    def record_sample() -> None:
         process_tree = sample_process_tree(root, tracked_processes)
         node = sample_node_resources()
         pid_set = set(process_tree["pid_set"])
@@ -353,8 +350,16 @@ def main() -> None:
                 "gpus": gpus,
             }
         )
+
+    record_sample()
+    while True:
         if proc.poll() is not None:
             break
+        try:
+            proc.wait(timeout=args.interval_sec)
+        except subprocess.TimeoutExpired:
+            pass
+        record_sample()
 
     payload = {
         "label": args.label,

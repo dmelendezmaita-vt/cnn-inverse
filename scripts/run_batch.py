@@ -48,6 +48,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--hh-tar-path", default=None, help="Path to the external Hodgkin-Huxley tar.gz archive.")
     ap.add_argument("--run-root", default=str(REPO_ROOT / "runs" / "batches"), help="Root directory for batch outputs and status files.")
     ap.add_argument("--python-bin", default=sys.executable, help="Python interpreter used for Python-based steps.")
+    ap.add_argument("--monitor-python", default=None, help="Interpreter used to run the repo resource-monitoring tools.")
     ap.add_argument("--curr", default="0.1", help="Current identifier passed to HH workflows.")
     ap.add_argument("--resume", action="store_true", help="Skip batches that already have a completed status file.")
     ap.add_argument("--force", action="store_true", help="Rerun batches even when a completed status file already exists.")
@@ -262,6 +263,18 @@ def resolve_python_bin(args: argparse.Namespace, step: BatchStep) -> str:
     return args.python_bin
 
 
+def resolve_monitor_python(args: argparse.Namespace, step: BatchStep) -> str:
+    if args.monitor_python:
+        path = Path(args.monitor_python)
+        if not path.is_absolute():
+            path = REPO_ROOT / path
+        return str(path)
+    env_override = os.environ.get("RESOURCE_MONITOR_PYTHON", "").strip()
+    if env_override:
+        return env_override
+    return resolve_python_bin(args, step)
+
+
 def wrap_with_resource_monitor(
     *,
     monitor_python: str,
@@ -281,6 +294,8 @@ def wrap_with_resource_monitor(
         step_id,
         "--gpu-expected",
         str(int(gpu_expected)),
+        "--monitor-python",
+        monitor_python,
         "--",
         *list(command),
     ]
@@ -304,11 +319,16 @@ def gpu_expected_for_step(
     if step.kind in {"dnn", "sbi"}:
         return 1
     if step.kind == "script":
-        if batch.preferred_gpu:
-            return 1
-        if step.nproc_per_node is not None:
+        extra_args = tuple(str(token).lower() for token in step.extra_args)
+        if "--device" in extra_args:
+            idx = extra_args.index("--device")
+            if idx + 1 < len(extra_args) and extra_args[idx + 1] in {"gpu", "cuda"}:
+                return max(1, int(step.nproc_per_node or 1))
+        if step.python_bin_override and "bayesflow" in step.python_bin_override.lower():
+            return max(1, int(step.nproc_per_node or 1))
+        if step.nproc_per_node is not None and step.step_nnodes is not None and int(step.step_nnodes) > 1:
             return max(1, int(step.nproc_per_node))
-        if step.step_nnodes is not None and int(step.step_nnodes) > 1:
+        if step.step_nnodes is not None and int(step.step_nnodes) > 1 and batch.preferred_gpu:
             return 1
     return 0
 
@@ -464,7 +484,7 @@ def build_step_command(
             ]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         monitored_command = wrap_with_resource_monitor(
-            monitor_python=python_bin,
+            monitor_python=resolve_monitor_python(args, step),
             step_root=step_root,
             step_id=step.step_id,
             gpu_expected=gpu_expected_for_step(args, batch, step),
@@ -493,7 +513,7 @@ def build_step_command(
             base_command += ["--curr", str(args.curr)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         monitored_command = wrap_with_resource_monitor(
-            monitor_python=python_bin,
+            monitor_python=resolve_monitor_python(args, step),
             step_root=step_root,
             step_id=step.step_id,
             gpu_expected=gpu_expected_for_step(args, batch, step),
@@ -536,7 +556,7 @@ def build_step_command(
             base_command += ["--seed", str(step.seed)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         monitored_command = wrap_with_resource_monitor(
-            monitor_python=python_bin,
+            monitor_python=resolve_monitor_python(args, step),
             step_root=step_root,
             step_id=step.step_id,
             gpu_expected=gpu_expected_for_step(args, batch, step),
@@ -567,7 +587,7 @@ def build_step_command(
             base_command += ["--seed", str(step.seed)]
         base_command += render_extra_args(step.extra_args, run_root=run_root, batch=batch, step=step)
         monitored_command = wrap_with_resource_monitor(
-            monitor_python=python_bin,
+            monitor_python=resolve_monitor_python(args, step),
             step_root=step_root,
             step_id=step.step_id,
             gpu_expected=gpu_expected_for_step(args, batch, step),
@@ -613,11 +633,36 @@ def summarize_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSt
     if raw_monitor_files:
         outputs["resource_monitor_files"] = [str(path) for path in raw_monitor_files]
         monitors: List[Dict[str, object]] = []
+        monitor_details: List[Dict[str, object]] = []
         for path in raw_monitor_files:
             try:
-                monitors.append(json.loads(path.read_text()))
+                raw_monitor = json.loads(path.read_text())
             except Exception:
                 continue
+            monitors.append(raw_monitor)
+            resource_dir = path.parent
+            detail: Dict[str, object] = {
+                "resource_dir": str(resource_dir),
+                "label": raw_monitor.get("label", ""),
+                "hostname": raw_monitor.get("hostname", ""),
+                "slurm_step_id": raw_monitor.get("slurm_step_id", ""),
+                "raw_summary": raw_monitor.get("summary", {}),
+            }
+            task_env_path = resource_dir / "task_env.json"
+            if task_env_path.exists():
+                try:
+                    detail["task_env"] = json.loads(task_env_path.read_text())
+                except Exception:
+                    pass
+            resource_summary_path = resource_dir / "resource_summary.json"
+            if resource_summary_path.exists():
+                try:
+                    detail["resource_summary"] = json.loads(resource_summary_path.read_text())
+                except Exception:
+                    pass
+            monitor_details.append(detail)
+        if monitor_details:
+            outputs["resource_monitor_details"] = monitor_details
         if monitors:
             summary = {
                 "hostnames": sorted({str(item.get("hostname")) for item in monitors if item.get("hostname")}),
@@ -774,18 +819,15 @@ def validate_step_outputs(args: argparse.Namespace, run_root: Path, batch: Batch
         raise RuntimeError(f"Output validation failed for {batch.batch_id}:{step.step_id}: {joined}")
 
     if batch.requires_slurm:
-        python_bin = resolve_python_bin(args, step)
-        gpu_expected = gpu_expected_for_step(args, batch, step)
+        monitor_python = resolve_monitor_python(args, step)
         for summary_path in outputs.get("resource_summary_files", []):
             resource_dir = str(Path(summary_path).parent)
             subprocess.run(
                 [
-                    python_bin,
+                    monitor_python,
                     "scripts/validate_monitoring_contract.py",
                     "--resource-dir",
                     resource_dir,
-                    "--gpu-expected",
-                    str(gpu_expected),
                 ],
                 cwd=str(REPO_ROOT),
                 check=True,

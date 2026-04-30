@@ -22,6 +22,7 @@ SKIP_INLINE_SPLIT_EVAL="${SKIP_INLINE_SPLIT_EVAL:-0}"
 LAUNCH_BACKEND="${LAUNCH_BACKEND:-torchrun}"
 PYTHON_BIN="${PYTHON_BIN:-python}"
 TORCHRUN_BIN="${TORCHRUN_BIN:-torchrun}"
+MONITOR_PYTHON="${RESOURCE_MONITOR_PYTHON:-${PYTHON_BIN}}"
 RESOURCE_MONITOR_DIR="${RESOURCE_MONITOR_DIR:-${RUN_OUTPUT_ROOT}/resource_monitor}"
 RESOURCE_MONITOR_LABEL="${RESOURCE_MONITOR_LABEL:-${RUN_ID}}"
 RESOURCE_MONITOR_INTERVAL_SEC="${RESOURCE_MONITOR_INTERVAL_SEC:-5.0}"
@@ -182,9 +183,7 @@ echo "$(date -Is) [interactive-step] skip_inline_split_eval=${SKIP_INLINE_SPLIT_
 echo "$(date -Is) [interactive-step] launch_backend=${LAUNCH_BACKEND}"
 
 cd "${REPO_ROOT}"
-
-# Ensure a unique output directory below RUN_OUTPUT_ROOT for each logical task execution.
-export SLURM_JOB_ID="${ALLOC_JOB_ID}_${RUN_ID}"
+RUN_OUTPUT_DIR_NAME="${SLURM_JOB_ID}"
 
 SAVE_PREDICTIONS_ARGS=()
 if [[ -n "${SAVE_PREDICTIONS}" && "${SAVE_PREDICTIONS}" != "inherit_from_config" ]]; then
@@ -212,10 +211,11 @@ if [[ -n "${EVAL_ONLY_CHECKPOINT}" ]]; then
   unset WORLD_SIZE RANK LOCAL_RANK LOCAL_WORLD_SIZE MASTER_ADDR MASTER_PORT
   unset SLURM_NTASKS SLURM_LOCALID
   export CUDA_VISIBLE_DEVICES=
-  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+  "${MONITOR_PYTHON}" scripts/run_monitored_command.py \
     --resource-dir "${RESOURCE_MONITOR_STEP_DIR}" \
     --label "${RESOURCE_MONITOR_LABEL}" \
     --gpu-expected 0 \
+    --monitor-python "${MONITOR_PYTHON}" \
     -- \
     "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
@@ -235,10 +235,11 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" ]]; then
 fi
 
 if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
-  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+  "${MONITOR_PYTHON}" scripts/run_monitored_command.py \
     --resource-dir "${RESOURCE_MONITOR_STEP_DIR}" \
     --label "${RESOURCE_MONITOR_LABEL}" \
     --gpu-expected "${NPROC_PER_NODE}" \
+    --monitor-python "${MONITOR_PYTHON}" \
     -- \
     "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
@@ -249,10 +250,11 @@ if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
     --curr "${CURR}" \
     "${SAVE_PREDICTIONS_ARGS[@]}"
 else
-  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+  "${MONITOR_PYTHON}" scripts/run_monitored_command.py \
     --resource-dir "${RESOURCE_MONITOR_STEP_DIR}" \
     --label "${RESOURCE_MONITOR_LABEL}" \
     --gpu-expected "${NPROC_PER_NODE}" \
+    --monitor-python "${MONITOR_PYTHON}" \
     -- \
     "${TORCHRUN_BIN}" \
     --nnodes="${STEP_NNODES}" \
@@ -273,7 +275,7 @@ else
 fi
 
 if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" && "${SKIP_INLINE_SPLIT_EVAL}" != "1" && "${SLURM_PROCID:-0}" == "0" ]]; then
-  SAVE_DIR="${RUN_OUTPUT_ROOT}/${ALLOC_JOB_ID}_${RUN_ID}"
+  SAVE_DIR="${RUN_OUTPUT_ROOT}/${RUN_OUTPUT_DIR_NAME}"
   CKPT_PATH="$(find "${SAVE_DIR}/checkpoints" -type f -name 'net_e*.pt' 2>/dev/null | sort | tail -n 1 || true)"
   if [[ -z "${CKPT_PATH}" ]]; then
     echo "$(date -Is) [interactive-step] split-eval failed: no checkpoint found under ${SAVE_DIR}/checkpoints" >&2
@@ -288,10 +290,11 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" && "${SKIP_INLINE_SPLIT_EVAL}" != "1" &
   # distributed training step for these post-local SGD runs.
   export CUDA_VISIBLE_DEVICES=
 
-  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+  "${MONITOR_PYTHON}" scripts/run_monitored_command.py \
     --resource-dir "$(resource_monitor_dir_for_label "${RESOURCE_MONITOR_LABEL}_split_eval")" \
     --label "${RESOURCE_MONITOR_LABEL}_split_eval" \
     --gpu-expected 0 \
+    --monitor-python "${MONITOR_PYTHON}" \
     -- \
     "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
