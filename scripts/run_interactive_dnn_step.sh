@@ -64,7 +64,17 @@ resource_monitor_file_for_label() {
     "${SLURM_PROCID:-0}"
 }
 
-RESOURCE_MONITOR_FILE="$(resource_monitor_file_for_label "${RESOURCE_MONITOR_LABEL}")"
+resource_monitor_dir_for_label() {
+  local label="$1"
+  printf '%s/%s_%s_n%s_p%s\n' \
+    "${RESOURCE_MONITOR_DIR}" \
+    "${label}" \
+    "${NODE_TAG}" \
+    "${SLURM_NODEID:-0}" \
+    "${SLURM_PROCID:-0}"
+}
+
+RESOURCE_MONITOR_STEP_DIR="$(resource_monitor_dir_for_label "${RESOURCE_MONITOR_LABEL}")"
 
 resolve_step_master_addr() {
   local nodelist=""
@@ -202,10 +212,10 @@ if [[ -n "${EVAL_ONLY_CHECKPOINT}" ]]; then
   unset WORLD_SIZE RANK LOCAL_RANK LOCAL_WORLD_SIZE MASTER_ADDR MASTER_PORT
   unset SLURM_NTASKS SLURM_LOCALID
   export CUDA_VISIBLE_DEVICES=
-  "${PYTHON_BIN}" scripts/resource_monitor.py \
-    --output-json "${RESOURCE_MONITOR_FILE}" \
+  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+    --resource-dir "${RESOURCE_MONITOR_STEP_DIR}" \
     --label "${RESOURCE_MONITOR_LABEL}" \
-    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    --gpu-expected 0 \
     -- \
     "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
@@ -225,10 +235,10 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" ]]; then
 fi
 
 if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
-  "${PYTHON_BIN}" scripts/resource_monitor.py \
-    --output-json "${RESOURCE_MONITOR_FILE}" \
+  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+    --resource-dir "${RESOURCE_MONITOR_STEP_DIR}" \
     --label "${RESOURCE_MONITOR_LABEL}" \
-    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    --gpu-expected "${NPROC_PER_NODE}" \
     -- \
     "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \
@@ -239,10 +249,10 @@ if [[ "${LAUNCH_BACKEND}" == "slurm_direct" ]]; then
     --curr "${CURR}" \
     "${SAVE_PREDICTIONS_ARGS[@]}"
 else
-  "${PYTHON_BIN}" scripts/resource_monitor.py \
-    --output-json "${RESOURCE_MONITOR_FILE}" \
+  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+    --resource-dir "${RESOURCE_MONITOR_STEP_DIR}" \
     --label "${RESOURCE_MONITOR_LABEL}" \
-    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    --gpu-expected "${NPROC_PER_NODE}" \
     -- \
     "${TORCHRUN_BIN}" \
     --nnodes="${STEP_NNODES}" \
@@ -278,10 +288,10 @@ if [[ "${SPLIT_EVAL_AFTER_TRAIN}" == "1" && "${SKIP_INLINE_SPLIT_EVAL}" != "1" &
   # distributed training step for these post-local SGD runs.
   export CUDA_VISIBLE_DEVICES=
 
-  "${PYTHON_BIN}" scripts/resource_monitor.py \
-    --output-json "$(resource_monitor_file_for_label "${RESOURCE_MONITOR_LABEL}_split_eval")" \
+  "${PYTHON_BIN}" scripts/run_monitored_command.py \
+    --resource-dir "$(resource_monitor_dir_for_label "${RESOURCE_MONITOR_LABEL}_split_eval")" \
     --label "${RESOURCE_MONITOR_LABEL}_split_eval" \
-    --interval-sec "${RESOURCE_MONITOR_INTERVAL_SEC}" \
+    --gpu-expected 0 \
     -- \
     "${PYTHON_BIN}" src/pytorch/run_dnn.py \
     --params "${PARAMS_FILE}" \

@@ -267,21 +267,50 @@ def wrap_with_resource_monitor(
     monitor_python: str,
     step_root: Path,
     step_id: str,
+    gpu_expected: int,
     command: Sequence[str],
 ) -> List[str]:
     monitor_dir = step_root / "resource_monitor"
     monitor_dir.mkdir(parents=True, exist_ok=True)
-    output_json = monitor_dir / "resource_monitor.json"
     return [
         monitor_python,
-        "scripts/resource_monitor.py",
-        "--output-json",
-        str(output_json),
+        "scripts/run_monitored_command.py",
+        "--resource-dir",
+        str(monitor_dir),
         "--label",
         step_id,
+        "--gpu-expected",
+        str(int(gpu_expected)),
         "--",
         *list(command),
     ]
+
+
+def gpu_expected_for_step(
+    args: argparse.Namespace,
+    batch: BatchDefinition,
+    step: BatchStep,
+) -> int:
+    if not batch.requires_slurm:
+        return 0
+    if not step.wrap_srun:
+        return 0
+    if step.kind == "interactive_dnn":
+        if step.load_from_step:
+            return 0
+        return max(1, int(step.nproc_per_node or 1))
+    if step.kind == "classical":
+        return 0
+    if step.kind in {"dnn", "sbi"}:
+        return 1
+    if step.kind == "script":
+        if batch.preferred_gpu:
+            return 1
+        if step.nproc_per_node is not None:
+            return max(1, int(step.nproc_per_node))
+        if step.step_nnodes is not None and int(step.step_nnodes) > 1:
+            return 1
+    return 0
 
 
 def render_extra_args(
@@ -438,6 +467,7 @@ def build_step_command(
             monitor_python=python_bin,
             step_root=step_root,
             step_id=step.step_id,
+            gpu_expected=gpu_expected_for_step(args, batch, step),
             command=base_command,
         )
         command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
@@ -466,6 +496,7 @@ def build_step_command(
             monitor_python=python_bin,
             step_root=step_root,
             step_id=step.step_id,
+            gpu_expected=gpu_expected_for_step(args, batch, step),
             command=base_command,
         )
         command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
@@ -508,6 +539,7 @@ def build_step_command(
             monitor_python=python_bin,
             step_root=step_root,
             step_id=step.step_id,
+            gpu_expected=gpu_expected_for_step(args, batch, step),
             command=base_command,
         )
         command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
@@ -538,6 +570,7 @@ def build_step_command(
             monitor_python=python_bin,
             step_root=step_root,
             step_id=step.step_id,
+            gpu_expected=gpu_expected_for_step(args, batch, step),
             command=base_command,
         )
         command = wrap_single_node_srun(args, allocation_job_id, monitored_command) if batch.requires_slurm and step.wrap_srun else monitored_command
@@ -576,11 +609,11 @@ def summarize_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSt
     metric_files = sorted(root.rglob("metrics_summary.json"))
     if metric_files:
         outputs["metrics_summary_files"] = [str(path) for path in metric_files]
-    resource_files = sorted(root.rglob("resource_monitor*.json"))
-    if resource_files:
-        outputs["resource_monitor_files"] = [str(path) for path in resource_files]
+    raw_monitor_files = sorted(root.rglob("resource_monitor.json"))
+    if raw_monitor_files:
+        outputs["resource_monitor_files"] = [str(path) for path in raw_monitor_files]
         monitors: List[Dict[str, object]] = []
-        for path in resource_files:
+        for path in raw_monitor_files:
             try:
                 monitors.append(json.loads(path.read_text()))
             except Exception:
@@ -686,10 +719,22 @@ def summarize_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSt
             summary["node_by_hostname"] = node_by_hostname
             summary["gpu_by_uuid"] = gpu_by_uuid
             outputs["resource_monitor_summary"] = summary
+    resource_summary_files = sorted(root.rglob("resource_summary.json"))
+    if resource_summary_files:
+        outputs["resource_summary_files"] = [str(path) for path in resource_summary_files]
+    resource_time_files = sorted(root.rglob("resource_time.txt"))
+    if resource_time_files:
+        outputs["resource_time_files"] = [str(path) for path in resource_time_files]
+    sacct_files = sorted(root.rglob("sacct_step.txt"))
+    if sacct_files:
+        outputs["sacct_step_files"] = [str(path) for path in sacct_files]
+    gpu_csv_files = sorted(root.rglob("gpu_monitor.csv"))
+    if gpu_csv_files:
+        outputs["gpu_monitor_files"] = [str(path) for path in gpu_csv_files]
     return outputs
 
 
-def validate_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchStep, outputs: Dict[str, object]) -> None:
+def validate_step_outputs(args: argparse.Namespace, run_root: Path, batch: BatchDefinition, step: BatchStep, outputs: Dict[str, object]) -> None:
     root = step_output_root(run_root, batch, step)
     errors: List[str] = []
 
@@ -709,8 +754,10 @@ def validate_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSte
         expects_metrics = True
     if expects_metrics and "metrics_summary_files" not in outputs:
         errors.append("expected at least one metrics_summary.json artifact, but none was found")
+    if batch.requires_slurm and "resource_summary_files" not in outputs:
+        errors.append("expected at least one resource_summary.json artifact, but none was found")
     if batch.requires_slurm and "resource_monitor_files" not in outputs:
-        errors.append("expected at least one resource monitor artifact, but none was found")
+        errors.append("expected at least one resource_monitor.json artifact, but none was found")
 
     if step.required_globs:
         for pattern in step.required_globs:
@@ -725,6 +772,24 @@ def validate_step_outputs(run_root: Path, batch: BatchDefinition, step: BatchSte
     if errors:
         joined = "; ".join(errors)
         raise RuntimeError(f"Output validation failed for {batch.batch_id}:{step.step_id}: {joined}")
+
+    if batch.requires_slurm:
+        python_bin = resolve_python_bin(args, step)
+        gpu_expected = gpu_expected_for_step(args, batch, step)
+        for summary_path in outputs.get("resource_summary_files", []):
+            resource_dir = str(Path(summary_path).parent)
+            subprocess.run(
+                [
+                    python_bin,
+                    "scripts/validate_monitoring_contract.py",
+                    "--resource-dir",
+                    resource_dir,
+                    "--gpu-expected",
+                    str(gpu_expected),
+                ],
+                cwd=str(REPO_ROOT),
+                check=True,
+            )
 
 
 def print_batch_listing() -> None:
@@ -930,7 +995,7 @@ def execute_batches(args: argparse.Namespace, batches: Sequence[BatchDefinition]
 
                 outputs = summarize_step_outputs(run_root, batch, step)
                 if not args.dry_run:
-                    validate_step_outputs(run_root, batch, step, outputs)
+                    validate_step_outputs(args, run_root, batch, step, outputs)
                 step_record["outputs"] = outputs
                 step_record["completed_at"] = utc_now_iso()
                 step_record["status"] = "completed"

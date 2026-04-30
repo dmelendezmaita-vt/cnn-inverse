@@ -72,8 +72,33 @@ def initialize_cpu_counters(procs: Iterable[psutil.Process]) -> None:
             continue
 
 
-def sample_process_tree(root: psutil.Process) -> Dict[str, object]:
+def refresh_tracked_processes(
+    root: psutil.Process,
+    tracked: Dict[int, psutil.Process],
+) -> tuple[List[psutil.Process], set[int]]:
     procs = collect_processes(root)
+    alive: List[psutil.Process] = []
+    seen: set[int] = set()
+    new_pids: set[int] = set()
+    for proc in procs:
+        pid = proc.pid
+        seen.add(pid)
+        if pid not in tracked:
+            tracked[pid] = proc
+            new_pids.add(pid)
+        alive.append(tracked[pid])
+    stale_pids = [pid for pid in tracked if pid not in seen]
+    for pid in stale_pids:
+        tracked.pop(pid, None)
+    return alive, new_pids
+
+
+def sample_process_tree(
+    root: psutil.Process,
+    tracked: Dict[int, psutil.Process],
+) -> Dict[str, object]:
+    procs, new_pids = refresh_tracked_processes(root, tracked)
+    initialize_cpu_counters(tracked[pid] for pid in new_pids)
     pid_set = {proc.pid for proc in procs}
     cpu_percent_sum = 0.0
     rss_bytes_sum = 0
@@ -82,7 +107,10 @@ def sample_process_tree(root: psutil.Process) -> Dict[str, object]:
     for proc in procs:
         try:
             with proc.oneshot():
-                cpu_percent = float(proc.cpu_percent(None))
+                if proc.pid in new_pids:
+                    cpu_percent = 0.0
+                else:
+                    cpu_percent = float(proc.cpu_percent(None))
                 mem = proc.memory_info()
                 name = proc.name()
         except psutil.Error:
@@ -302,6 +330,7 @@ def main() -> None:
     command_started_ts = time.time()
     proc = subprocess.Popen(args.command)
     root = psutil.Process(proc.pid)
+    tracked_processes: Dict[int, psutil.Process] = {}
     initialize_cpu_counters(collect_processes(root))
     psutil.cpu_percent(interval=None, percpu=True)
 
@@ -311,7 +340,7 @@ def main() -> None:
         if not first_sample:
             time.sleep(args.interval_sec)
         first_sample = False
-        process_tree = sample_process_tree(root)
+        process_tree = sample_process_tree(root, tracked_processes)
         node = sample_node_resources()
         pid_set = set(process_tree["pid_set"])
         gpus = add_gpu_attribution(query_nvidia_smi(), pid_set)
