@@ -52,6 +52,8 @@ export TEMP="${TMPDIR}"
 mkdir -p "${WORK_ROOT}" "${WORK}" "${TMPDIR}"
 mkdir -p "${RESOURCE_MONITOR_DIR}"
 
+STAGING_BARRIER_DIR="${RUN_OUTPUT_ROOT}/_staging_barrier/${ALLOC_JOB_ID}_${RUN_ID}"
+
 resource_monitor_file_for_label() {
   local label="$1"
   printf '%s/resource_monitor_%s_%s_n%s_p%s.json\n' \
@@ -93,6 +95,22 @@ resolve_step_master_addr() {
 
 STEP_MASTER_ADDR="$(resolve_step_master_addr)"
 export MASTER_ADDR="${STEP_MASTER_ADDR}"
+
+wait_for_staging_barrier() {
+  local barrier_dir="$1"
+  local expected_nodes="$2"
+  local marker="${barrier_dir}/node_${SLURM_NODEID:-0}_proc_${SLURM_PROCID:-0}"
+  mkdir -p "${barrier_dir}"
+  : > "${marker}"
+  while true; do
+    local ready
+    ready="$(find "${barrier_dir}" -maxdepth 1 -type f | wc -l | tr -d ' ')"
+    if [[ "${ready}" -ge "${expected_nodes}" ]]; then
+      break
+    fi
+    sleep 2
+  done
+}
 
 if [[ -n "${SHARED_DATA_DIR}" ]]; then
   if [[ ! -d "${SHARED_DATA_DIR}" ]] || ! find "${SHARED_DATA_DIR}" -mindepth 1 -maxdepth 1 | grep -q .; then
@@ -139,6 +157,10 @@ PY
 )"
 else
   DATA_DIR="${TAR_PATH}"
+fi
+
+if (( STEP_NNODES > 1 )); then
+  wait_for_staging_barrier "${STAGING_BARRIER_DIR}" "${STEP_NNODES}"
 fi
 
 echo "$(date -Is) [interactive-step] run_id=${RUN_ID} alloc_job_id=${ALLOC_JOB_ID} nodeid=${SLURM_NODEID:-NA} procid=${SLURM_PROCID:-NA}"
@@ -228,6 +250,7 @@ else
     --nproc_per_node="${NPROC_PER_NODE}" \
     --rdzv_backend=c10d \
     --rdzv_id="${ALLOC_JOB_ID}_${RUN_ID}" \
+    --rdzv_conf "timeout=${TORCH_DIST_TIMEOUT_SECONDS}" \
     --rdzv_endpoint="${MASTER_ADDR}:${MASTER_PORT}" \
     src/pytorch/run_dnn.py \
       --params "${PARAMS_FILE}" \

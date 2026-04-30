@@ -102,6 +102,21 @@ def _extract_tar_to_stage(tar_path: Path, dest_dir: Path) -> None:
     subprocess.run(["cp", "-f", str(tar_path), str(tar_copy)], check=True)
     dest_dir.mkdir(parents=True, exist_ok=True)
     subprocess.run(["tar", "-xf", str(tar_copy), "-C", str(dest_dir)], check=True)
+    tar_copy.unlink(missing_ok=True)
+
+
+def _normalize_extracted_tree(dest_dir: Path, data_prefix: str) -> None:
+    expected = dest_dir / data_prefix
+    if expected.is_dir():
+        nested_root = expected
+    else:
+        entries = [path for path in dest_dir.iterdir() if path.name != ".stage_manifest.json"]
+        if len(entries) != 1 or not entries[0].is_dir():
+            return
+        nested_root = entries[0]
+    for child in nested_root.iterdir():
+        os.replace(child, dest_dir / child.name)
+    nested_root.rmdir()
 
 
 def _measure_tree_bytes(root: Path) -> dict[str, int]:
@@ -163,6 +178,7 @@ def stage_hh_dataset_root(
             _copy_single_current(source_dir, tmp_dir, str(curr), data_prefix)
         else:
             _extract_tar_to_stage(source_dir, tmp_dir)
+            _normalize_extracted_tree(tmp_dir, data_prefix)
         payload = {
             "mode": mode,
             "source_dir": str(source_dir),
