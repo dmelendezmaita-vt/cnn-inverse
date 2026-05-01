@@ -419,8 +419,15 @@ def make_step_env(
     placeholder_ok: bool = False,
 ) -> Dict[str, str]:
     env = os.environ.copy()
+    python_bin = resolve_python_bin(args, step)
+    monitor_python = resolve_monitor_python(args, step)
     env["PYTHONUNBUFFERED"] = "1"
     env["REPO_ROOT"] = str(REPO_ROOT)
+    env["PYTHON_BIN"] = python_bin
+    env["RESOURCE_MONITOR_PYTHON"] = monitor_python
+    torchrun_path = Path(python_bin).resolve().parent / "torchrun"
+    if torchrun_path.exists():
+        env["TORCHRUN_BIN"] = str(torchrun_path)
     if batch.requires_slurm and hh_tar_path is not None:
         data_prefix = derive_data_prefix(hh_tar_path)
         prepared_root = default_prepared_data_root(args)
