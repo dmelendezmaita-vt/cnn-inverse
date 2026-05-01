@@ -4,6 +4,15 @@ set -euo pipefail
 REPO_ROOT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 cd "${REPO_ROOT}"
 
+python - <<'PY'
+import sys
+if sys.version_info[:2] < (3, 12):
+    raise SystemExit(
+        "prepare_falcon_envs.sh requires Python 3.12 or newer. "
+        "On Falcon, load Python/3.12.3-GCCcore-13.3.0 before running it."
+    )
+PY
+
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip wheel 'setuptools<81'
