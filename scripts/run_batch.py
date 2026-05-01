@@ -447,9 +447,16 @@ def make_step_env(
     if batch.requires_slurm and hh_tar_path is not None:
         data_prefix = derive_data_prefix(hh_tar_path)
         prepared_root = default_prepared_data_root(args)
+        step_root = step_output_root(run_root, batch, step)
+        if step.parallel_group:
+            split_cache_root = step_root / ".split_array_cache"
+            scale_cache_root = step_root / ".scale_cache"
+        else:
+            split_cache_root = prepared_root / data_prefix / ".split_array_cache"
+            scale_cache_root = prepared_root / data_prefix / ".scale_cache"
         env["ALLOC_JOB_ID"] = allocation_job_id
         env["RUN_ID"] = step.step_id
-        env["RUN_OUTPUT_ROOT"] = str(step_output_root(run_root, batch, step))
+        env["RUN_OUTPUT_ROOT"] = str(step_root)
         env["PARAMS_FILE"] = step.params_file
         env["TAR_PATH"] = str(hh_tar_path)
         env["DATA_PREFIX"] = data_prefix
@@ -463,8 +470,8 @@ def make_step_env(
         )
         env["NC_HH_PREPARED_ROOT"] = str(prepared_root)
         env["NC_HH_CACHE_IDENTITY"] = f"{hh_tar_path.resolve()}::{data_prefix}"
-        env["NC_HH_SPLIT_CACHE_ROOT"] = str(prepared_root / data_prefix / ".split_array_cache")
-        env["NC_HH_SCALE_CACHE_ROOT"] = str(prepared_root / data_prefix / ".scale_cache")
+        env["NC_HH_SPLIT_CACHE_ROOT"] = str(split_cache_root)
+        env["NC_HH_SCALE_CACHE_ROOT"] = str(scale_cache_root)
         env["LAUNCH_BACKEND"] = str(args.launch_backend)
         env["RESOURCE_MONITOR_DIR"] = str(step_output_root(run_root, batch, step) / "resource_monitor")
         env["RESOURCE_MONITOR_LABEL"] = str(step.step_id)
