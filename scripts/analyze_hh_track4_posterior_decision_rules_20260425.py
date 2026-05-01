@@ -17,6 +17,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src" / "pytorch"))
 sys.path.insert(0, str(REPO / "src"))
 from data import _apply_scale_inverse, _apply_targets_transform, _resolve_split_array_cache_dir, preprocess_targets  # type: ignore  # noqa: E402
+from run_hh_track4_aligned_multicurrent_classical_20260425 import load_one_current, load_params as classical_load_params  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -67,25 +68,18 @@ def postprocess_targets_array(y_norm: np.ndarray, targets_scale: dict) -> np.nda
 
 
 def targets_scale(args: argparse.Namespace) -> dict:
-    params = load_params(str((REPO / args.params).resolve() if not Path(args.params).is_absolute() else Path(args.params)))
-    params["data"]["data_dir"] = str(resolve_hh_dataset_root(args.data_dir, data_prefix=args.data_prefix))
-    params["data"]["data_prefix"] = args.data_prefix
-    params["data"]["curr"] = "0.1"
-    params["data"]["Ntrain"] = args.n_train
-    params["data"]["Nvalidate"] = args.n_validate
-    params["data"]["Ntest"] = args.n_test
-    params["data"]["split_array_cache_enabled"] = True
-    cache_dir = _resolve_split_array_cache_dir(params["data"])
-    if cache_dir is None:
-        raise SystemExit("Unable to resolve split-array cache for posterior decision-rule analysis.")
-    target_train = np.load(cache_dir / "targets_train.npy", mmap_mode="r")
-    target_validate = np.load(cache_dir / "targets_validate.npy", mmap_mode="r")
-    target_test = np.load(cache_dir / "targets_test.npy", mmap_mode="r")
-    targets = {
-        "train": np.array(target_train[: args.n_train], copy=True).astype(np.float32, copy=False),
-        "validate": np.array(target_validate[: args.n_validate], copy=True).astype(np.float32, copy=False),
-        "test": np.array(target_test[: args.n_test], copy=True).astype(np.float32, copy=False),
-    }
+    params_path = str((REPO / args.params).resolve() if not Path(args.params).is_absolute() else Path(args.params))
+    params = classical_load_params(params_path)
+    _, targets = load_one_current(
+        params,
+        curr="0.1",
+        data_dir=args.data_dir,
+        data_prefix=args.data_prefix,
+        n_train=args.n_train,
+        n_validate=args.n_validate,
+        n_test=args.n_test,
+        feature_mode="raw",
+    )
     logger = logging.getLogger("decision_rules_scale")
     if not logger.handlers:
         logger.addHandler(logging.NullHandler())
