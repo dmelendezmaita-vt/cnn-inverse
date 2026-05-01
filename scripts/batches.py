@@ -1475,7 +1475,6 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 pass_data_dir=True,
                 required_globs=("metrics_summary.json",),
                 extra_args=(
-                    "--aggregation", "meanstd",
                     "--batch-size", "16",
                     "--inference-batch-size", "16",
                     "--num-workers", "0",
