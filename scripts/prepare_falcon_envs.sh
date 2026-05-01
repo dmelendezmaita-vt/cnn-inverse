@@ -6,7 +6,7 @@ cd "${REPO_ROOT}"
 
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip setuptools wheel
+python -m pip install --upgrade pip wheel 'setuptools<81'
 python -m pip install -r requirements-public-complete-core.txt
 python - <<'PY'
 import torch, sbi, swyft, pytorch_lightning, psutil
@@ -21,7 +21,7 @@ PY
 
 python -m venv .venv-bayesflow
 source .venv-bayesflow/bin/activate
-python -m pip install --upgrade pip setuptools wheel
+python -m pip install --upgrade pip wheel 'setuptools<81'
 python -m pip install -r requirements-public-bayesflow.txt
 python - <<'PY'
 import bayesflow, keras, numpy, psutil
