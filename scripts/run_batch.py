@@ -322,8 +322,13 @@ def gpu_expected_for_step(
         extra_args = tuple(str(token).lower() for token in step.extra_args)
         if "--device" in extra_args:
             idx = extra_args.index("--device")
-            if idx + 1 < len(extra_args) and extra_args[idx + 1] in {"gpu", "cuda"}:
+            if idx + 1 < len(extra_args) and extra_args[idx + 1] == "cpu":
+                return 0
+            if idx + 1 < len(extra_args) and extra_args[idx + 1] in {"gpu", "cuda", "auto"}:
                 return max(1, int(step.nproc_per_node or 1))
+        script_path = (step.script_path or "").lower()
+        if "swyft" in script_path:
+            return max(1, int(step.nproc_per_node or 1))
         if step.python_bin_override and "bayesflow" in step.python_bin_override.lower():
             return max(1, int(step.nproc_per_node or 1))
         if step.nproc_per_node is not None and step.step_nnodes is not None and int(step.step_nnodes) > 1:
@@ -351,6 +356,31 @@ def render_extra_args(
             value = value.replace("{LOAD_FROM_STEP_ROOT}", str(source_step_root(run_root, batch, step.load_from_step)))
         rendered.append(value)
     return rendered
+
+
+def step_cohorts(steps: Sequence[BatchStep]) -> List[List[BatchStep]]:
+    cohorts: List[List[BatchStep]] = []
+    current: List[BatchStep] = []
+    current_group: Optional[str] = None
+    for step in steps:
+        group = step.parallel_group
+        if not group:
+            if current:
+                cohorts.append(current)
+                current = []
+                current_group = None
+            cohorts.append([step])
+            continue
+        if current and current_group == group:
+            current.append(step)
+            continue
+        if current:
+            cohorts.append(current)
+        current = [step]
+        current_group = group
+    if current:
+        cohorts.append(current)
+    return cohorts
 
 
 def resolve_load_checkpoint(
@@ -976,73 +1006,143 @@ def execute_batches(args: argparse.Namespace, batches: Sequence[BatchDefinition]
         write_json(status_path, batch_status)
 
         try:
-            for step in batch.steps:
-                command, env = build_step_command(
-                    args=args,
-                    batch=batch,
-                    step=step,
-                    hh_tar_path=hh_tar_path,
-                    allocation_job_id=allocation_job_id,
-                    step_records=step_records,
-                    run_root=run_root,
-                    placeholder_ok=False,
-                )
-                env_subset = {
-                    key: env[key]
-                    for key in sorted(
-                        key
-                        for key in env.keys()
-                        if key
-                        in {
-                            "ALLOC_JOB_ID",
-                            "CURR",
-                            "DATA_ACCESS_MODE",
-                            "DATA_PREFIX",
-                            "EVAL_ONLY_CHECKPOINT",
-                            "LAUNCH_BACKEND",
-                            "MASTER_ADDR",
-                            "MASTER_PORT",
-                            "NPROC_PER_NODE",
-                            "PARAMS_FILE",
-                            "RUN_ID",
-                            "RUN_OUTPUT_ROOT",
-                            "SAVE_PREDICTIONS",
-                            "SHARED_DATA_DIR",
-                            "SPLIT_EVAL_AFTER_TRAIN",
-                            "STEP_NNODES",
-                            "TAR_PATH",
+            for cohort in step_cohorts(batch.steps):
+                cohort_specs: List[Dict[str, object]] = []
+                for step in cohort:
+                    command, env = build_step_command(
+                        args=args,
+                        batch=batch,
+                        step=step,
+                        hh_tar_path=hh_tar_path,
+                        allocation_job_id=allocation_job_id,
+                        step_records=step_records,
+                        run_root=run_root,
+                        placeholder_ok=False,
+                    )
+                    env_subset = {
+                        key: env[key]
+                        for key in sorted(
+                            key
+                            for key in env.keys()
+                            if key
+                            in {
+                                "ALLOC_JOB_ID",
+                                "CURR",
+                                "DATA_ACCESS_MODE",
+                                "DATA_PREFIX",
+                                "EVAL_ONLY_CHECKPOINT",
+                                "LAUNCH_BACKEND",
+                                "MASTER_ADDR",
+                                "MASTER_PORT",
+                                "NPROC_PER_NODE",
+                                "PARAMS_FILE",
+                                "RUN_ID",
+                                "RUN_OUTPUT_ROOT",
+                                "SAVE_PREDICTIONS",
+                                "SHARED_DATA_DIR",
+                                "SPLIT_EVAL_AFTER_TRAIN",
+                                "STEP_NNODES",
+                                "TAR_PATH",
+                            }
+                        )
+                    }
+                    print(f"[batch {batch.batch_id}] step {step.step_id}")
+                    print(f"  command: {format_command(command)}")
+                    if env_subset:
+                        print(f"  env: {json.dumps(env_subset, sort_keys=True)}")
+
+                    step_record: Dict[str, object] = {
+                        "step_id": step.step_id,
+                        "kind": step.kind,
+                        "description": step.description,
+                        "command": command,
+                        "env_subset": env_subset,
+                        "started_at": utc_now_iso(),
+                        "completed_at": None,
+                        "status": "running",
+                    }
+                    batch_status["steps"].append(step_record)
+                    cohort_specs.append(
+                        {
+                            "step": step,
+                            "command": command,
+                            "env": env,
+                            "step_record": step_record,
                         }
                     )
-                }
-                print(f"[batch {batch.batch_id}] step {step.step_id}")
-                print(f"  command: {format_command(command)}")
-                if env_subset:
-                    print(f"  env: {json.dumps(env_subset, sort_keys=True)}")
-
-                step_record: Dict[str, object] = {
-                    "step_id": step.step_id,
-                    "kind": step.kind,
-                    "description": step.description,
-                    "command": command,
-                    "env_subset": env_subset,
-                    "started_at": utc_now_iso(),
-                    "completed_at": None,
-                    "status": "running",
-                }
-                batch_status["steps"].append(step_record)
                 write_json(status_path, batch_status)
 
-                if not args.dry_run:
-                    subprocess.run(command, cwd=str(REPO_ROOT), env=env, check=True)
+                if args.dry_run:
+                    continue
 
-                outputs = summarize_step_outputs(run_root, batch, step)
-                if not args.dry_run:
+                active: List[Tuple[Dict[str, object], subprocess.Popen[object]]] = []
+                for spec in cohort_specs:
+                    proc = subprocess.Popen(
+                        spec["command"],
+                        cwd=str(REPO_ROOT),
+                        env=spec["env"],
+                    )
+                    active.append((spec, proc))
+
+                first_failure: Optional[subprocess.CalledProcessError] = None
+                failure_step_id: Optional[str] = None
+                for spec, proc in active:
+                    rc = proc.wait()
+                    step = spec["step"]
+                    step_record = spec["step_record"]
+                    if rc != 0:
+                        if first_failure is None:
+                            first_failure = subprocess.CalledProcessError(rc, spec["command"])
+                            failure_step_id = step.step_id
+                            for other_spec, other_proc in active:
+                                if other_proc is not proc and other_proc.poll() is None:
+                                    other_proc.terminate()
+                        step_record["completed_at"] = utc_now_iso()
+                        step_record["status"] = "failed"
+                        step_record["failure"] = {
+                            "returncode": rc,
+                            "command": spec["command"],
+                        }
+                        write_json(status_path, batch_status)
+                        continue
+
+                    outputs = summarize_step_outputs(run_root, batch, step)
                     validate_step_outputs(args, run_root, batch, step, outputs)
-                step_record["outputs"] = outputs
-                step_record["completed_at"] = utc_now_iso()
-                step_record["status"] = "completed"
-                step_records[step.step_id] = outputs
-                write_json(status_path, batch_status)
+                    step_record["outputs"] = outputs
+                    step_record["completed_at"] = utc_now_iso()
+                    step_record["status"] = "completed"
+                    step_records[step.step_id] = outputs
+                    write_json(status_path, batch_status)
+
+                for spec, proc in active:
+                    if proc.poll() is None:
+                        proc.wait()
+                    step_record = spec["step_record"]
+                    if step_record.get("status") == "running":
+                        rc = int(proc.returncode or 0)
+                        if rc == 0:
+                            continue
+                        step_record["completed_at"] = utc_now_iso()
+                        step_record["status"] = "failed"
+                        step_record["failure"] = {
+                            "returncode": rc,
+                            "command": spec["command"],
+                        }
+                        write_json(status_path, batch_status)
+                        if first_failure is None:
+                            first_failure = subprocess.CalledProcessError(rc, spec["command"])
+                            failure_step_id = spec["step"].step_id
+
+                if first_failure is not None:
+                    batch_status["status"] = "failed"
+                    batch_status["completed_at"] = utc_now_iso()
+                    batch_status["failed_step"] = failure_step_id
+                    batch_status["failure"] = {
+                        "returncode": first_failure.returncode,
+                        "command": first_failure.cmd,
+                    }
+                    write_json(status_path, batch_status)
+                    raise SystemExit(first_failure.returncode) from first_failure
 
             batch_status["status"] = "completed"
             batch_status["completed_at"] = utc_now_iso()
@@ -1050,6 +1150,7 @@ def execute_batches(args: argparse.Namespace, batches: Sequence[BatchDefinition]
         except subprocess.CalledProcessError as exc:
             batch_status["status"] = "failed"
             batch_status["completed_at"] = utc_now_iso()
+            batch_status["failed_step"] = batch_status.get("failed_step")
             batch_status["failure"] = {
                 "returncode": exc.returncode,
                 "command": exc.cmd,

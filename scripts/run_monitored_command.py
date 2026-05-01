@@ -46,8 +46,20 @@ def maybe_compose_step_id(job_id: str, step_id: str) -> str:
     return f"{job_id}.{step_id}"
 
 
+def should_monitor_gpus(gpu_expected: int) -> bool:
+    if gpu_expected > 0:
+        return True
+    visible = os.environ.get("CUDA_VISIBLE_DEVICES", "").strip()
+    if visible:
+        return True
+    slurm_gpus = os.environ.get("SLURM_GPUS_ON_NODE", "").strip()
+    if slurm_gpus and slurm_gpus not in {"0", "(null)"}:
+        return True
+    return False
+
+
 def start_gpu_monitor(resource_dir: Path, gpu_expected: int) -> subprocess.Popen[str] | None:
-    if gpu_expected <= 0:
+    if not should_monitor_gpus(gpu_expected):
         return None
     visible = os.environ.get("CUDA_VISIBLE_DEVICES", "").strip()
     interval_sec = os.environ.get("GPU_MONITOR_INTERVAL_SEC", "1").strip() or "1"

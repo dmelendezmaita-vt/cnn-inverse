@@ -35,6 +35,7 @@ class BatchStep:
     env_overrides: Tuple[Tuple[str, str], ...] = ()
     required_globs: Tuple[str, ...] = ()
     wrap_srun: bool = True
+    parallel_group: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -238,6 +239,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--diagnostic-samples", "8",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk05_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_meanstd",
@@ -260,6 +262,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--diagnostic-samples", "8",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk05_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_structured",
@@ -281,6 +284,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--diagnostic-samples", "8",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk05_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_set",
@@ -303,6 +307,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--diagnostic-samples", "8",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk05_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_temporal",
@@ -361,6 +366,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--device", "gpu",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk06_swyft_a",
             ),
             BatchStep(
                 step_id="swyft_meanstd",
@@ -381,6 +387,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--device", "gpu",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk06_swyft_a",
             ),
             BatchStep(
                 step_id="swyft_structured",
@@ -400,6 +407,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--device", "gpu",
                     "--seed", "20260429",
                 ),
+                parallel_group="smk06_swyft_a",
             ),
             BatchStep(
                 step_id="swyft_tmnre",
@@ -1322,6 +1330,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--sample-batch-size", "16",
                     "--diagnostic-samples", "16",
                 ),
+                parallel_group="can08_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_meanstd",
@@ -1340,6 +1349,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--sample-batch-size", "16",
                     "--diagnostic-samples", "16",
                 ),
+                parallel_group="can08_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_structured",
@@ -1357,6 +1367,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--sample-batch-size", "16",
                     "--diagnostic-samples", "16",
                 ),
+                parallel_group="can08_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_set",
@@ -1376,6 +1387,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--diagnostic-samples", "8",
                     "--summary-dim", "32",
                 ),
+                parallel_group="can08_bayesflow_a",
             ),
             BatchStep(
                 step_id="bayesflow_temporal",
@@ -1396,6 +1408,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                     "--summary-dim", "32",
                     "--recurrent-dim", "64",
                 ),
+                parallel_group="can08_frameworks_b",
             ),
             BatchStep(
                 step_id="swyft_concat",
@@ -1405,7 +1418,14 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
                 pass_data_dir=True,
                 required_globs=("metrics_summary.json",),
-                extra_args=("--aggregation", "concat"),
+                extra_args=(
+                    "--aggregation", "concat",
+                    "--batch-size", "16",
+                    "--inference-batch-size", "16",
+                    "--num-workers", "0",
+                    "--device", "gpu",
+                ),
+                parallel_group="can08_frameworks_b",
             ),
             BatchStep(
                 step_id="swyft_meanstd",
@@ -1415,7 +1435,14 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
                 pass_data_dir=True,
                 required_globs=("metrics_summary.json",),
-                extra_args=("--aggregation", "meanstd"),
+                extra_args=(
+                    "--aggregation", "meanstd",
+                    "--batch-size", "16",
+                    "--inference-batch-size", "16",
+                    "--num-workers", "0",
+                    "--device", "gpu",
+                ),
+                parallel_group="can08_frameworks_b",
             ),
             BatchStep(
                 step_id="swyft_structured",
@@ -1425,7 +1452,14 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 params_file="src/pytorch/configs/hh/params_sbi_hh_followup.yaml",
                 pass_data_dir=True,
                 required_globs=("metrics_summary.json",),
-                extra_args=("--aggregation", "meanstd"),
+                extra_args=(
+                    "--aggregation", "meanstd",
+                    "--batch-size", "16",
+                    "--inference-batch-size", "16",
+                    "--num-workers", "0",
+                    "--device", "gpu",
+                ),
+                parallel_group="can08_frameworks_b",
             ),
             BatchStep(
                 step_id="swyft_tmnre",
@@ -1436,7 +1470,14 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 pass_data_dir=True,
                 required_globs=("metrics_summary.json",),
                 load_from_step="swyft_meanstd",
-                extra_args=("--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}"),
+                extra_args=(
+                    "--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}",
+                    "--batch-size", "16",
+                    "--inference-batch-size", "16",
+                    "--num-workers", "0",
+                    "--device", "gpu",
+                ),
+                parallel_group="can08_swyft_followup",
             ),
             BatchStep(
                 step_id="swyft_tmnre_score_prune",
@@ -1447,7 +1488,15 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 pass_data_dir=True,
                 required_globs=("metrics_summary.json",),
                 load_from_step="swyft_meanstd",
-                extra_args=("--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}", "--aggregation", "meanstd"),
+                extra_args=(
+                    "--stage1-run-dir", "{LOAD_FROM_STEP_ROOT}",
+                    "--aggregation", "meanstd",
+                    "--batch-size", "16",
+                    "--inference-batch-size", "16",
+                    "--num-workers", "0",
+                    "--device", "gpu",
+                ),
+                parallel_group="can08_swyft_followup",
             ),
         ),
     ),
@@ -1524,6 +1573,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 description="Compact-HH sandbox against observed HH traces",
                 script_path="scripts/run_hh_track4_assumption_conditioned_compact_hh_sandbox_20260424.py",
                 pass_data_dir=True,
+                parallel_group="can10_group_a",
             ),
             BatchStep(
                 step_id="compact_hh_fit_search",
@@ -1531,6 +1581,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 description="Compact-HH direct-fitting search branch",
                 script_path="scripts/run_hh_track4_assumption_conditioned_compact_hh_fit_search_20260424.py",
                 pass_data_dir=True,
+                parallel_group="can10_group_a",
             ),
             BatchStep(
                 step_id="hybrid_refinement_midpoint",
@@ -1539,6 +1590,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 script_path="scripts/run_hh_track4_assumption_conditioned_hybrid_refinement_20260425.py",
                 pass_data_dir=True,
                 extra_args=("--init-mode", "midpoint"),
+                parallel_group="can10_group_a",
             ),
             BatchStep(
                 step_id="wasserstein_abc",
@@ -1546,12 +1598,14 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 description="Sliced-Wasserstein ABC surrogate branch",
                 script_path="scripts/run_hh_track4_assumption_conditioned_wasserstein_abc_20260425.py",
                 pass_data_dir=True,
+                parallel_group="can10_group_a",
             ),
             BatchStep(
                 step_id="active_sequential_policy_suite",
                 kind="script",
                 description="Active-sequential policy comparison branch",
                 script_path="scripts/run_hh_track4_assumption_conditioned_active_sequential_policy_suite_20260425.py",
+                parallel_group="can10_group_b",
             ),
             BatchStep(
                 step_id="asnpe_surrogate",
@@ -1559,6 +1613,7 @@ BATCHES: Tuple[BatchDefinition, ...] = (
                 description="ASNPE-style surrogate branch",
                 script_path="scripts/run_hh_track4_assumption_conditioned_asnpe_20260426.py",
                 python_bin_override=".venv-bayesflow/bin/python",
+                parallel_group="can10_group_b",
             ),
         ),
     ),
