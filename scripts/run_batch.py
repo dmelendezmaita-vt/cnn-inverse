@@ -183,6 +183,15 @@ def derive_master_addr(args: argparse.Namespace, allocation_job_id: Optional[str
     return os.environ.get("HOSTNAME", "localhost")
 
 
+def derive_step_master_port(base_port: str, step_id: str) -> str:
+    try:
+        base = int(base_port)
+    except Exception:
+        return str(base_port)
+    offset = (sum(step_id.encode("utf-8")) % 1000) + 1
+    return str(base + offset)
+
+
 def require_slurm(batch: BatchDefinition, args: argparse.Namespace) -> str:
     allocation_job_id = args.allocation_job_id or os.environ.get("SLURM_JOB_ID")
     if not batch.requires_slurm:
@@ -445,7 +454,7 @@ def make_step_env(
         env["TAR_PATH"] = str(hh_tar_path)
         env["DATA_PREFIX"] = data_prefix
         env["MASTER_ADDR"] = derive_master_addr(args, allocation_job_id)
-        env["MASTER_PORT"] = str(args.master_port)
+        env["MASTER_PORT"] = derive_step_master_port(str(args.master_port), step.step_id)
         env["STEP_NNODES"] = str(step.step_nnodes or args.step_nnodes)
         env["NPROC_PER_NODE"] = str(step.nproc_per_node or args.nproc_per_node)
         env["DATA_ACCESS_MODE"] = str(args.data_access_mode)
