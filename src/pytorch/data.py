@@ -2,7 +2,7 @@
 Handling of data.
 """
 
-import hashlib, inspect, io, json, logging, pathlib, os, shutil, sys, random, tarfile, tempfile, time, warnings
+import contextlib, fcntl, hashlib, inspect, io, json, logging, pathlib, os, shutil, sys, random, tarfile, tempfile, time, warnings
 import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utils'))
@@ -153,18 +153,37 @@ def _resolve_features_scale_cache_path(data_params, array_name='features'):
 
 
 def _load_features_scale_cache(cache_path: pathlib.Path):
-    with np.load(cache_path, allow_pickle=False) as cached:
-        shift = np.array(cached['shift'])
-        mult = np.array(cached['mult'])
+    lock_path = _cache_lock_path(cache_path)
+    with _exclusive_cache_lock(lock_path):
+        with np.load(cache_path, allow_pickle=False) as cached:
+            shift = np.array(cached['shift'])
+            mult = np.array(cached['mult'])
     return {'shift': shift, 'mult': mult}
+
+
+def _cache_lock_path(cache_path: pathlib.Path) -> pathlib.Path:
+    return cache_path.parent / f'.{cache_path.name}.lock'
+
+
+@contextlib.contextmanager
+def _exclusive_cache_lock(lock_path: pathlib.Path):
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open('w') as lock_fh:
+        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_fh.fileno(), fcntl.LOCK_UN)
 
 
 def _save_features_scale_cache(cache_path: pathlib.Path, scale):
     cache_path.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = cache_path.parent / f".{cache_path.stem}.{os.getpid()}.tmp.npz"
-    with tmp_path.open("wb") as f:
-        np.savez(f, shift=np.asarray(scale['shift']), mult=np.asarray(scale['mult']))
-    os.replace(tmp_path, cache_path)
+    lock_path = _cache_lock_path(cache_path)
+    with _exclusive_cache_lock(lock_path):
+        tmp_path = cache_path.parent / f".{cache_path.stem}.{os.getpid()}.tmp.npz"
+        with tmp_path.open("wb") as f:
+            np.savez(f, shift=np.asarray(scale['shift']), mult=np.asarray(scale['mult']))
+        os.replace(tmp_path, cache_path)
 
 
 def _resolve_split_array_cache_dir(data_params):
@@ -288,32 +307,36 @@ def _maybe_stage_split_array_cache_dir(cache_dir: pathlib.Path) -> pathlib.Path:
 
 def _load_split_array_cache(cache_dir: pathlib.Path, array_name: str, mmap_mode=None):
     files = _split_array_cache_files(cache_dir, array_name)
-    if not all(path.exists() for path in files.values()):
-        return None
-    return {
-        split: np.load(path, allow_pickle=False, mmap_mode=mmap_mode)
-        for split, path in files.items()
-    }
+    lock_path = cache_dir.parent / f'.{cache_dir.name}.{array_name}.lock'
+    with _exclusive_cache_lock(lock_path):
+        if not all(path.exists() for path in files.values()):
+            return None
+        return {
+            split: np.load(path, allow_pickle=False, mmap_mode=mmap_mode)
+            for split, path in files.items()
+        }
 
 
 def _save_split_array_cache(cache_dir: pathlib.Path, array_name: str, arrays):
     cache_dir.mkdir(parents=True, exist_ok=True)
     files = _split_array_cache_files(cache_dir, array_name)
-    tmp_files = {}
-    try:
-        for split, path in files.items():
-            tmp_path = cache_dir / f'.{path.stem}.{os.getpid()}.tmp.npy'
-            with tmp_path.open('wb') as f:
-                np.save(f, np.asarray(arrays[split]))
-            tmp_files[split] = tmp_path
-        for split, path in files.items():
-            os.replace(tmp_files[split], path)
-    finally:
-        for tmp_path in tmp_files.values():
-            try:
-                tmp_path.unlink()
-            except FileNotFoundError:
-                pass
+    lock_path = cache_dir.parent / f'.{cache_dir.name}.{array_name}.lock'
+    with _exclusive_cache_lock(lock_path):
+        tmp_files = {}
+        try:
+            for split, path in files.items():
+                tmp_path = cache_dir / f'.{path.stem}.{os.getpid()}.tmp.npy'
+                with tmp_path.open('wb') as f:
+                    np.save(f, np.asarray(arrays[split]))
+                tmp_files[split] = tmp_path
+            for split, path in files.items():
+                os.replace(tmp_files[split], path)
+        finally:
+            for tmp_path in tmp_files.values():
+                try:
+                    tmp_path.unlink()
+                except FileNotFoundError:
+                    pass
 
 ###############################################################################
 
