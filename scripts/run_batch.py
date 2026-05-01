@@ -316,7 +316,14 @@ def gpu_expected_for_step(
         return max(1, int(step.nproc_per_node or 1))
     if step.kind == "classical":
         return 0
-    if step.kind in {"dnn", "sbi"}:
+    if step.kind == "sbi":
+        extra_args = tuple(str(token).lower() for token in step.extra_args)
+        if "--device" in extra_args:
+            idx = extra_args.index("--device")
+            if idx + 1 < len(extra_args) and extra_args[idx + 1] == "cpu":
+                return 0
+        return 1
+    if step.kind == "dnn":
         return 1
     if step.kind == "script":
         extra_args = tuple(str(token).lower() for token in step.extra_args)
