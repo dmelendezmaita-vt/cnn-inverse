@@ -425,7 +425,7 @@ def make_step_env(
     env["REPO_ROOT"] = str(REPO_ROOT)
     env["PYTHON_BIN"] = python_bin
     env["RESOURCE_MONITOR_PYTHON"] = monitor_python
-    torchrun_path = Path(python_bin).resolve().parent / "torchrun"
+    torchrun_path = Path(python_bin).parent / "torchrun"
     if torchrun_path.exists():
         env["TORCHRUN_BIN"] = str(torchrun_path)
     if batch.requires_slurm and hh_tar_path is not None:
