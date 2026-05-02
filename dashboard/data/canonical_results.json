@@ -1,6 +1,6 @@
 {
-  "generated_on": "2026-04-28",
-  "scope_note": "The dashboard condenses a large artifact surface into a small set of argument-driven charts, which are organized by comparability class and by scientific role.",
+  "generated_on": "2026-05-02",
+  "scope_note": "The dashboard condenses a large artifact surface into a small set of argument-driven charts, which are organized by comparability class and by scientific role. The current interpretation surface is anchored to the fresh published full clean rerun that completed at `/projects/neuro-collab/github-validation/cnn-inverse-falcon-monitoring-full-cold-clean-20260501r`.",
   "inventory": {
     "kpis": [
       {
@@ -111,7 +111,7 @@
         "numeric_cells": 216
       }
     ],
-    "interpretation_note": "The raw archive is much larger than the interpretation surface that a reader can use directly. The dashboard therefore shows only the comparisons that answer a question clearly, while the underlying tables and files remain available for audit."
+    "interpretation_note": "The raw archive is much larger than the interpretation surface that a reader can use directly. The dashboard therefore shows only the comparisons that answer a question clearly, while the underlying tables and files remain available for audit. The latest update also reflects the fact that the published repository now reproduces the full canonical suite from a fresh clone on Falcon."
   },
   "reading_guide": [
     {
@@ -131,6 +131,12 @@
       "badge": "Interpretation rule",
       "kind": "boundary",
       "body": "The Hodgkin-Huxley fixed-task comparison is the empirical center. Benchmark parity, execution studies, and execution-path optimizations support or bound that comparison."
+    },
+    {
+      "title": "Fresh full rerun closure",
+      "badge": "Interpretation rule",
+      "kind": "support",
+      "body": "The latest published head completed the full canonical suite from a fresh Falcon clone. That closure matters most for execution, framework, posterior-rule, and surrogate claims, because it turns earlier partial or targeted checks into one end-to-end reproducibility result."
     }
   ],
   "threads": [
@@ -139,7 +145,7 @@
       "badge": "Supporting evidence",
       "intro": "These studies checked whether the inherited FitzHugh-Nagumo baseline remained statistically stable, and whether the archived split behavior remained scientifically interpretable.",
       "how_to_read": "Read the metric-delta chart as a bounded difference against the archived benchmark mean, then read the ANOVA chart as a check that node count did not materially change predictive quality.",
-      "main_conclusion": "The baseline remained statistically close to the archived benchmark, while runtime changed more than predictive quality. The split issue shaped interpretation and did not alter the later Hodgkin-Huxley frontier.",
+      "main_conclusion": "The baseline remained statistically close to the archived benchmark, while runtime changed more than predictive quality. The fresh full clean rerun did not change that conclusion, and the split issue still remains an interpretation boundary rather than a moving target.",
       "charts": [
         {
           "title": "Benchmark deltas against the archived FitzHugh-Nagumo reference",
@@ -194,7 +200,13 @@
       "badge": "Supporting evidence",
       "intro": "These studies determined which execution setting best supports broad comparative sweeps while keeping the task fixed.",
       "how_to_read": "The throughput chart answers the run-policy question. The train-time chart answers a narrower question, namely whether tuned 2-node and 4-node lanes improved inside their own lane, which is different from asking whether multi-node scaling beat the best single-node policy.",
-      "main_conclusion": "Throughput-first grouped single-node execution became the practical default. Tuned 2-node and 4-node paths improved their own lane materially, but they did not overturn the broad-sweep single-node policy.",
+      "main_conclusion": "Throughput-first grouped single-node execution remained the default within a fixed workload, while the final runner now also exploits the full 4-node allocation by running independent steps in resource-aware cohorts. Tuned 2-node and 4-node paths improved their own lane materially, but they did not overturn the broad-sweep single-node policy.",
+      "cards": [
+        {
+          "title": "Fresh full-run scheduler closure",
+          "body": "The published runner now launches independent 1-node, 2-node, posterior, framework, and surrogate steps concurrently when their node demands do not overlap, while giving each distributed step its own rendezvous port and its own cache roots when needed. The fresh full clean rerun cleared the execution-policy batch and the later overlapping single-node batches under that contract."
+        }
+      ],
       "charts": [
         {
           "title": "Completed runs per hour, grouped 1-node versus selected 4-node latency path",
@@ -276,7 +288,13 @@
       "badge": "Primary evidence",
       "intro": "This is the empirical center of the work. The current clean direct frontier is taken from the homogeneous A30 rerun package, which displaced the older mixed closure endpoint.",
       "how_to_read": "Read the accuracy chart as the clean direct comparison within the direct-estimation class, and read the runtime chart separately, because runtime and accuracy answer different questions.",
-      "main_conclusion": "The direct clean winner is tuned Extra Trees, the robust direct representative is tuned k-nearest neighbors, and the best surviving neural direct row is materially behind both.",
+      "main_conclusion": "The direct clean winner is tuned Extra Trees, the robust direct representative is tuned k-nearest neighbors, and the best surviving neural direct row is still materially behind both in the final clean rerun.",
+      "cards": [
+        {
+          "title": "Latest clean direct frontier",
+          "body": "In the fresh full clean rerun, `extra_trees_500_depth20` reached a clean MAE of 495.69, `knn_k11` reached 502.44, and the surviving neural direct row reached 913.42. That leaves kNN only 1.36% above the tuned tree on clean MAE, while the neural direct row remains 84.27% above the tuned tree."
+        }
+      ],
       "charts": [
         {
           "title": "Clean direct MAE by family representative",
@@ -331,7 +349,13 @@
       "badge": "Boundary and extension",
       "intro": "These studies broadened the executable comparison through richer observations, stronger posterior families, and later aligned framework rows.",
       "how_to_read": "The posterior chart stays inside the posterior-oriented result space. The gain chart identifies which interventions materially improved that space.",
-      "main_conclusion": "Observation enrichment improved SNPE materially, FMPE became the strongest clean posterior family in the checkpoint-2 block, and later BayesFlow decision rules improved MAE inside the aligned posterior branch without overturning the direct clean winner.",
+      "main_conclusion": "The fresh clean rerun keeps the posterior story but sharpens its ranking. BayesFlow meanstd with a posterior-median rule is now the best posterior MAE row, BayesFlow mean prediction is the best posterior MSE and R2 row, and NPSE median improves over the FMPE extension median in the later extension block.",
+      "cards": [
+        {
+          "title": "Latest posterior snapshot",
+          "body": "The clean posterior decision-rule table from the fresh full rerun places `bayesflow_meanstd` median first at MAE 583.42, `bayesflow_meanstd` mean first at MSE 1.784e6 with R2 0.630, `npse_extension` median at MAE 861.43, and `fmpe_extension` median at MAE 1059.11. The older claim that FMPE was the strongest clean posterior family no longer holds under the final published run."
+        }
+      ],
       "charts": [
         {
           "title": "Posterior-oriented clean MAE by representative",
@@ -413,7 +437,13 @@
       "badge": "Boundary and extension",
       "intro": "These studies asked whether the clean winners survived perturbations, and whether shift-specific retraining changed the representative set.",
       "how_to_read": "The first chart shows the clean-to-shift-specific posterior interventions. The second chart shows where the robust direct representative gains its practical value.",
-      "main_conclusion": "Robustness is plural. Matched drift and matched masking repairs are genuinely useful, while the robust direct representative is kNN rather than the clean tuned tree under additive noise.",
+      "main_conclusion": "Robustness is plural. The fresh clean rerun still says that matched posterior repairs help within their own shift, while the robust direct representative under additive noise is kNN rather than the clean tuned tree.",
+      "cards": [
+        {
+          "title": "Latest robustness check",
+          "body": "At additive noise 0.20, `knn_k11` reduced MAE from 916.00 to 510.65 relative to the tuned tree, which is a 44.25% improvement. Inside the posterior family, the drift-specific SNPE retraining row reduced mean-rule MAE from 1135.05 on the clean raw-plus-FFT-plus-summary reference to 1078.92, while the matched mask row reduced it to 1123.65."
+        }
+      ],
       "charts": [
         {
           "title": "Shift-specific posterior improvement relative to the clean-trained feature-aware SNPE reference",
@@ -468,7 +498,7 @@
       "badge": "Coverage expansion",
       "intro": "These studies reduced missed-family risk through aligned framework runs, posterior decision rules, active-sequential ladders, and hybrid initializer rows.",
       "how_to_read": "These charts stay inside their own extension class. They broaden coverage within the executable method space.",
-      "main_conclusion": "The best active-sequential row remained a simple Wasserstein smoke heuristic, ASNPE-style extension improved its own lane at a large runtime cost, and hybrid-initializer rows broadened coverage without entering the direct clean leaderboard.",
+      "main_conclusion": "The extension surface is now reproducibly executable from a fresh full clean run. In the active-sequential lane, disagreement and Wasserstein are effectively tied on the primary error metric, while ASNPE remains weaker on that same metric even though it closes with a coherent posterior.",
       "charts": [
         {
           "title": "Active-sequential error metric by representative policy",
@@ -485,15 +515,15 @@
           "series": [
             {
               "label": "Error metric",
-              "values": [0.46467, 0.46681, 0.52043, 0.65578],
-              "color": "#1f6f78"
-            }
-          ],
-          "notes": [
-            "The simple Wasserstein smoke policy remained the best row in this class on the reported error metric.",
-            "ASNPE extended improved over earlier ASNPE ladders, but it did not become the best active-sequential representative overall."
-          ]
-        },
+            "values": [0.74426, 0.74196, 0.74438, 0.98890],
+            "color": "#1f6f78"
+          }
+        ],
+        "notes": [
+            "Disagreement is the lowest row on mean absolute log10 parameter error, but Wasserstein is only 0.31% worse on that metric.",
+            "ASNPE now finishes cleanly in the fresh full rerun, but its mean absolute log10 parameter error remains 33.28% above the best active-sequential policy."
+        ]
+      },
         {
           "title": "Active-sequential runtime by representative policy",
           "subtitle": "Lower is better. The runtime gap is part of why these rows stayed in their own extension section.",
@@ -509,14 +539,20 @@
           "series": [
             {
               "label": "Runtime",
-              "values": [4.698, 4.747, 4.700, 376.272],
-              "color": "#b04a2f"
-            }
-          ],
-          "notes": [
-            "The later active ladder widened coverage dramatically, but the best class-level row was still the cheap Wasserstein heuristic.",
-            "This is one reason the extension studies should be read as coverage-expansion evidence rather than as a replacement leaderboard."
-          ]
+            "values": [64.219, 63.819, 64.066, 66.643],
+            "color": "#b04a2f"
+          }
+        ],
+        "notes": [
+            "The three active-sequential policies now sit in the same runtime band, roughly 64 seconds, in the fresh clean run.",
+            "ASNPE is no longer a runtime outlier, but it is still not competitive on the active-sequential error metric."
+        ]
+      }
+      ],
+      "cards": [
+        {
+          "title": "Wasserstein and disagreement after the clean rerun",
+          "body": "The final active-sequential summary puts disagreement at mean absolute log10 parameter error 0.74196 and Wasserstein at 0.74426, while Wasserstein retains the explicit distributional interpretation of projected 1-Wasserstein disagreement across posterior predictive draws. The practical difference between those two policies is therefore small in accuracy terms, and the choice between them is now mostly interpretive rather than operational."
         }
       ]
     },
@@ -525,7 +561,7 @@
       "badge": "Engineering support",
       "intro": "These studies optimized startup behavior inside the extracted-data Hodgkin-Huxley execution path. They mattered operationally, while the scientific frontier remained unchanged.",
       "how_to_read": "The cache charts measure startup reduction inside the execution path. The explanation cards clarify why the branch stayed secondary, even though the later mmap-backed canaries were strong.",
-      "main_conclusion": "Feature-scale caching reduced preprocessing materially, the mmap-backed split-array cache removed almost all startup overhead in the successful canaries, and the branch was tested far enough to prove viability. A larger matrix was unnecessary, because the main run-policy question had already closed on grouped single-node throughput.",
+      "main_conclusion": "Feature-scale caching reduced preprocessing materially, the mmap-backed split-array cache removed almost all startup overhead in the successful canaries, and the final fresh clean run also confirmed that cache locking and step-local cache isolation are sufficient for concurrent cohorts. The branch is therefore no longer only a canary proof, because it now supports the published concurrent full runner directly.",
       "charts": [
         {
           "title": "Feature-scale cache preprocessing reduction",
@@ -579,7 +615,7 @@
         },
         {
           "title": "What was actually proved",
-          "body": "The later proof chain established that the split-array cache could be prewarmed, launched through its ordinary canary package, and then exercised through an older ordinary HH launcher once safe dataloader overrides were materialized automatically. That result established operational viability, while a new large experimental campaign would not have changed the main conclusions."
+          "body": "The later proof chain established that the split-array cache could be prewarmed, launched through its ordinary canary package, exercised through an older ordinary HH launcher, protected by explicit cache-file locking, and isolated per parallel cohort when contention risk existed. That is the execution-path contract which survived the final fresh full clean rerun."
         }
       ]
     }
