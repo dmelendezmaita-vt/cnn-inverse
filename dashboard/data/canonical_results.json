@@ -331,12 +331,16 @@
       "title": "Single-Current Split Contract Audit",
       "badge": "Primary evidence",
       "intro": "These runs compare sequential and random split behavior on the two audited HH current slices while keeping the single-current direct task fixed.",
-      "how_to_read": "Read the MAE chart as paired point-accuracy sensitivity to split policy. Read the Wasserstein chart separately, because marginal fidelity can prefer a different classical family than paired point accuracy. Read the delta chart only as a split-sensitivity summary, not as a family ranking by itself.",
-      "main_conclusion": "Split choice does not rescue the direct neural row or overturn the classical advantage. The direct DNN row remains stable and much worse than the classical rows on both current slices. Within the classical lane, random forest is the paired point-accuracy leader, while Extra Trees retains the lower empirical marginal Wasserstein.",
+      "how_to_read": "Read the first three charts as the direct HH metric hierarchy that the manuscript now uses, namely paired MAE, mean range-normalized MAE, and empirical marginal Wasserstein. Read the delta chart only as a split-sensitivity summary, not as a family ranking by itself.",
+      "main_conclusion": "Split choice does not rescue the direct neural row or overturn the classical advantage. The direct DNN row remains stable and much worse than the classical rows on both current slices. Within the classical lane, random forest remains the paired point-accuracy leader, while Extra Trees retains the lower empirical marginal Wasserstein.",
       "cards": [
         {
           "title": "Current direct audit snapshot",
           "body": "At current `0.1`, the direct DNN row stays near MAE `915.4-916.3`, while the classical rows stay near `497-509`. At current `0.3`, the direct DNN row stays near `918.0-920.7`, while the classical rows stay near `492-509`."
+        },
+        {
+          "title": "Direct metric rule",
+          "body": "The direct HH frontier is no longer read through MAE alone. Paired MAE and mean normalized MAE answer the paired recovery question, while empirical marginal Wasserstein answers whether the predicted population reproduces the held-out parameter marginals in log10 space."
         },
         {
           "title": "Provisional caveat",
@@ -390,10 +394,10 @@
           ]
         },
         {
-          "title": "Sequential versus random empirical marginal Wasserstein",
-          "subtitle": "Lower is better. This chart answers a marginal-fidelity question rather than a paired point-accuracy question.",
+          "title": "Sequential versus random mean normalized MAE by family and current slice",
+          "subtitle": "Lower is better. This chart asks whether the paired error is large relative to each target's held-out spread.",
           "type": "grouped_bar",
-          "unit": "W1",
+          "unit": "mean nmae range",
           "lower_is_better": true,
           "categories": [
             "DNN @0.1",
@@ -407,128 +411,31 @@
             {
               "label": "Sequential",
               "values": [
-                0.9824729490998978,
-                0.3668970912018102,
-                0.46448322235206635,
-                0.9745875693738598,
-                0.39385333031750774,
-                0.48325382349049323
+                0.2540734366683823,
+                0.1794643399234885,
+                0.17506925880829818,
+                0.2565093821256498,
+                0.1773972805890561,
+                0.1748837020199661
               ],
-              "color": "#b04a2f"
+              "color": "#4457a7"
             },
             {
               "label": "Random mean",
               "values": [
-                0.9858036502006484,
-                0.375477817951228,
-                0.4710808288209755,
-                0.967886854775621,
-                0.3954217506238063,
-                0.48222157030936375
+                0.254239079416069,
+                0.1794279408784323,
+                0.17468353093289138,
+                0.25648245153908067,
+                0.179178931666488,
+                0.17543294813455204
               ],
-              "color": "#2a8a50"
+              "color": "#1d8f6e"
             }
           ],
           "notes": [
-            "Extra Trees retains the lower empirical marginal Wasserstein in the classical lane on both currents.",
-            "This is why the direct frontier now needs two statements, namely paired point accuracy and marginal fidelity."
-          ]
-        },
-        {
-          "title": "Random-minus-sequential MAE change",
-          "subtitle": "Negative values mean the random mean improved over the sequential row.",
-          "type": "bar",
-          "unit": "%",
-          "lower_is_better": false,
-          "categories": [
-            "DNN @0.1",
-            "ET @0.1",
-            "RF @0.1",
-            "DNN @0.3",
-            "ET @0.3",
-            "RF @0.3"
-          ],
-          "series": [
-            {
-              "label": "MAE change",
-              "values": [
-                0.034449895525451774,
-                -0.6703244925956964,
-                -0.8218033532270576,
-                -0.02111982839679889,
-                2.200889645724878,
-                0.5115751434846568
-              ],
-              "color": "#8a6f1f"
-            }
-          ],
-          "notes": [
-            "The direct DNN deltas are effectively zero on both audited currents.",
-            "The largest observed split effect is the `+2.20%` MAE penalty for Extra Trees on current `0.3`, which still does not threaten the DNN-versus-classical separation."
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Single-Current Split Contract Audit",
-      "badge": "Primary evidence",
-      "intro": "These runs compare sequential and random split behavior on the two audited HH current slices while keeping the single-current direct task fixed.",
-      "how_to_read": "Read the MAE chart as paired point-accuracy sensitivity to split policy. Read the Wasserstein chart separately, because marginal fidelity can prefer a different classical family than paired point accuracy. Read the delta chart only as a split-sensitivity summary, not as a family ranking by itself.",
-      "main_conclusion": "Split choice does not rescue the direct neural row or overturn the classical advantage. The direct DNN row remains stable and much worse than the classical rows on both current slices. Within the classical lane, random forest is the paired point-accuracy leader, while Extra Trees retains the lower empirical marginal Wasserstein.",
-      "cards": [
-        {
-          "title": "Current direct audit snapshot",
-          "body": "At current `0.1`, the direct DNN row stays near MAE `915.4-916.3`, while the classical rows stay near `497-509`. At current `0.3`, the direct DNN row stays near `918.0-920.7`, while the classical rows stay near `492-509`."
-        },
-        {
-          "title": "Provisional caveat",
-          "body": "The split audit has completed 27 of 30 rows. The remaining gap is only the last three classical `0.1` random retry rows, so the DNN-versus-classical separation is already stable, but the exact `0.1` classical random means are still slightly provisional."
-        }
-      ],
-      "charts": [
-        {
-          "title": "Sequential versus random clean MAE by family and current slice",
-          "subtitle": "Lower is better. Random bars report the mean across completed random-split rows.",
-          "type": "grouped_bar",
-          "unit": "MAE",
-          "lower_is_better": true,
-          "categories": [
-            "DNN @0.1",
-            "ET @0.1",
-            "RF @0.1",
-            "DNN @0.3",
-            "ET @0.3",
-            "RF @0.3"
-          ],
-          "series": [
-            {
-              "label": "Sequential",
-              "values": [
-                915.3706665039062,
-                508.6550551027721,
-                501.0188103267628,
-                919.484375,
-                492.40085847903316,
-                493.66483701036594
-              ],
-              "color": "#6a4fb3"
-            },
-            {
-              "label": "Random mean",
-              "values": [
-                915.6860107421875,
-                505.2454156855921,
-                496.9014209431991,
-                919.2901814778646,
-                503.2380579887586,
-                496.190303608635
-              ],
-              "color": "#1f6f78"
-            }
-          ],
-          "notes": [
-            "The direct DNN row is nearly unchanged under split choice on both currents.",
-            "The classical rows remain much stronger than the direct DNN row under both split policies."
+            "The normalized view preserves the same separation, which means the direct DNN row is not only worse in absolute units but also worse relative to target scale.",
+            "The classical rows stay clustered in the lower normalized-error band on both audited currents."
           ]
         },
         {
@@ -614,111 +521,158 @@
     {
       "title": "Posterior-Oriented and Representation Follow-Up",
       "badge": "Boundary and extension",
-      "intro": "These older posterior-oriented rows are retained as descriptive extension context, but they are pending re-tabulation on the same canonical single-current contract.",
-      "how_to_read": "Read this section as archived posterior context rather than as a chapter-level winner table. The direct HH interpretation currently comes from the split audit above.",
-      "main_conclusion": "Posterior and aligned follow-up rows still broaden method coverage, but the dashboard no longer treats them as current decisive evidence until they are regenerated on the canonical single-current contract.",
-      "cards": [
-        {
-          "title": "Current status",
-          "body": "The posterior lane remains informative, but it is descriptive pending reprocessing on the canonical contract. These charts should therefore be read as coverage context, not as the current front-door HH claim."
-        },
-        {
-          "title": "Current status",
-          "body": "The posterior lane remains informative, but it is descriptive pending reprocessing on the canonical contract. These charts should therefore be read as coverage context, not as the current front-door HH claim."
-        },
-        {
-          "title": "Latest posterior snapshot",
-          "body": "The clean posterior decision-rule table from the fresh full rerun places `bayesflow_meanstd` median first at MAE 583.42, `bayesflow_meanstd` mean first at MSE 1.784e6 with R2 0.630, `npse_extension` median at MAE 861.43, and `fmpe_extension` median at MAE 1059.11. The older claim that FMPE was the strongest clean posterior family no longer holds under the final published run."
-        }
-      ],
+      "intro": "This posterior lane remains descriptive pending re-tabulation on the canonical single-current contract, but the dashboard now reads it through posterior-specific metrics instead of a generic MAE-only summary.",
+      "how_to_read": "Read the first chart only as point-summary context. Read the later charts as the posterior metric family that the manuscript uses, namely coverage gap, interval width, and truth-centered Wasserstein. These rows are still not the front-door HH claim, because they are not yet regenerated on the current canonical contract.",
+      "main_conclusion": "Posterior interpretation remains a calibration-and-sharpness tradeoff rather than a single leaderboard. NPSE has the lowest descriptive point-summary MAE in this retained single-current posterior block, but it pays for that with a much wider `90%` interval, while the other posterior families stay undercovered and only modestly separated on truth-centered Wasserstein.",
       "charts": [
         {
-          "title": "Posterior-oriented clean MAE by representative",
-          "subtitle": "Lower is better. These rows remain inside the posterior-oriented result space.",
+          "title": "Posterior point-summary MAE by representative family",
+          "subtitle": "Lower is better. This chart is context only, because it collapses each posterior to one point summary.",
           "type": "bar",
           "unit": "MAE",
           "lower_is_better": true,
           "categories": [
-            "BayesFlow posterior median",
+            "SNPE raw",
+            "SNPE feature-aware",
+            "SNPE calibrated",
             "FMPE",
-            "BayesFlow framework meanstd",
             "NPSE"
           ],
           "series": [
             {
-              "label": "Clean MAE",
+              "label": "Best point-summary MAE",
               "values": [
-                564.64,
-                582.3,
-                595.63,
-                620.61
+                1066.540229033258,
+                1029.0324869165913,
+                980.8994260428008,
+                1059.105251462742,
+                861.425655059691
               ],
               "color": "#1f6f78"
             }
           ],
           "notes": [
-            "The BayesFlow median row is the best comparable posterior decision rule by MAE.",
-            "FMPE is still the clean posterior-family winner in the checkpoint-2 SBI block.",
-            "NPSE stayed slower and weaker than FMPE on the primary point metrics."
+            "NPSE is the strongest descriptive point-summary row by MAE in this retained single-current posterior block.",
+            "Point-summary MAE does not establish posterior quality by itself, because it ignores calibration and posterior concentration."
           ]
         },
         {
-          "title": "Posterior-oriented intervention gains",
-          "subtitle": "Positive values are improvements against the reference named in each label. The combined-corruption row is intentionally negative.",
+          "title": "Posterior 90% coverage gap by selected rule",
+          "subtitle": "Lower is better. This chart measures the absolute gap between observed and nominal `90%` coverage.",
           "type": "bar",
-          "unit": "%",
-          "lower_is_better": false,
+          "unit": "coverage gap",
+          "lower_is_better": true,
           "categories": [
-            "Raw+FFT SNPE MAE gain",
-            "FMPE versus SNPE MAE gain",
-            "BayesFlow median versus framework MAE gain",
-            "Combined-corruption clean penalty"
+            "SNPE raw",
+            "SNPE feature-aware",
+            "SNPE calibrated",
+            "FMPE",
+            "NPSE"
           ],
           "series": [
             {
-              "label": "MAE change",
+              "label": "Coverage gap",
               "values": [
-                8.0,
-                2.49,
-                5.2,
-                -66.8
+                0.27158203125,
+                0.2157552083333334,
+                0.2802083333333334,
+                0.2802083333333334,
+                0.04713541666666665
               ],
               "color": "#6a4fb3"
             }
           ],
           "notes": [
-            "The richer observation space mattered before later family expansion.",
-            "The combined-corruption negative bar is a guardrail, because that branch damaged clean behavior too severely for promotion."
+            "NPSE has the smallest retained coverage gap in this descriptive block.",
+            "The other retained posterior families remain materially undercovered, which is why the manuscript does not treat point-summary MAE as a sufficient posterior metric."
           ]
         },
         {
-          "title": "Posterior-oriented runtime by representative",
-          "subtitle": "Lower is better. This chart reports performance cost rather than predictive quality.",
+          "title": "Posterior 90% interval width by selected rule",
+          "subtitle": "Lower is sharper, but width has to be read together with coverage gap.",
           "type": "bar",
-          "unit": "seconds",
+          "unit": "interval width",
           "lower_is_better": true,
           "categories": [
-            "BayesFlow framework meanstd",
+            "SNPE raw",
+            "SNPE feature-aware",
+            "SNPE calibrated",
             "FMPE",
-            "BayesFlow posterior median",
             "NPSE"
           ],
           "series": [
             {
-              "label": "Representative runtime",
+              "label": "Mean interval width",
               "values": [
-                133.2,
-                166.7,
-                367.9,
-                482.24
+                2595.6717290347146,
+                2890.2918877388706,
+                2605.2791811835145,
+                2705.2633893379993,
+                7707.425096343445
               ],
               "color": "#b04a2f"
             }
           ],
           "notes": [
-            "BayesFlow meanstd is the fastest aligned framework row among the promoted posterior-oriented representatives.",
-            "The MAE-optimal posterior decision rule is much slower than the aligned framework row, which is why the dashboard keeps accuracy and runtime in separate charts."
+            "NPSE improves the coverage gap only by accepting a much broader posterior interval.",
+            "This is the reason the manuscript treats coverage and width as a coupled posterior metric pair."
           ]
+        },
+        {
+          "title": "Truth-centered posterior Wasserstein by selected rule",
+          "subtitle": "Lower is better. Marginal and sliced values answer related but not identical posterior-concentration questions.",
+          "type": "grouped_bar",
+          "unit": "log10 W1",
+          "lower_is_better": true,
+          "categories": [
+            "SNPE raw",
+            "SNPE feature-aware",
+            "SNPE calibrated",
+            "FMPE",
+            "NPSE"
+          ],
+          "series": [
+            {
+              "label": "Marginal W1",
+              "values": [
+                1.1501605847688736,
+                1.1895599580391678,
+                1.1495341738217724,
+                1.158463328063594,
+                1.1349630799867936
+              ],
+              "color": "#2a8a50"
+            },
+            {
+              "label": "Sliced W1",
+              "values": [
+                1.2292191165392645,
+                1.260729989684057,
+                1.207925817900445,
+                1.2092462207949186,
+                1.2122915469103992
+              ],
+              "color": "#8a6f1f"
+            }
+          ],
+          "notes": [
+            "The retained single-current posterior families are only modestly separated on truth-centered Wasserstein, which is why the main posterior reading remains a tradeoff rather than a winner-take-all ranking.",
+            "The aligned BayesFlow archive remains the cleaner calibration reference, but it belongs to a different, now non-front-door contract."
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "title": "Posterior metric rule",
+          "body": "This dashboard section now follows the manuscript's posterior metric logic. Point-summary MAE is kept only as context, while coverage gap, interval width, and truth-centered posterior Wasserstein carry the substantive interpretation."
+        },
+        {
+          "title": "Archived aligned BayesFlow context",
+          "body": "In the archived aligned BayesFlow surface, `bayesflow_meanstd` reaches test MAE `597.7`, coverage gap `0.0198`, interval width `1757.8`, and truth-centered marginal and sliced Wasserstein `0.886` and `0.951`, while `bayesflow_structured` raises MAE to `617.3` but narrows the coverage gap to `0.0107` and lowers empirical marginal Wasserstein to `0.568`. That calibration-sensitive tradeoff still matters interpretively, but it does not define the current admissible HH front door."
+        },
+        {
+          "title": "Aligned archive values",
+          "body": "The archived aligned reference rows currently retained in the manuscript are `bayesflow_meanstd` test MAE `597.7`, coverage gap `0.0198`, width `1757.8`, and truth-centered marginal and sliced Wasserstein `0.886` and `0.951`. The structured aligned row reaches MAE `617.3`, coverage gap `0.0107`, width `1853.4`, and empirical marginal Wasserstein `0.568`."
         }
       ]
     },
@@ -794,73 +748,131 @@
     {
       "title": "Later Executable Extensions",
       "badge": "Coverage expansion",
-      "intro": "These studies reduced missed-family risk through aligned framework runs, posterior decision rules, active-sequential ladders, and hybrid initializer rows.",
-      "how_to_read": "These charts stay inside their own extension class. They broaden coverage within the executable method space.",
-      "main_conclusion": "The extension surface is now reproducibly executable from a fresh full clean run. In the active-sequential lane, disagreement and Wasserstein are effectively tied on the primary error metric, while ASNPE remains weaker on that same metric even though it closes with a coherent posterior.",
+      "intro": "These later executable extensions stay outside the primary direct HH frontier, but the dashboard now reads the active-sequential branch through the same metrics that the manuscript uses.",
+      "how_to_read": "Read mean absolute log10 error as the primary active-sequential score. Read contraction and ESS together, because sharper concentration without effective posterior support is not a sufficient gain. Read runtime only as operational support.",
+      "main_conclusion": "Inside the active-sequential branch, disagreement remains the primary error row and also has the strongest posterior contraction, while ESS stays nearly unchanged across the three policies. Wasserstein remains effectively tied on the primary error metric and retains the clearest distribution-aware acquisition interpretation.",
       "charts": [
         {
           "title": "Active-sequential error metric by representative policy",
-          "subtitle": "Lower is better. This chart stays inside the active-sequential class.",
+          "subtitle": "Lower is better. This remains the primary active-sequential score.",
           "type": "bar",
           "unit": "mean abs log10 error",
           "lower_is_better": true,
           "categories": [
-            "Wasserstein smoke",
-            "Disagreement smoke",
-            "Uncertainty smoke",
+            "Disagreement",
+            "Wasserstein",
+            "Uncertainty",
             "ASNPE extended"
           ],
           "series": [
             {
               "label": "Error metric",
               "values": [
-                0.74426,
-                0.74196,
-                0.74438,
-                0.9889
+                0.7419592579335208,
+                0.7442606722881766,
+                0.7443837990937657,
+                0.9889044165611267
               ],
               "color": "#1f6f78"
             }
           ],
           "notes": [
-            "Disagreement is the lowest row on mean absolute log10 parameter error, but Wasserstein is only 0.31% worse on that metric.",
-            "ASNPE now finishes cleanly in the fresh full rerun, but its mean absolute log10 parameter error remains 33.28% above the best active-sequential policy."
+            "Disagreement is the best active-sequential row on the primary error metric.",
+            "Wasserstein is only marginally worse on error, which is why the branch remains an interpretive rather than a decisive operational split."
+          ]
+        },
+        {
+          "title": "Active-sequential posterior contraction",
+          "subtitle": "Higher indicates tighter concentration under the sequential posterior summary used in this branch.",
+          "type": "bar",
+          "unit": "contraction",
+          "lower_is_better": false,
+          "categories": [
+            "Disagreement",
+            "Wasserstein",
+            "Uncertainty"
+          ],
+          "series": [
+            {
+              "label": "Contraction",
+              "values": [
+                0.47377776155712004,
+                0.43810171928679675,
+                0.43543638196799184
+              ],
+              "color": "#6a4fb3"
+            }
+          ],
+          "notes": [
+            "Disagreement has the strongest contraction in the current active-sequential suite.",
+            "The Wasserstein and uncertainty rows remain close to each other on this concentration measure."
+          ]
+        },
+        {
+          "title": "Active-sequential effective sample size",
+          "subtitle": "Higher indicates slightly better retained posterior support, but the three policies are nearly tied here.",
+          "type": "bar",
+          "unit": "ESS",
+          "lower_is_better": false,
+          "categories": [
+            "Disagreement",
+            "Wasserstein",
+            "Uncertainty"
+          ],
+          "series": [
+            {
+              "label": "ESS",
+              "values": [
+                33.80451174749622,
+                33.78439023130985,
+                33.78362675262426
+              ],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "ESS is nearly unchanged across the three active-sequential policies.",
+            "This is why the active-sequential interpretation does not reduce to an ESS-driven distinction."
           ]
         },
         {
           "title": "Active-sequential runtime by representative policy",
-          "subtitle": "Lower is better. The runtime gap is part of why these rows stayed in their own extension section.",
+          "subtitle": "Lower is better. Runtime remains secondary to the active-sequential metric logic.",
           "type": "bar",
           "unit": "seconds",
           "lower_is_better": true,
           "categories": [
-            "Wasserstein smoke",
-            "Disagreement smoke",
-            "Uncertainty smoke",
+            "Disagreement",
+            "Wasserstein",
+            "Uncertainty",
             "ASNPE extended"
           ],
           "series": [
             {
               "label": "Runtime",
               "values": [
-                64.219,
-                63.819,
-                64.066,
-                66.643
+                63.55538368225098,
+                63.96741199493408,
+                64.36294627189636,
+                87.82253623008728
               ],
               "color": "#b04a2f"
             }
           ],
           "notes": [
-            "The three active-sequential policies now sit in the same runtime band, roughly 64 seconds, in the fresh clean run.",
-            "ASNPE is no longer a runtime outlier, but it is still not competitive on the active-sequential error metric."
+            "The three active-sequential policies stay in the same runtime band.",
+            "ASNPE is no longer a runtime outlier, but it remains materially weaker on the primary active-sequential error metric."
           ]
         }
       ],
       "cards": [
         {
-          "title": "Wasserstein and disagreement after the clean rerun",
-          "body": "The final active-sequential summary puts disagreement at mean absolute log10 parameter error 0.74196 and Wasserstein at 0.74426, while Wasserstein retains the explicit distributional interpretation of projected 1-Wasserstein disagreement across posterior predictive draws. The practical difference between those two policies is therefore small in accuracy terms, and the choice between them is now mostly interpretive rather than operational."
+          "title": "Metric hierarchy inside the active-sequential branch",
+          "body": "The manuscript treats this branch as a separate inferential object. Mean absolute log10 parameter error remains the primary score, while contraction and ESS clarify whether similar error levels conceal different posterior concentration behavior."
+        },
+        {
+          "title": "Wasserstein versus disagreement",
+          "body": "The Wasserstein policy remains within `0.31%` of disagreement on the primary error metric, while ESS stays essentially unchanged and disagreement retains the stronger contraction. The practical choice is therefore mostly interpretive, because Wasserstein keeps the clearest distance-aware acquisition meaning."
         }
       ]
     },

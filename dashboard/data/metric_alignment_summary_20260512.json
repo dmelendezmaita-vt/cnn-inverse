@@ -1,0 +1,114 @@
+{
+  "generated_on": "2026-05-12",
+  "direct_metric_hierarchy": {
+    "primary_metrics": [
+      "mae",
+      "mean_nmae_range",
+      "empirical_marginal_wasserstein_log10"
+    ],
+    "split_audit_mean_nmae_range": {
+      "0.1:direct_dnn:rand": 0.254239079416069,
+      "0.1:direct_dnn:seq": 0.2540734366683823,
+      "0.1:extra_trees_500:rand": 0.1794279408784323,
+      "0.1:extra_trees_500:seq": 0.1794643399234885,
+      "0.1:random_forest_500:rand": 0.17468353093289138,
+      "0.1:random_forest_500:seq": 0.17506925880829818,
+      "0.3:direct_dnn:rand": 0.25648245153908067,
+      "0.3:direct_dnn:seq": 0.2565093821256498,
+      "0.3:extra_trees_500:rand": 0.179178931666488,
+      "0.3:extra_trees_500:seq": 0.1773972805890561,
+      "0.3:random_forest_500:rand": 0.17543294813455204,
+      "0.3:random_forest_500:seq": 0.1748837020199661
+    }
+  },
+  "posterior_metric_hierarchy": {
+    "context_point_summary": [
+      "mae"
+    ],
+    "primary_posterior_metrics": [
+      "cov90_gap",
+      "width90_mean",
+      "posterior_truth_marginal_w1_log10",
+      "posterior_truth_sliced_w1_log10"
+    ],
+    "aligned_archive_reference": {
+      "bayesflow_meanstd_test": {
+        "batch_id": "can08_aligned_frameworks",
+        "run_name": "bayesflow_meanstd",
+        "rule": "test",
+        "n_eval": "128",
+        "n_targets": "6",
+        "mse": "3012910.9018082283",
+        "mae": "597.6574902206388",
+        "r2": "0.08008608455994522",
+        "mean_nmae_range": "0.1825805329404031",
+        "cov90": "0.8802083333333334",
+        "cov90_gap": "0.019791666666666652",
+        "width90_mean": "1757.813850626332",
+        "empirical_marginal_w1_log10": "0.6383832448478176",
+        "posterior_truth_marginal_w1_log10": "0.8857723233034432",
+        "posterior_truth_sliced_w1_log10": "0.9510742234462922",
+        "source_file": "/projects/neuro-collab/github-validation/cnn-inverse-falcon-monitoring-full-cold-clean-20260501r/runs/batches/can08_aligned_frameworks/bayesflow_meanstd/predictions_test.npz"
+      },
+      "bayesflow_structured_test": {
+        "batch_id": "can08_aligned_frameworks",
+        "run_name": "bayesflow_structured",
+        "rule": "test",
+        "n_eval": "128",
+        "n_targets": "6",
+        "mse": "3236058.9068568964",
+        "mae": "617.2821588473744",
+        "r2": "0.094315232763399",
+        "mean_nmae_range": "0.18286520047219346",
+        "cov90": "0.8893229166666666",
+        "cov90_gap": "0.010677083333333393",
+        "width90_mean": "1853.427160612967",
+        "empirical_marginal_w1_log10": "0.5684178683434725",
+        "posterior_truth_marginal_w1_log10": "",
+        "posterior_truth_sliced_w1_log10": "",
+        "source_file": "/projects/neuro-collab/github-validation/cnn-inverse-falcon-monitoring-full-cold-clean-20260501r/runs/batches/can08_aligned_frameworks/bayesflow_structured/predictions_test.npz"
+      }
+    }
+  },
+  "active_metric_hierarchy": {
+    "primary_metric": "mean_abs_log10_error_params_mean",
+    "support_metrics": [
+      "posterior_contraction_mean_mean",
+      "ess_mean",
+      "runtime_sec"
+    ],
+    "active_policy_rows": [
+      {
+        "policy": "disagreement",
+        "mean_abs_log10_error_params_mean": "0.7419592579335208",
+        "mean_relative_error_params_mean": "9.162776025400074",
+        "posterior_contraction_mean_mean": "0.47377776155712004",
+        "ess_mean": "33.80451174749622",
+        "run_dir": "/projects/neuro-collab/code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/runs/milestone_modified_noncan08_20260511/can10_assumption_conditioned_surrogates/active_sequential_policy_suite/policy_disagreement",
+        "runtime_sec": "63.55538368225098"
+      },
+      {
+        "policy": "wasserstein",
+        "mean_abs_log10_error_params_mean": "0.7442606722881766",
+        "mean_relative_error_params_mean": "9.15911263139902",
+        "posterior_contraction_mean_mean": "0.43810171928679675",
+        "ess_mean": "33.78439023130985",
+        "run_dir": "/projects/neuro-collab/code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/runs/milestone_modified_noncan08_20260511/can10_assumption_conditioned_surrogates/active_sequential_policy_suite/policy_wasserstein",
+        "runtime_sec": "63.96741199493408"
+      },
+      {
+        "policy": "uncertainty",
+        "mean_abs_log10_error_params_mean": "0.7443837990937657",
+        "mean_relative_error_params_mean": "9.158973612533273",
+        "posterior_contraction_mean_mean": "0.43543638196799184",
+        "ess_mean": "33.78362675262426",
+        "run_dir": "/projects/neuro-collab/code/github_prep/fhn_dnn-1-implementation-in-pytorch-public/runs/milestone_modified_noncan08_20260511/can10_assumption_conditioned_surrogates/active_sequential_policy_suite/policy_uncertainty",
+        "runtime_sec": "64.36294627189636"
+      }
+    ],
+    "asnpe_manifest": {
+      "posterior_mean_abs_log10_error": 0.9889044165611267,
+      "runtime_sec": 87.82253623008728
+    }
+  }
+}
