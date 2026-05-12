@@ -15,6 +15,13 @@ EXPANDED_METRICS_CSV = Path("/home/dmm96/manuscript_notes/ms/metrics_milestone_m
 ACTIVE_POLICY_CSV = REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "can10_assumption_conditioned_surrogates" / "active_sequential_policy_suite" / "active_sequential_policy_comparison.csv"
 ASNPE_MANIFEST_JSON = REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "can10_assumption_conditioned_surrogates" / "asnpe_surrogate" / "asnpe_manifest.json"
 SPLIT_RUN_ROOT = REPO_ROOT / "runs" / "thesis_rewrite_20260512"
+POSTERIOR_METRICS_JSON = {
+    "snpe_raw": REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "sci04_posterior_followup" / "snpe_raw" / "metrics_summary.json",
+    "snpe_median_rule": REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "sci04_posterior_followup" / "snpe_median_rule" / "metrics_summary.json",
+    "snpe_validate_calibrated": REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "sci06_public_extensions" / "snpe_validate_calibrated" / "metrics_summary.json",
+    "fmpe_extension": REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "sci06_public_extensions" / "fmpe_extension" / "metrics_summary.json",
+    "npse_extension": REPO_ROOT / "runs" / "milestone_modified_noncan08_20260511" / "sci06_public_extensions" / "npse_extension" / "metrics_summary.json",
+}
 
 
 def load_split_rows() -> list[dict[str, str]]:
@@ -49,6 +56,10 @@ def float_or_none(value: str | None) -> float | None:
     if value in (None, ""):
         return None
     return float(value)
+
+
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def package_stats(root: Path) -> tuple[int, float]:
@@ -100,6 +111,34 @@ def collect_split_nmae_lookup() -> dict[tuple[str, str, str], float | None]:
                 vals.append(value)
         lookup[key] = (sum(vals) / len(vals)) if vals else None
     return lookup
+
+
+def direct_per_target_metric(
+    *,
+    current: str,
+    model: str,
+    split_kind: str,
+    field: str,
+) -> tuple[list[str], list[float]]:
+    pattern_map = {
+        ("0.1", "direct_dnn", "seq"): "A1_direct_seq_0p1",
+        ("0.1", "extra_trees_500", "seq"): "A1_extra_trees_500_0p1",
+        ("0.1", "random_forest_500", "seq"): "A1_random_forest_500_0p1",
+        ("0.3", "direct_dnn", "seq"): "A3_direct_seq_0p3",
+        ("0.3", "extra_trees_500", "seq"): "A3_extra_trees_500_0p3",
+        ("0.3", "random_forest_500", "seq"): "A3_random_forest_500_0p3",
+    }
+    run_dir = next(iter(sorted(SPLIT_RUN_ROOT.glob(pattern_map[(current, model, split_kind)]))))
+    metrics_csv = next(iter(sorted(run_dir.rglob("metrics_per_target.csv"))))
+    rows = list(csv.DictReader(metrics_csv.open(newline="", encoding="utf-8")))
+    filtered = [row for row in rows if row.get("split") == "test" or row.get("group") == "test"]
+    target_names = [row["target_name"] for row in filtered]
+    values = [float(row[field]) for row in filtered]
+    return target_names, values
+
+
+def load_posterior_metric_jsons() -> dict[str, dict]:
+    return {name: load_json(path) for name, path in POSTERIOR_METRICS_JSON.items()}
 
 
 def metrics_row(
@@ -210,6 +249,12 @@ def build_primary_direct_thread(
     rnd_nmae = [float(nmae_lookup[(curr, model, "rand")]) for curr, model, _ in order]
     seq_w1 = [float(lut[(curr, model)]["seq_w1"]) for curr, model, _ in order]
     rnd_w1 = [float(lut[(curr, model)]["rand_w1_mean"]) for curr, model, _ in order]
+    target_names_01, dnn_nmae_01 = direct_per_target_metric(current="0.1", model="direct_dnn", split_kind="seq", field="nmae_range")
+    _, et_nmae_01 = direct_per_target_metric(current="0.1", model="extra_trees_500", split_kind="seq", field="nmae_range")
+    _, rf_nmae_01 = direct_per_target_metric(current="0.1", model="random_forest_500", split_kind="seq", field="nmae_range")
+    target_names_03, dnn_nmae_03 = direct_per_target_metric(current="0.3", model="direct_dnn", split_kind="seq", field="nmae_range")
+    _, et_nmae_03 = direct_per_target_metric(current="0.3", model="extra_trees_500", split_kind="seq", field="nmae_range")
+    _, rf_nmae_03 = direct_per_target_metric(current="0.3", model="random_forest_500", split_kind="seq", field="nmae_range")
     mae_delta_pct = [
         100.0 * (float(lut[(curr, model)]["rand_mae_mean"]) - float(lut[(curr, model)]["seq_mae"])) / float(lut[(curr, model)]["seq_mae"])
         for curr, model, _ in order
@@ -269,6 +314,40 @@ def build_primary_direct_thread(
                 ]
             },
             {
+                "title": "Per-target normalized MAE on the sequential current `0.1` audit slice",
+                "subtitle": "Lower is better. This chart shows where the direct separation lives inside the target vector.",
+                "type": "grouped_bar",
+                "unit": "mean nmae range",
+                "lower_is_better": True,
+                "categories": target_names_01,
+                "series": [
+                    {"label": "DNN", "values": dnn_nmae_01, "color": "#6a4fb3"},
+                    {"label": "Extra Trees", "values": et_nmae_01, "color": "#1f6f78"},
+                    {"label": "Random Forest", "values": rf_nmae_01, "color": "#2a8a50"}
+                ],
+                "notes": [
+                    "The classical rows dominate strongly on `hh_param_1`, while the gap narrows but remains across the rest of the target vector.",
+                    "This is why the manuscript keeps parameter-wise summaries in the direct HH lane."
+                ]
+            },
+            {
+                "title": "Per-target normalized MAE on the sequential current `0.3` audit slice",
+                "subtitle": "Lower is better. The per-target pattern remains close to the `0.1` slice.",
+                "type": "grouped_bar",
+                "unit": "mean nmae range",
+                "lower_is_better": True,
+                "categories": target_names_03,
+                "series": [
+                    {"label": "DNN", "values": dnn_nmae_03, "color": "#6a4fb3"},
+                    {"label": "Extra Trees", "values": et_nmae_03, "color": "#1f6f78"},
+                    {"label": "Random Forest", "values": rf_nmae_03, "color": "#2a8a50"}
+                ],
+                "notes": [
+                    "The direct ranking remains stable target by target on the second audited current slice.",
+                    "The aggregate direct result is not being driven by one unstable target coordinate."
+                ]
+            },
+            {
                 "title": "Sequential versus random empirical marginal Wasserstein",
                 "subtitle": "Lower is better. This chart answers a marginal-fidelity question rather than a paired point-accuracy question.",
                 "type": "grouped_bar",
@@ -319,7 +398,7 @@ def update_execution_thread(summary: dict) -> None:
             break
 
 
-def build_posterior_thread(expanded_rows: list[dict[str, str]]) -> dict:
+def build_posterior_thread(expanded_rows: list[dict[str, str]], posterior_metric_jsons: dict[str, dict]) -> dict:
     posterior_representatives = [
         ("snpe_raw", "SNPE raw"),
         ("snpe_median_rule", "SNPE feature-aware"),
@@ -344,6 +423,9 @@ def build_posterior_thread(expanded_rows: list[dict[str, str]]) -> dict:
     interval_width = [float(row["width90_mean"]) for row in selected_rows]
     marginal_w1 = [float(row["posterior_truth_marginal_w1_log10"]) for row in selected_rows]
     sliced_w1 = [float(row["posterior_truth_sliced_w1_log10"]) for row in selected_rows]
+    cov50 = [float(posterior_metric_jsons[name]["marginal_coverage"]["0.5"]["overall"]) for name, _ in posterior_representatives]
+    cov80 = [float(posterior_metric_jsons[name]["marginal_coverage"]["0.8"]["overall"]) for name, _ in posterior_representatives]
+    cov90 = [float(posterior_metric_jsons[name]["marginal_coverage"]["0.9"]["overall"]) for name, _ in posterior_representatives]
 
     meanstd_test = metrics_row(expanded_rows, batch_id="can08_aligned_frameworks", run_name="bayesflow_meanstd", rule="test")
     structured_test = metrics_row(expanded_rows, batch_id="can08_aligned_frameworks", run_name="bayesflow_structured", rule="test")
@@ -353,7 +435,7 @@ def build_posterior_thread(expanded_rows: list[dict[str, str]]) -> dict:
         "badge": "Boundary and extension",
         "intro": "This posterior lane remains descriptive pending re-tabulation on the canonical single-current contract, but the dashboard now reads it through posterior-specific metrics instead of a generic MAE-only summary.",
         "how_to_read": "Read the first chart only as point-summary context. Read the later charts as the posterior metric family that the manuscript uses, namely coverage gap, interval width, and truth-centered Wasserstein. These rows are still not the front-door HH claim, because they are not yet regenerated on the current canonical contract.",
-        "main_conclusion": "Posterior interpretation remains a calibration-and-sharpness tradeoff rather than a single leaderboard. NPSE has the lowest descriptive point-summary MAE in this retained single-current posterior block, but it pays for that with a much wider `90%` interval, while the other posterior families stay undercovered and only modestly separated on truth-centered Wasserstein.",
+        "main_conclusion": "Posterior interpretation remains a calibration-and-sharpness tradeoff rather than a single leaderboard. NPSE has the lowest descriptive point-summary MAE in this retained single-current posterior block and the strongest observed coverage, but it pays for that with a much wider `90%` interval, while the other posterior families stay undercovered and only modestly separated on truth-centered Wasserstein.",
         "charts": [
             {
                 "title": "Posterior point-summary MAE by representative family",
@@ -383,6 +465,23 @@ def build_posterior_thread(expanded_rows: list[dict[str, str]]) -> dict:
                 "notes": [
                     "NPSE has the smallest retained coverage gap in this descriptive block.",
                     "The other retained posterior families remain materially undercovered, which is why the manuscript does not treat point-summary MAE as a sufficient posterior metric."
+                ]
+            },
+            {
+                "title": "Observed posterior coverage by nominal level",
+                "subtitle": "Higher is not automatically better, because coverage has to be read with interval width, but this chart shows the full multi-level undercoverage pattern.",
+                "type": "grouped_bar",
+                "unit": "coverage",
+                "lower_is_better": False,
+                "categories": [label for _, label in posterior_representatives],
+                "series": [
+                    {"label": "50% nominal", "values": cov50, "color": "#4457a7"},
+                    {"label": "80% nominal", "values": cov80, "color": "#1d8f6e"},
+                    {"label": "90% nominal", "values": cov90, "color": "#8a6f1f"}
+                ],
+                "notes": [
+                    "Rows that approach nominal coverage at `90%` still remain visibly undercovered at the lower nominal levels.",
+                    "NPSE is strongest on observed coverage, but it achieves that result with a much broader interval."
                 ]
             },
             {
@@ -434,8 +533,8 @@ def build_posterior_thread(expanded_rows: list[dict[str, str]]) -> dict:
     }
 
 
-def update_posterior_thread(summary: dict, expanded_rows: list[dict[str, str]]) -> None:
-    replacement = build_posterior_thread(expanded_rows)
+def update_posterior_thread(summary: dict, expanded_rows: list[dict[str, str]], posterior_metric_jsons: dict[str, dict]) -> None:
+    replacement = build_posterior_thread(expanded_rows, posterior_metric_jsons)
     for thread in summary["threads"]:
         if thread["title"] == "Posterior-Oriented and Representation Follow-Up":
             thread.clear()
@@ -523,6 +622,29 @@ def update_extensions_thread(summary: dict, active_rows: list[dict[str, str]], a
                     ]
                 },
                 {
+                    "title": "Active-sequential mean relative error",
+                    "subtitle": "Lower is better. This chart is secondary to the log10 error row, but it confirms that the policies remain tightly clustered on a scale-free error view.",
+                    "type": "bar",
+                    "unit": "mean relative error",
+                    "lower_is_better": True,
+                    "categories": ["Disagreement", "Wasserstein", "Uncertainty"],
+                    "series": [
+                        {
+                            "label": "Relative error",
+                            "values": [
+                                float(lut["disagreement"]["mean_relative_error_params_mean"]),
+                                float(lut["wasserstein"]["mean_relative_error_params_mean"]),
+                                float(lut["uncertainty"]["mean_relative_error_params_mean"]),
+                            ],
+                            "color": "#4457a7",
+                        }
+                    ],
+                    "notes": [
+                        "Relative error is almost tied across the three active-sequential policies, which is why it remains secondary to the main log10 error metric.",
+                        "The stronger separation in this branch comes from contraction and interpretive stance rather than from scale-free relative-error magnitude."
+                    ]
+                },
+                {
                     "title": "Active-sequential runtime by representative policy",
                     "subtitle": "Lower is better. Runtime remains secondary to the active-sequential metric logic.",
                     "type": "bar",
@@ -566,6 +688,7 @@ def write_metric_alignment_json(
     expanded_rows: list[dict[str, str]],
     active_rows: list[dict[str, str]],
     asnpe_manifest: dict,
+    posterior_metric_jsons: dict[str, dict],
 ) -> None:
     payload = {
         "generated_on": "2026-05-12",
@@ -579,6 +702,13 @@ def write_metric_alignment_json(
         "posterior_metric_hierarchy": {
             "context_point_summary": ["mae"],
             "primary_posterior_metrics": ["cov90_gap", "width90_mean", "posterior_truth_marginal_w1_log10", "posterior_truth_sliced_w1_log10"],
+            "coverage_levels": {
+                name: {
+                    level: payload["overall"]
+                    for level, payload in posterior_metric_jsons[name]["marginal_coverage"].items()
+                }
+                for name in sorted(posterior_metric_jsons)
+            },
             "aligned_archive_reference": {
                 "bayesflow_meanstd_test": metrics_row(expanded_rows, batch_id="can08_aligned_frameworks", run_name="bayesflow_meanstd", rule="test"),
                 "bayesflow_structured_test": metrics_row(expanded_rows, batch_id="can08_aligned_frameworks", run_name="bayesflow_structured", rule="test"),
@@ -586,7 +716,7 @@ def write_metric_alignment_json(
         },
         "active_metric_hierarchy": {
             "primary_metric": "mean_abs_log10_error_params_mean",
-            "support_metrics": ["posterior_contraction_mean_mean", "ess_mean", "runtime_sec"],
+            "support_metrics": ["mean_relative_error_params_mean", "posterior_contraction_mean_mean", "ess_mean", "runtime_sec"],
             "active_policy_rows": active_rows,
             "asnpe_manifest": {
                 "posterior_mean_abs_log10_error": asnpe_manifest["posterior_mean_abs_log10_error"],
@@ -624,13 +754,14 @@ def main() -> None:
     split_rows = load_split_rows()
     expanded_rows = load_expanded_metric_rows()
     active_rows = load_active_policy_rows()
-    asnpe_manifest = json.loads(ASNPE_MANIFEST_JSON.read_text(encoding="utf-8"))
+    posterior_metric_jsons = load_posterior_metric_jsons()
+    asnpe_manifest = load_json(ASNPE_MANIFEST_JSON)
     nmae_lookup = collect_split_nmae_lookup()
 
     update_inventory(summary, split_rows)
     update_reading_guide(summary)
     update_execution_thread(summary)
-    update_posterior_thread(summary, expanded_rows)
+    update_posterior_thread(summary, expanded_rows, posterior_metric_jsons)
     update_extensions_thread(summary, active_rows, asnpe_manifest)
     write_support_json(split_rows)
     write_metric_alignment_json(
@@ -638,6 +769,7 @@ def main() -> None:
         expanded_rows=expanded_rows,
         active_rows=active_rows,
         asnpe_manifest=asnpe_manifest,
+        posterior_metric_jsons=posterior_metric_jsons,
     )
 
     new_thread = build_primary_direct_thread(split_rows, nmae_lookup)

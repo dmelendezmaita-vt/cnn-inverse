@@ -16,9 +16,11 @@ function formatValue(value, unit) {
   if (unit === "MAE") return Number(value).toFixed(2);
   if (unit === "W1" || unit === "log10 W1") return Number(value).toFixed(3);
   if (unit === "mean nmae range" || unit === "coverage gap") return Number(value).toFixed(3);
+  if (unit === "coverage") return Number(value).toFixed(3);
   if (unit === "interval width") return Number(value).toFixed(1);
   if (unit === "ESS") return Number(value).toFixed(2);
   if (unit === "contraction") return Number(value).toFixed(4);
+  if (unit === "mean relative error") return Number(value).toFixed(3);
   if (unit === "mean abs log10 error") return Number(value).toFixed(5);
   return Number(value).toFixed(3);
 }

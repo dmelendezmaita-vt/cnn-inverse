@@ -31,6 +31,33 @@
       "posterior_truth_marginal_w1_log10",
       "posterior_truth_sliced_w1_log10"
     ],
+    "coverage_levels": {
+      "fmpe_extension": {
+        "0.5": 0.3567708333333333,
+        "0.8": 0.5377604166666666,
+        "0.9": 0.6197916666666666
+      },
+      "npse_extension": {
+        "0.5": 0.4361979166666667,
+        "0.8": 0.7486979166666666,
+        "0.9": 0.8528645833333334
+      },
+      "snpe_median_rule": {
+        "0.5": 0.38720703125,
+        "0.8": 0.6022135416666666,
+        "0.9": 0.6842447916666666
+      },
+      "snpe_raw": {
+        "0.5": 0.3377278645833333,
+        "0.8": 0.5478515625,
+        "0.9": 0.62841796875
+      },
+      "snpe_validate_calibrated": {
+        "0.5": 0.3359375,
+        "0.8": 0.5338541666666666,
+        "0.9": 0.6197916666666666
+      }
+    },
     "aligned_archive_reference": {
       "bayesflow_meanstd_test": {
         "batch_id": "can08_aligned_frameworks",
@@ -73,6 +100,7 @@
   "active_metric_hierarchy": {
     "primary_metric": "mean_abs_log10_error_params_mean",
     "support_metrics": [
+      "mean_relative_error_params_mean",
       "posterior_contraction_mean_mean",
       "ess_mean",
       "runtime_sec"

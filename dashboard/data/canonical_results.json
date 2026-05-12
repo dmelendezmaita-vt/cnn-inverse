@@ -439,6 +439,120 @@
           ]
         },
         {
+          "title": "Per-target normalized MAE on the sequential current `0.1` audit slice",
+          "subtitle": "Lower is better. This chart shows where the direct separation lives inside the target vector.",
+          "type": "grouped_bar",
+          "unit": "mean nmae range",
+          "lower_is_better": true,
+          "categories": [
+            "hh_param_1",
+            "hh_param_2",
+            "hh_param_3",
+            "hh_param_4",
+            "hh_param_5",
+            "hh_param_6"
+          ],
+          "series": [
+            {
+              "label": "DNN",
+              "values": [
+                0.24406614692438275,
+                0.2447497701199964,
+                0.28089181140835096,
+                0.247060749685452,
+                0.2367752453878074,
+                0.27089689648430404
+              ],
+              "color": "#6a4fb3"
+            },
+            {
+              "label": "Extra Trees",
+              "values": [
+                0.020500249374768305,
+                0.2163759130039093,
+                0.1700492834931191,
+                0.2394564715867322,
+                0.181415055049009,
+                0.2489890670333931
+              ],
+              "color": "#1f6f78"
+            },
+            {
+              "label": "Random Forest",
+              "values": [
+                0.020436851477165775,
+                0.21326120228636375,
+                0.1654503750874297,
+                0.23643182414843839,
+                0.17542302394522022,
+                0.23941227590517128
+              ],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "The classical rows dominate strongly on `hh_param_1`, while the gap narrows but remains across the rest of the target vector.",
+            "This is why the manuscript keeps parameter-wise summaries in the direct HH lane."
+          ]
+        },
+        {
+          "title": "Per-target normalized MAE on the sequential current `0.3` audit slice",
+          "subtitle": "Lower is better. The per-target pattern remains close to the `0.1` slice.",
+          "type": "grouped_bar",
+          "unit": "mean nmae range",
+          "lower_is_better": true,
+          "categories": [
+            "hh_param_1",
+            "hh_param_2",
+            "hh_param_3",
+            "hh_param_4",
+            "hh_param_5",
+            "hh_param_6"
+          ],
+          "series": [
+            {
+              "label": "DNN",
+              "values": [
+                0.24732271731527514,
+                0.24655452564961866,
+                0.27773132286056634,
+                0.24491830437273474,
+                0.24063495724831466,
+                0.2818944653073891
+              ],
+              "color": "#6a4fb3"
+            },
+            {
+              "label": "Extra Trees",
+              "values": [
+                0.020928460449654778,
+                0.2192492486798529,
+                0.1618084890413743,
+                0.22986092432364316,
+                0.176391348414558,
+                0.2561452126252535
+              ],
+              "color": "#1f6f78"
+            },
+            {
+              "label": "Random Forest",
+              "values": [
+                0.02132910695700387,
+                0.21483596152077386,
+                0.16033901238066406,
+                0.23100292567911793,
+                0.1710609522304425,
+                0.2507342533517943
+              ],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "The direct ranking remains stable target by target on the second audited current slice.",
+            "The aggregate direct result is not being driven by one unstable target coordinate."
+          ]
+        },
+        {
           "title": "Sequential versus random empirical marginal Wasserstein",
           "subtitle": "Lower is better. This chart answers a marginal-fidelity question rather than a paired point-accuracy question.",
           "type": "grouped_bar",
@@ -523,7 +637,7 @@
       "badge": "Boundary and extension",
       "intro": "This posterior lane remains descriptive pending re-tabulation on the canonical single-current contract, but the dashboard now reads it through posterior-specific metrics instead of a generic MAE-only summary.",
       "how_to_read": "Read the first chart only as point-summary context. Read the later charts as the posterior metric family that the manuscript uses, namely coverage gap, interval width, and truth-centered Wasserstein. These rows are still not the front-door HH claim, because they are not yet regenerated on the current canonical contract.",
-      "main_conclusion": "Posterior interpretation remains a calibration-and-sharpness tradeoff rather than a single leaderboard. NPSE has the lowest descriptive point-summary MAE in this retained single-current posterior block, but it pays for that with a much wider `90%` interval, while the other posterior families stay undercovered and only modestly separated on truth-centered Wasserstein.",
+      "main_conclusion": "Posterior interpretation remains a calibration-and-sharpness tradeoff rather than a single leaderboard. NPSE has the lowest descriptive point-summary MAE in this retained single-current posterior block and the strongest observed coverage, but it pays for that with a much wider `90%` interval, while the other posterior families stay undercovered and only modestly separated on truth-centered Wasserstein.",
       "charts": [
         {
           "title": "Posterior point-summary MAE by representative family",
@@ -585,6 +699,59 @@
           "notes": [
             "NPSE has the smallest retained coverage gap in this descriptive block.",
             "The other retained posterior families remain materially undercovered, which is why the manuscript does not treat point-summary MAE as a sufficient posterior metric."
+          ]
+        },
+        {
+          "title": "Observed posterior coverage by nominal level",
+          "subtitle": "Higher is not automatically better, because coverage has to be read with interval width, but this chart shows the full multi-level undercoverage pattern.",
+          "type": "grouped_bar",
+          "unit": "coverage",
+          "lower_is_better": false,
+          "categories": [
+            "SNPE raw",
+            "SNPE feature-aware",
+            "SNPE calibrated",
+            "FMPE",
+            "NPSE"
+          ],
+          "series": [
+            {
+              "label": "50% nominal",
+              "values": [
+                0.3377278645833333,
+                0.38720703125,
+                0.3359375,
+                0.3567708333333333,
+                0.4361979166666667
+              ],
+              "color": "#4457a7"
+            },
+            {
+              "label": "80% nominal",
+              "values": [
+                0.5478515625,
+                0.6022135416666666,
+                0.5338541666666666,
+                0.5377604166666666,
+                0.7486979166666666
+              ],
+              "color": "#1d8f6e"
+            },
+            {
+              "label": "90% nominal",
+              "values": [
+                0.62841796875,
+                0.6842447916666666,
+                0.6197916666666666,
+                0.6197916666666666,
+                0.8528645833333334
+              ],
+              "color": "#8a6f1f"
+            }
+          ],
+          "notes": [
+            "Rows that approach nominal coverage at `90%` still remain visibly undercovered at the lower nominal levels.",
+            "NPSE is strongest on observed coverage, but it achieves that result with a much broader interval."
           ]
         },
         {
@@ -833,6 +1000,33 @@
           "notes": [
             "ESS is nearly unchanged across the three active-sequential policies.",
             "This is why the active-sequential interpretation does not reduce to an ESS-driven distinction."
+          ]
+        },
+        {
+          "title": "Active-sequential mean relative error",
+          "subtitle": "Lower is better. This chart is secondary to the log10 error row, but it confirms that the policies remain tightly clustered on a scale-free error view.",
+          "type": "bar",
+          "unit": "mean relative error",
+          "lower_is_better": true,
+          "categories": [
+            "Disagreement",
+            "Wasserstein",
+            "Uncertainty"
+          ],
+          "series": [
+            {
+              "label": "Relative error",
+              "values": [
+                9.162776025400074,
+                9.15911263139902,
+                9.158973612533273
+              ],
+              "color": "#4457a7"
+            }
+          ],
+          "notes": [
+            "Relative error is almost tied across the three active-sequential policies, which is why it remains secondary to the main log10 error metric.",
+            "The stronger separation in this branch comes from contraction and interpretive stance rather than from scale-free relative-error magnitude."
           ]
         },
         {
