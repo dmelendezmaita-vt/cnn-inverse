@@ -1,6 +1,6 @@
 {
-  "generated_on": "2026-05-02",
-  "scope_note": "The dashboard condenses a large artifact surface into a small set of argument-driven charts, which are organized by comparability class and by scientific role. The current interpretation surface is anchored to the fresh published full clean rerun that completed at `/projects/neuro-collab/github-validation/cnn-inverse-falcon-monitoring-full-cold-clean-20260501r`.",
+  "generated_on": "2026-05-12",
+  "scope_note": "The dashboard now foregrounds the single-current split-contract audit on the `0.1` and `0.3` HH slices. Older throughput, posterior, and robustness sections remain as supporting or archival context, while the direct HH interpretation is updated to the new audit surface.",
   "inventory": {
     "kpis": [
       {
@@ -22,13 +22,24 @@
         "label": "Numeric result cells",
         "value": "1,824",
         "note": "Numeric fields in the structured tables that matter for the dashboard, before logs and per-target artifacts."
+      },
+      {
+        "label": "Split-audit rows complete",
+        "value": "27 / 30",
+        "note": "Three classical `0.1` random retry rows are still missing, but the direct-neural and current `0.3` surfaces are complete."
       }
     ],
     "packages": [
       {
+        "label": "Single-current split audit",
+        "files": 715,
+        "gib": 1.36,
+        "role": "Current HH contract audit across sequential and random splits on the `0.1` and `0.3` current slices."
+      },
+      {
         "label": "Clean A30 canonical campaign",
         "files": 13867,
-        "gib": 38.00,
+        "gib": 38.0,
         "role": "Primary clean comparison and later aligned follow-up coverage."
       },
       {
@@ -76,6 +87,11 @@
     ],
     "rows_by_space": [
       {
+        "space": "Single-current split audit",
+        "rows": 27,
+        "numeric_cells": 108
+      },
+      {
         "space": "Direct clean summary",
         "rows": 140,
         "numeric_cells": 700
@@ -111,9 +127,15 @@
         "numeric_cells": 216
       }
     ],
-    "interpretation_note": "The raw archive is much larger than the interpretation surface that a reader can use directly. The dashboard therefore shows only the comparisons that answer a question clearly, while the underlying tables and files remain available for audit. The latest update also reflects the fact that the published repository now reproduces the full canonical suite from a fresh clone on Falcon."
+    "interpretation_note": "The dashboard now carries the live single-current split audit as the front door for HH direct interpretation. The audit already shows that the direct-neural row remains stable and noncompetitive under split changes, while the classical lane remains stronger and is now clearly metric-dependent. Older sections remain available for context, but they no longer define the leading interpretation surface."
   },
   "reading_guide": [
+    {
+      "title": "Contract audit first",
+      "badge": "Interpretation rule",
+      "kind": "boundary",
+      "body": "The single-current split audit is now the primary HH interpretation surface. Older clean closure, throughput, and aligned-posterior sections should be read as supporting or archival context unless they are revalidated on the same contract."
+    },
     {
       "title": "Comparability first",
       "badge": "Interpretation rule",
@@ -161,7 +183,11 @@
           "series": [
             {
               "label": "Delta versus benchmark",
-              "values": [8.09, 3.86, 0.145],
+              "values": [
+                8.09,
+                3.86,
+                0.145
+              ],
               "color": "#7a3c12"
             }
           ],
@@ -184,7 +210,11 @@
           "series": [
             {
               "label": "Node-count ANOVA",
-              "values": [0.996, 0.992, 0.992],
+              "values": [
+                0.996,
+                0.992,
+                0.992
+              ],
               "color": "#1f6f78"
             }
           ],
@@ -198,13 +228,13 @@
     {
       "title": "Execution Configuration and Run Policy",
       "badge": "Supporting evidence",
-      "intro": "These studies determined which execution setting best supports broad comparative sweeps while keeping the task fixed.",
-      "how_to_read": "The throughput chart answers the run-policy question. The train-time chart answers a narrower question, namely whether tuned 2-node and 4-node lanes improved inside their own lane, which is different from asking whether multi-node scaling beat the best single-node policy.",
-      "main_conclusion": "Throughput-first grouped single-node execution remained the default within a fixed workload, while the final runner now also exploits the full 4-node allocation by running independent steps in resource-aware cohorts. Tuned 2-node and 4-node paths improved their own lane materially, but they did not overturn the broad-sweep single-node policy.",
+      "intro": "These earlier throughput studies motivated the HH sweep-setting question, but the current HH contract decision is still under audit.",
+      "how_to_read": "Read these charts as historical support for the execution question, not as a settled answer for the current single-current HH audit surface.",
+      "main_conclusion": "Earlier throughput packages favored grouped single-node execution, but the dashboard now treats that as supporting context until the single-current split and training audits close.",
       "cards": [
         {
-          "title": "Fresh full-run scheduler closure",
-          "body": "The published runner now launches independent 1-node, 2-node, posterior, framework, and surrogate steps concurrently when their node demands do not overlap, while giving each distributed step its own rendezvous port and its own cache roots when needed. The fresh full clean rerun cleared the execution-policy batch and the later overlapping single-node batches under that contract."
+          "title": "Why this thread moved down",
+          "body": "The current bundle now foregrounds the split-contract audit. The older throughput packages still matter, because they define plausible candidate sweep settings, but they no longer outrank the contract audit as the main HH interpretation surface."
         }
       ],
       "charts": [
@@ -221,12 +251,18 @@
           "series": [
             {
               "label": "Grouped 1-node",
-              "values": [127.43, 54.75],
+              "values": [
+                127.43,
+                54.75
+              ],
               "color": "#1f6f78"
             },
             {
               "label": "Selected 4-node latency path",
-              "values": [30.38, 29.51],
+              "values": [
+                30.38,
+                29.51
+              ],
               "color": "#b04a2f"
             }
           ],
@@ -250,7 +286,12 @@
           "series": [
             {
               "label": "Train-time reduction",
-              "values": [33.45, 35.08, 32.80, 33.93],
+              "values": [
+                33.45,
+                35.08,
+                32.8,
+                33.93
+              ],
               "color": "#2a8a50"
             }
           ],
@@ -272,7 +313,10 @@
           "series": [
             {
               "label": "factor_s5 versus factor_s2",
-              "values": [4.35, 4.66],
+              "values": [
+                4.35,
+                4.66
+              ],
               "color": "#6a4fb3"
             }
           ],
@@ -284,62 +328,285 @@
       ]
     },
     {
-      "title": "Primary Direct Fixed-Task Comparison",
+      "title": "Single-Current Split Contract Audit",
       "badge": "Primary evidence",
-      "intro": "This is the empirical center of the work. The current clean direct frontier is taken from the homogeneous A30 rerun package, which displaced the older mixed closure endpoint.",
-      "how_to_read": "Read the accuracy chart as the clean direct comparison within the direct-estimation class, and read the runtime chart separately, because runtime and accuracy answer different questions.",
-      "main_conclusion": "The direct clean winner is tuned Extra Trees, the robust direct representative is tuned k-nearest neighbors, and the best surviving neural direct row is still materially behind both in the final clean rerun.",
+      "intro": "These runs compare sequential and random split behavior on the two audited HH current slices while keeping the single-current direct task fixed.",
+      "how_to_read": "Read the MAE chart as paired point-accuracy sensitivity to split policy. Read the Wasserstein chart separately, because marginal fidelity can prefer a different classical family than paired point accuracy. Read the delta chart only as a split-sensitivity summary, not as a family ranking by itself.",
+      "main_conclusion": "Split choice does not rescue the direct neural row or overturn the classical advantage. The direct DNN row remains stable and much worse than the classical rows on both current slices. Within the classical lane, random forest is the paired point-accuracy leader, while Extra Trees retains the lower empirical marginal Wasserstein.",
       "cards": [
         {
-          "title": "Latest clean direct frontier",
-          "body": "In the fresh full clean rerun, `extra_trees_500_depth20` reached a clean MAE of 495.69, `knn_k11` reached 502.44, and the surviving neural direct row reached 913.42. That leaves kNN only 1.36% above the tuned tree on clean MAE, while the neural direct row remains 84.27% above the tuned tree."
+          "title": "Current direct audit snapshot",
+          "body": "At current `0.1`, the direct DNN row stays near MAE `915.4-916.3`, while the classical rows stay near `497-509`. At current `0.3`, the direct DNN row stays near `918.0-920.7`, while the classical rows stay near `492-509`."
+        },
+        {
+          "title": "Provisional caveat",
+          "body": "The split audit has completed 27 of 30 rows. The remaining gap is only the last three classical `0.1` random retry rows, so the DNN-versus-classical separation is already stable, but the exact `0.1` classical random means are still slightly provisional."
         }
       ],
       "charts": [
         {
-          "title": "Clean direct MAE by family representative",
-          "subtitle": "Lower is better. These rows share one direct-estimation comparison class.",
-          "type": "bar",
+          "title": "Sequential versus random clean MAE by family and current slice",
+          "subtitle": "Lower is better. Random bars report the mean across completed random-split rows.",
+          "type": "grouped_bar",
           "unit": "MAE",
           "lower_is_better": true,
           "categories": [
-            "Extra Trees depth-20",
-            "kNN k=11",
-            "EfficientNet beta0.05 inverse-var e500"
+            "DNN @0.1",
+            "ET @0.1",
+            "RF @0.1",
+            "DNN @0.3",
+            "ET @0.3",
+            "RF @0.3"
           ],
           "series": [
             {
-              "label": "Clean MAE",
-              "values": [500.43, 502.13, 879.46],
+              "label": "Sequential",
+              "values": [
+                915.3706665039062,
+                508.6550551027721,
+                501.0188103267628,
+                919.484375,
+                492.40085847903316,
+                493.66483701036594
+              ],
+              "color": "#6a4fb3"
+            },
+            {
+              "label": "Random mean",
+              "values": [
+                915.6860107421875,
+                505.2454156855921,
+                496.9014209431991,
+                919.2901814778646,
+                503.2380579887586,
+                496.190303608635
+              ],
               "color": "#1f6f78"
             }
           ],
           "notes": [
-            "The clean gap from the best neural direct row to the direct winner is 43.1% on MAE.",
-            "The clean gap between the direct winner and the robust kNN representative is only 0.34%."
+            "The direct DNN row is nearly unchanged under split choice on both currents.",
+            "The classical rows remain much stronger than the direct DNN row under both split policies."
           ]
         },
         {
-          "title": "Representative runtime by direct family",
-          "subtitle": "Lower is better. Runtime is a cost measure, so it should be read separately from MAE.",
-          "type": "bar",
-          "unit": "seconds",
+          "title": "Sequential versus random empirical marginal Wasserstein",
+          "subtitle": "Lower is better. This chart answers a marginal-fidelity question rather than a paired point-accuracy question.",
+          "type": "grouped_bar",
+          "unit": "W1",
           "lower_is_better": true,
           "categories": [
-            "kNN k=11",
-            "Extra Trees depth-20",
-            "EfficientNet beta0.05 inverse-var e500"
+            "DNN @0.1",
+            "ET @0.1",
+            "RF @0.1",
+            "DNN @0.3",
+            "ET @0.3",
+            "RF @0.3"
           ],
           "series": [
             {
-              "label": "Representative runtime",
-              "values": [5.47, 13.10, 235.76],
+              "label": "Sequential",
+              "values": [
+                0.9824729490998978,
+                0.3668970912018102,
+                0.46448322235206635,
+                0.9745875693738598,
+                0.39385333031750774,
+                0.48325382349049323
+              ],
               "color": "#b04a2f"
+            },
+            {
+              "label": "Random mean",
+              "values": [
+                0.9858036502006484,
+                0.375477817951228,
+                0.4710808288209755,
+                0.967886854775621,
+                0.3954217506238063,
+                0.48222157030936375
+              ],
+              "color": "#2a8a50"
             }
           ],
           "notes": [
-            "The direct clean winner was also much cheaper than the best surviving neural row.",
-            "The kNN representative remained the lowest-runtime direct contender while preserving near-winner clean accuracy."
+            "Extra Trees retains the lower empirical marginal Wasserstein in the classical lane on both currents.",
+            "This is why the direct frontier now needs two statements, namely paired point accuracy and marginal fidelity."
+          ]
+        },
+        {
+          "title": "Random-minus-sequential MAE change",
+          "subtitle": "Negative values mean the random mean improved over the sequential row.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "DNN @0.1",
+            "ET @0.1",
+            "RF @0.1",
+            "DNN @0.3",
+            "ET @0.3",
+            "RF @0.3"
+          ],
+          "series": [
+            {
+              "label": "MAE change",
+              "values": [
+                0.034449895525451774,
+                -0.6703244925956964,
+                -0.8218033532270576,
+                -0.02111982839679889,
+                2.200889645724878,
+                0.5115751434846568
+              ],
+              "color": "#8a6f1f"
+            }
+          ],
+          "notes": [
+            "The direct DNN deltas are effectively zero on both audited currents.",
+            "The largest observed split effect is the `+2.20%` MAE penalty for Extra Trees on current `0.3`, which still does not threaten the DNN-versus-classical separation."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Single-Current Split Contract Audit",
+      "badge": "Primary evidence",
+      "intro": "These runs compare sequential and random split behavior on the two audited HH current slices while keeping the single-current direct task fixed.",
+      "how_to_read": "Read the MAE chart as paired point-accuracy sensitivity to split policy. Read the Wasserstein chart separately, because marginal fidelity can prefer a different classical family than paired point accuracy. Read the delta chart only as a split-sensitivity summary, not as a family ranking by itself.",
+      "main_conclusion": "Split choice does not rescue the direct neural row or overturn the classical advantage. The direct DNN row remains stable and much worse than the classical rows on both current slices. Within the classical lane, random forest is the paired point-accuracy leader, while Extra Trees retains the lower empirical marginal Wasserstein.",
+      "cards": [
+        {
+          "title": "Current direct audit snapshot",
+          "body": "At current `0.1`, the direct DNN row stays near MAE `915.4-916.3`, while the classical rows stay near `497-509`. At current `0.3`, the direct DNN row stays near `918.0-920.7`, while the classical rows stay near `492-509`."
+        },
+        {
+          "title": "Provisional caveat",
+          "body": "The split audit has completed 27 of 30 rows. The remaining gap is only the last three classical `0.1` random retry rows, so the DNN-versus-classical separation is already stable, but the exact `0.1` classical random means are still slightly provisional."
+        }
+      ],
+      "charts": [
+        {
+          "title": "Sequential versus random clean MAE by family and current slice",
+          "subtitle": "Lower is better. Random bars report the mean across completed random-split rows.",
+          "type": "grouped_bar",
+          "unit": "MAE",
+          "lower_is_better": true,
+          "categories": [
+            "DNN @0.1",
+            "ET @0.1",
+            "RF @0.1",
+            "DNN @0.3",
+            "ET @0.3",
+            "RF @0.3"
+          ],
+          "series": [
+            {
+              "label": "Sequential",
+              "values": [
+                915.3706665039062,
+                508.6550551027721,
+                501.0188103267628,
+                919.484375,
+                492.40085847903316,
+                493.66483701036594
+              ],
+              "color": "#6a4fb3"
+            },
+            {
+              "label": "Random mean",
+              "values": [
+                915.6860107421875,
+                505.2454156855921,
+                496.9014209431991,
+                919.2901814778646,
+                503.2380579887586,
+                496.190303608635
+              ],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
+            "The direct DNN row is nearly unchanged under split choice on both currents.",
+            "The classical rows remain much stronger than the direct DNN row under both split policies."
+          ]
+        },
+        {
+          "title": "Sequential versus random empirical marginal Wasserstein",
+          "subtitle": "Lower is better. This chart answers a marginal-fidelity question rather than a paired point-accuracy question.",
+          "type": "grouped_bar",
+          "unit": "W1",
+          "lower_is_better": true,
+          "categories": [
+            "DNN @0.1",
+            "ET @0.1",
+            "RF @0.1",
+            "DNN @0.3",
+            "ET @0.3",
+            "RF @0.3"
+          ],
+          "series": [
+            {
+              "label": "Sequential",
+              "values": [
+                0.9824729490998978,
+                0.3668970912018102,
+                0.46448322235206635,
+                0.9745875693738598,
+                0.39385333031750774,
+                0.48325382349049323
+              ],
+              "color": "#b04a2f"
+            },
+            {
+              "label": "Random mean",
+              "values": [
+                0.9858036502006484,
+                0.375477817951228,
+                0.4710808288209755,
+                0.967886854775621,
+                0.3954217506238063,
+                0.48222157030936375
+              ],
+              "color": "#2a8a50"
+            }
+          ],
+          "notes": [
+            "Extra Trees retains the lower empirical marginal Wasserstein in the classical lane on both currents.",
+            "This is why the direct frontier now needs two statements, namely paired point accuracy and marginal fidelity."
+          ]
+        },
+        {
+          "title": "Random-minus-sequential MAE change",
+          "subtitle": "Negative values mean the random mean improved over the sequential row.",
+          "type": "bar",
+          "unit": "%",
+          "lower_is_better": false,
+          "categories": [
+            "DNN @0.1",
+            "ET @0.1",
+            "RF @0.1",
+            "DNN @0.3",
+            "ET @0.3",
+            "RF @0.3"
+          ],
+          "series": [
+            {
+              "label": "MAE change",
+              "values": [
+                0.034449895525451774,
+                -0.6703244925956964,
+                -0.8218033532270576,
+                -0.02111982839679889,
+                2.200889645724878,
+                0.5115751434846568
+              ],
+              "color": "#8a6f1f"
+            }
+          ],
+          "notes": [
+            "The direct DNN deltas are effectively zero on both audited currents.",
+            "The largest observed split effect is the `+2.20%` MAE penalty for Extra Trees on current `0.3`, which still does not threaten the DNN-versus-classical separation."
           ]
         }
       ]
@@ -347,10 +614,18 @@
     {
       "title": "Posterior-Oriented and Representation Follow-Up",
       "badge": "Boundary and extension",
-      "intro": "These studies broadened the executable comparison through richer observations, stronger posterior families, and later aligned framework rows.",
-      "how_to_read": "The posterior chart stays inside the posterior-oriented result space. The gain chart identifies which interventions materially improved that space.",
-      "main_conclusion": "The fresh clean rerun keeps the posterior story but sharpens its ranking. BayesFlow meanstd with a posterior-median rule is now the best posterior MAE row, BayesFlow mean prediction is the best posterior MSE and R2 row, and NPSE median improves over the FMPE extension median in the later extension block.",
+      "intro": "These older posterior-oriented rows are retained as descriptive extension context, but they are pending re-tabulation on the same canonical single-current contract.",
+      "how_to_read": "Read this section as archived posterior context rather than as a chapter-level winner table. The direct HH interpretation currently comes from the split audit above.",
+      "main_conclusion": "Posterior and aligned follow-up rows still broaden method coverage, but the dashboard no longer treats them as current decisive evidence until they are regenerated on the canonical single-current contract.",
       "cards": [
+        {
+          "title": "Current status",
+          "body": "The posterior lane remains informative, but it is descriptive pending reprocessing on the canonical contract. These charts should therefore be read as coverage context, not as the current front-door HH claim."
+        },
+        {
+          "title": "Current status",
+          "body": "The posterior lane remains informative, but it is descriptive pending reprocessing on the canonical contract. These charts should therefore be read as coverage context, not as the current front-door HH claim."
+        },
         {
           "title": "Latest posterior snapshot",
           "body": "The clean posterior decision-rule table from the fresh full rerun places `bayesflow_meanstd` median first at MAE 583.42, `bayesflow_meanstd` mean first at MSE 1.784e6 with R2 0.630, `npse_extension` median at MAE 861.43, and `fmpe_extension` median at MAE 1059.11. The older claim that FMPE was the strongest clean posterior family no longer holds under the final published run."
@@ -372,7 +647,12 @@
           "series": [
             {
               "label": "Clean MAE",
-              "values": [564.64, 582.30, 595.63, 620.61],
+              "values": [
+                564.64,
+                582.3,
+                595.63,
+                620.61
+              ],
               "color": "#1f6f78"
             }
           ],
@@ -397,7 +677,12 @@
           "series": [
             {
               "label": "MAE change",
-              "values": [8.0, 2.49, 5.20, -66.8],
+              "values": [
+                8.0,
+                2.49,
+                5.2,
+                -66.8
+              ],
               "color": "#6a4fb3"
             }
           ],
@@ -421,7 +706,12 @@
           "series": [
             {
               "label": "Representative runtime",
-              "values": [133.2, 166.7, 367.9, 482.24],
+              "values": [
+                133.2,
+                166.7,
+                367.9,
+                482.24
+              ],
               "color": "#b04a2f"
             }
           ],
@@ -459,7 +749,11 @@
           "series": [
             {
               "label": "MAE change",
-              "values": [28.4, 36.9, -66.8],
+              "values": [
+                28.4,
+                36.9,
+                -66.8
+              ],
               "color": "#2a8a50"
             }
           ],
@@ -482,7 +776,11 @@
           "series": [
             {
               "label": "kNN improvement",
-              "values": [40.9, 36.6, 28.1],
+              "values": [
+                40.9,
+                36.6,
+                28.1
+              ],
               "color": "#1f6f78"
             }
           ],
@@ -515,15 +813,20 @@
           "series": [
             {
               "label": "Error metric",
-            "values": [0.74426, 0.74196, 0.74438, 0.98890],
-            "color": "#1f6f78"
-          }
-        ],
-        "notes": [
+              "values": [
+                0.74426,
+                0.74196,
+                0.74438,
+                0.9889
+              ],
+              "color": "#1f6f78"
+            }
+          ],
+          "notes": [
             "Disagreement is the lowest row on mean absolute log10 parameter error, but Wasserstein is only 0.31% worse on that metric.",
             "ASNPE now finishes cleanly in the fresh full rerun, but its mean absolute log10 parameter error remains 33.28% above the best active-sequential policy."
-        ]
-      },
+          ]
+        },
         {
           "title": "Active-sequential runtime by representative policy",
           "subtitle": "Lower is better. The runtime gap is part of why these rows stayed in their own extension section.",
@@ -539,15 +842,20 @@
           "series": [
             {
               "label": "Runtime",
-            "values": [64.219, 63.819, 64.066, 66.643],
-            "color": "#b04a2f"
-          }
-        ],
-        "notes": [
+              "values": [
+                64.219,
+                63.819,
+                64.066,
+                66.643
+              ],
+              "color": "#b04a2f"
+            }
+          ],
+          "notes": [
             "The three active-sequential policies now sit in the same runtime band, roughly 64 seconds, in the fresh clean run.",
             "ASNPE is no longer a runtime outlier, but it is still not competitive on the active-sequential error metric."
-        ]
-      }
+          ]
+        }
       ],
       "cards": [
         {
@@ -576,7 +884,10 @@
           "series": [
             {
               "label": "Preprocess reduction",
-              "values": [61.4, 49.1],
+              "values": [
+                61.4,
+                49.1
+              ],
               "color": "#2a8a50"
             }
           ],
@@ -598,7 +909,10 @@
           "series": [
             {
               "label": "Startup reduction",
-              "values": [99.24, 99.22],
+              "values": [
+                99.24,
+                99.22
+              ],
               "color": "#6a4fb3"
             }
           ],
